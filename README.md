@@ -6,13 +6,13 @@
 
 > 本项目是社区项目，与 DeepSeek 官方无隶属关系。价格以 [DeepSeek 官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为准。
 
-[![CI](https://github.com/OWNER/liangwen-clock/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/liangwen-clock/actions/workflows/ci.yml)
+[![CI](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml/badge.svg)](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml)
 ![Swift 6](https://img.shields.io/badge/Swift-6.0-orange)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
 ![iOS 17+](https://img.shields.io/badge/iOS-17%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-> 仓库刚初始化时，请把上方链接中的 `OWNER` 替换为实际 GitHub 组织或用户名。发布步骤见 [`docs/ops/release.md`](docs/ops/release.md)。
+> 仓库：<https://github.com/wangzhizhou/liangwen-clock>。发布步骤见 [`docs/ops/release.md`](docs/ops/release.md)。
 
 ## 当前状态
 
