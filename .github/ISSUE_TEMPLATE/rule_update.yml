@@ -1,0 +1,71 @@
+---
+name: Rule data update
+description: 更新价格、节假日或提醒策略规则
+title: "[Rules]: "
+labels:
+  - rules
+  - needs-verification
+body:
+  - type: markdown
+    attributes:
+      value: |
+        规则数据影响所有用户。请先阅读 `docs/ops/rule-update-runbook.md`。
+        没有官方来源的改动不会被接受。请不要在 issue 中猜测节假日或价格。
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 更新类型
+      options:
+        - 价格 / 峰谷时段
+        - 法定节假日 / 调休
+        - 提醒策略
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: 官方来源 URL
+      placeholder: https://api-docs.deepseek.com/zh-cn/quick_start/pricing/
+    validations:
+      required: true
+
+  - type: input
+    id: checked-at
+    attributes:
+      label: 核对日期
+      placeholder: 2026-10-23
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes
+    attributes:
+      label: 变更内容
+      description: 旧值 → 新值；日期范围；影响的模型/计费项
+    validations:
+      required: true
+
+  - type: textarea
+    id: coverage
+    attributes:
+      label: 覆盖范围与例外
+      description: 日期数据从何时到何时有效？调休上班日如何处理？
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前检查
+      options:
+        - label: 我已确认来源是官方页面/公告，而不是第三方日历或二手转述
+          required: true
+        - label: 我理解调休上班的周末仍按官方文字视为谷期
+          required: true
+        - label: 我会运行 make rules-manifest 与 make validate-rules
+          required: true
+        - label: 我会同步更新 manifest、测试快照与 CHANGELOG
+          required: true

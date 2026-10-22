@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+DerivedData/
+build/
+Build/Generated/
+*.xcuserstate
+xcuserdata/
+*.xcresult
+*.moved-aside
+
+# Generated project (source of truth: project.yml)
+LiangWenClock.xcodeproj/
+
+# SwiftPM
+.build/
+.swiftpm/
+.netrc
+
+# Tooling
+.venv/
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+
+# Editors
+.idea/
+.vscode/

@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Rules + tests
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: Validate bundled rule bundle
+        run: swift run --package-path Packages/LiangWen liangwen-rules validate Rules
+
+      - name: Run tests
+        run: swift test --package-path Packages/LiangWen
+
+  build:
+    name: Build macOS + iOS
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build macOS app
+        run: |
+          xcodebuild -project LiangWenClock.xcodeproj \
+            -scheme LiangWenMac \
+            -configuration Debug \
+            -derivedDataPath .build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO build
+
+      - name: Verify bundled rules
+        run: test -f .build/DerivedData/Build/Products/Debug/LiangWenMac.app/Contents/Resources/Rules/manifest.json
+
+      - name: Build iOS app
+        run: |
+          xcodebuild -project LiangWenClock.xcodeproj \
+            -scheme LiangWeniOS \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath .build/DerivedData-iOS \
+            CODE_SIGNING_ALLOWED=NO build

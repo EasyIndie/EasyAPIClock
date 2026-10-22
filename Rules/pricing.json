@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "version": "2026.10.23",
+  "effectiveFrom": "2026-10-23T00:00:00+08:00",
+  "source": {
+    "name": "DeepSeek API Docs · 模型 & 价格",
+    "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+    "checkedAt": "2026-10-23T10:00:00+08:00"
+  },
+  "timeZone": "Asia/Shanghai",
+  "currency": "CNY",
+  "unit": "perMillionTokens",
+  "weeklyPeakWindows": [
+    { "weekday": 1, "start": "09:00", "end": "12:00" },
+    { "weekday": 1, "start": "14:00", "end": "18:00" },
+    { "weekday": 2, "start": "09:00", "end": "12:00" },
+    { "weekday": 2, "start": "14:00", "end": "18:00" },
+    { "weekday": 3, "start": "09:00", "end": "12:00" },
+    { "weekday": 3, "start": "14:00", "end": "18:00" },
+    { "weekday": 4, "start": "09:00", "end": "12:00" },
+    { "weekday": 4, "start": "14:00", "end": "18:00" },
+    { "weekday": 5, "start": "09:00", "end": "12:00" },
+    { "weekday": 5, "start": "14:00", "end": "18:00" }
+  ],
+  "models": [
+    {
+      "id": "deepseek-flash",
+      "displayName": "deepseek-flash",
+      "tiers": [
+        { "id": "inputCacheHit", "label": "输入（缓存命中）", "valley": "0.02", "peak": "0.04" },
+        { "id": "inputCacheMiss", "label": "输入（缓存未命中）", "valley": "1", "peak": "2" },
+        { "id": "output", "label": "输出", "valley": "4", "peak": "8" }
+      ]
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "displayName": "deepseek-v4-pro",
+      "tiers": [
+        { "id": "inputCacheHit", "label": "输入（缓存命中）", "valley": "0.15", "peak": "0.30" },
+        { "id": "inputCacheMiss", "label": "输入（缓存未命中）", "valley": "4.5", "peak": "9" },
+        { "id": "output", "label": "输出", "valley": "13.5", "peak": "27" }
+      ]
+    }
+  ],
+  "notes": [
+    "价格单位为人民币元 / 百万 Tokens，仅覆盖模型 Token 计费项。",
+    "Search / Fetch 是独立按次计费的 API，不包含在本规则内。",
+    "峰期单价为谷期的 2 倍；如果未来各计费项倍率不一致，应用只显示峰/谷，不显示统一倍率。"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "bundleVersion" : "2026.10.23",
+  "effectiveFrom" : "2026-10-23T00:00:00+08:00",
+  "files" : {
+    "calendar" : "calendar-2026.json",
+    "pricing" : "pricing.json",
+    "reminderPolicy" : "reminder-policy.json"
+  },
+  "notes" : "首次开源脚手架发布的规则包。价格与节假日规则分别更新，但必须成套安装。",
+  "publishedAt" : "2026-10-23T10:00:00+08:00",
+  "schemaVersion" : 1,
+  "sha256" : {
+    "calendar" : "d9b0a4cf77e9ef2cb5930b7b9e0f8b9c5387a463dec4fbedcd7f2e707e4b0560",
+    "pricing" : "fc06e685e82015a82507535bce1ccc68df88b0a7662360e38316c76712a78500",
+    "reminderPolicy" : "cdde7bf4912b9a99f03dd2932a43c4858b998f290fdd710ff5f271d3f3765d1e"
+  }
+}

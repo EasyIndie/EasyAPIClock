@@ -1,0 +1,94 @@
+---
+name: Bug report
+description: 报告可复现的问题（请勿在此提交安全漏洞）
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。提交前请先搜索已有 issue，并确认问题不是「规则待更新」的预期降级。
+        安全漏洞请使用私密安全公告，见 SECURITY.md。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题摘要
+      description: 一句话说明哪里不对
+      placeholder: 例如：周五 19:00 面板显示「周一 09:00 切换」，但倒计时为 00:00
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 在…
+        2. 点击…
+        3. 看到…
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: 应用版本 / 提交
+      placeholder: 0.1.0 或 commit hash
+    validations:
+      required: true
+
+  - type: input
+    id: rules-version
+    attributes:
+      label: 规则包版本
+      description: 设置面板中的规则包版本（例如 2026.10.23）
+    validations:
+      required: false
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台
+      options:
+        - macOS 14
+        - macOS 15
+        - macOS 26
+        - macOS 其他版本
+        - iOS（仅外壳）
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 其他环境信息
+      description: 芯片、系统语言、时区、通知权限、专注模式、是否睡眠唤醒后出现
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志或截图
+      description: 请移除个人信息；不要粘贴 API Key
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认
+      options:
+        - label: 我已阅读 AGENTS.md 与产品需求，确认这不是范围外功能请求
+          required: true
+        - label: 我没有在公开 issue 中披露安全漏洞细节
+          required: true
