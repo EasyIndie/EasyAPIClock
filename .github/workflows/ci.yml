@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Cache pinned XcodeGen
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .build/tools
           key: xcodegen-${{ runner.os }}-${{ hashFiles('.xcodegen-version', 'Scripts/install-xcodegen.sh') }}
