@@ -18,6 +18,12 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     DEAD_CODE_STRIPPING: YES
     SWIFT_EMIT_LOC_STRINGS: YES
+  configs:
+    Debug:
+      # A local SwiftPM package is built for the active architecture. Building
+      # both arm64 and x86_64 slices in Debug can leave the second slice without
+      # a matching package module, so local Debug builds stay single-arch.
+      ONLY_ACTIVE_ARCH: YES
 
 packages:
   LiangWen:

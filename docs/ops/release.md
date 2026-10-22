@@ -4,6 +4,7 @@
 
 ## 1. 发布前检查
 
+- [ ] `make doctor` 通过（macOS / Xcode / Swift / 固定版本 XcodeGen）。
 - [ ] `make check` 通过（规则、测试、格式、双端构建）。
 - [ ] `git status` 干净；版本号与 `CHANGELOG.md` 一致。
 - [ ] 2026/当前年份规则包已按官方来源复核；覆盖范围足够。

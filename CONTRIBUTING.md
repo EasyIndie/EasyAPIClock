@@ -5,15 +5,18 @@
 ## 环境
 
 - macOS 14+、Xcode 16+（Swift 6）
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen)：`brew install xcodegen`
+- XcodeGen 2.46.0：由 `make bootstrap` 自动安装并校验 SHA-256，不需要 `brew install`
 - 不需要账号、密钥或后端服务
 
 ```bash
-make bootstrap
+make bootstrap     # 安装固定版本 XcodeGen + 生成工程 + 环境检查
+make doctor
 make test
 make validate-rules
 make run-mac
 ```
+
+不要用 `brew upgrade xcodegen` 改变生成器版本；升级流程见 [`docs/adr/0002-xcodegen.md`](docs/adr/0002-xcodegen.md)。
 
 ## 工作流
 

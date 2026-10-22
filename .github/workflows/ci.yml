@@ -39,11 +39,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Cache pinned XcodeGen
+        uses: actions/cache@v4
+        with:
+          path: .build/tools
+          key: xcodegen-${{ runner.os }}-${{ hashFiles('.xcodegen-version', 'Scripts/install-xcodegen.sh') }}
+
+      - name: Install pinned XcodeGen
+        run: Scripts/install-xcodegen.sh
+
+      - name: Check toolchain
+        run: Scripts/doctor.sh
 
       - name: Generate project
-        run: xcodegen generate
+        run: .build/tools/xcodegen/bin/xcodegen generate
 
       - name: Build macOS app
         run: |

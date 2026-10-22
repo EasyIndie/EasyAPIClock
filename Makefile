@@ -4,16 +4,18 @@ PACKAGE := Packages/LiangWen
 PROJECT := LiangWenClock.xcodeproj
 DERIVED := .build/DerivedData
 DERIVED_IOS := .build/DerivedData-iOS
+XCODEGEN := .build/tools/xcodegen/bin/xcodegen
 XCODEBUILD := xcodebuild -project $(PROJECT)
 
 .DEFAULT_GOAL := help
-.PHONY: help bootstrap generate test validate-rules rules-manifest build-mac build-ios run-mac format lint check preview clean
+.PHONY: help bootstrap doctor tool generate test validate-rules rules-manifest build-mac build-ios run-mac format lint check preview clean
 
 help:
 	@printf '%s\n' \
 		'梁文钟 · 常用命令' \
 		'' \
-		'  make bootstrap       安装 xcodegen（如缺失）并生成工程' \
+		'  make bootstrap       安装固定版本 XcodeGen 并生成工程' \
+		'  make doctor          检查 macOS / Xcode / Swift / XcodeGen 版本' \
 		'  make generate        重新生成 Xcode 工程（源：project.yml）' \
 		'  make test            运行 SwiftPM 单元测试' \
 		'  make validate-rules  校验 Rules/ 规则包' \
@@ -28,12 +30,18 @@ help:
 		'  make clean           清理生成物（不会删除源码）'
 
 bootstrap:
-	@command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
-	@$(MAKE) generate
+	@Scripts/install-xcodegen.sh
+	@$(XCODEGEN) generate
+	@Scripts/doctor.sh
 
-generate:
-	@command -v xcodegen >/dev/null 2>&1 || { echo "缺少 xcodegen，请运行 make bootstrap"; exit 1; }
-	xcodegen generate
+doctor:
+	@Scripts/doctor.sh
+
+tool:
+	@Scripts/install-xcodegen.sh
+
+generate: tool
+	$(XCODEGEN) generate
 
 test:
 	swift test --package-path $(PACKAGE)

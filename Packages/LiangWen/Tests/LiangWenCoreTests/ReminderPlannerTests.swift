@@ -103,11 +103,11 @@ struct ReminderPlannerTests {
     }
 
     @Test("规则更新不会改变本地提醒强度")
-    func rulesDoNotOverridePreferences() {
+    func rulesDoNotOverridePreferences() throws {
         let preferences = UserPreferences(intensity: .off, earlyReminderEnabled: true)
         let updatedPolicy = Fixture.policy(defaultIntensity: .strong, advanceSeconds: [600])
-        let encoded = try! JSONEncoder().encode(preferences)
-        let decoded = try! JSONDecoder().decode(UserPreferences.self, from: encoded)
+        let encoded = try JSONEncoder().encode(preferences)
+        let decoded = try JSONDecoder().decode(UserPreferences.self, from: encoded)
         #expect(decoded == preferences)
         #expect(updatedPolicy.defaultIntensity == .strong)
         #expect(decoded.intensity == .off)

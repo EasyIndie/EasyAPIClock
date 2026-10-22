@@ -27,6 +27,7 @@
 - `liangwen-rules` CLI：规则包校验与 manifest 校验和重算。
 - 56 个 Swift Testing 单元测试，覆盖时段边界、周末/节假日、跨日、覆盖过期、规则完整性、提醒计划与文案。
 - XcodeGen 工程定义、Makefile、GitHub Actions CI、issue/PR 模板、安全与贡献文档。
+- 固定 XcodeGen 2.46.0 的安装脚本（官方 release + SHA-256 校验）与 `make doctor` 工具链检查。
 - 面向 AI 代理的 `AGENTS.md` 与分主题架构文档。
 
 ### Known limitations

@@ -36,7 +36,8 @@
 ## 4. 命令
 
 ```bash
-make bootstrap        # 安装 xcodegen（如缺失）+ 生成工程
+make bootstrap        # 安装固定版本 XcodeGen + 生成工程 + 环境检查
+make doctor           # 检查 macOS / Xcode / Swift / XcodeGen 版本
 make generate         # 仅生成 Xcode 工程
 make test             # swift test --package-path Packages/LiangWen
 make validate-rules   # 校验 Rules/ 规则包
@@ -50,6 +51,8 @@ make check            # 规则校验 + 测试 + lint + 双端构建
 ```
 
 `make check` 是提交前的最低门槛。CI 会重复执行这些检查。
+
+XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh` 下载官方 release 并校验 SHA-256。不要用 `brew install/upgrade xcodegen` 绕过固定版本；升级流程见 ADR-0002。
 
 ## 5. 代码地图与依赖方向
 

@@ -34,14 +34,17 @@
 
 ## 快速开始
 
-要求：macOS 14+、Xcode 16+（Swift 6）、[XcodeGen](https://github.com/yonaskolb/XcodeGen)。
+要求：macOS 14+、Xcode 16+（Swift 6）。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
 
 ```bash
-make bootstrap     # 安装 xcodegen（如缺失）并生成 Xcode 工程
+make bootstrap     # 安装固定 2.46.0 XcodeGen（SHA-256 校验）+ 生成工程 + 环境检查
+make doctor        # 检查 macOS / Xcode / Swift / XcodeGen
 make test          # 运行核心与界面文案测试
 make validate-rules
 make run-mac       # 构建并以 ad-hoc 签名启动菜单栏应用
 ```
+
+XcodeGen 版本固定在 [`.xcodegen-version`](.xcodegen-version)，安装脚本只下载官方 release 并校验 SHA-256；不会使用“latest”。
 
 `LiangWenClock.xcodeproj` 是生成产物，不提交到仓库。修改工程结构请编辑 [`project.yml`](project.yml)。
 
@@ -63,6 +66,7 @@ Packages/LiangWen/
   Sources/LiangWenKit    SwiftUI 面板/设置、偏好、通知调度、规则安装
   Sources/LiangWenRuleTool 规则包校验与 manifest 重新计算 CLI
 Rules/                 内置规则包（价格、2026 节假日、提醒策略、manifest）
+Scripts/               固定版本工具安装、开发环境检查
 docs/                  产品、架构、ADR、运维与原始交接包
 ```
 

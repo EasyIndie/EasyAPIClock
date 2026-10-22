@@ -124,7 +124,7 @@ make run-mac
 `.github/workflows/ci.yml`：
 
 1. **Rules + tests**：校验内置规则包（含 checksum 与语义）→ `swift test`。
-2. **Build**：安装 XcodeGen → 生成工程 → 构建 macOS（不签名）→ 检查 bundle 内 `Rules/manifest.json` → 构建 iOS 模拟器目标。
+2. **Build**：安装 `.xcodegen-version` 指定的 XcodeGen（SHA-256 校验）→ `doctor` → 生成工程 → 构建 macOS（不签名）→ 检查 bundle 内 `Rules/manifest.json` → 构建 iOS 模拟器目标。
 
 CI 不验证：真实通知、签名、公证、VoiceOver、通知中心外观、Focus/静音、睡眠唤醒。
 

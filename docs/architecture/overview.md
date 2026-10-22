@@ -152,7 +152,8 @@ Rules/                       唯一规则数据源
 ## 构建系统
 
 - SwiftPM 负责 `LiangWenCore` / `LiangWenKit` / CLI / 测试。
-- XcodeGen 从 `project.yml` 生成两个应用工程；`.xcodeproj` 不提交。
+- XcodeGen 2.46.0 从 `project.yml` 生成两个应用工程；`.xcodeproj` 不提交。
+- 版本固定在 `.xcodegen-version`；`Scripts/install-xcodegen.sh` 下载官方 universal release（含 `SettingPresets`）并校验 SHA-256；`make doctor` 检查工具链。
 - `Rules/` 以 folder reference 原样复制到两个 app bundle。
 - 详见 [ADR-0002](../adr/0002-xcodegen.md)。
 
