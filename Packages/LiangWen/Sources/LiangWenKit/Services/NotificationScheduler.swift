@@ -8,6 +8,17 @@ import LiangWenCore
     import UIKit
 #endif
 
+private func reminderAuthorization(from status: UNAuthorizationStatus) -> ReminderAuthorization {
+    switch status {
+    case .notDetermined: .notDetermined
+    case .denied: .denied
+    case .authorized: .authorized
+    case .provisional: .provisional
+    case .ephemeral: .ephemeral
+    @unknown default: .unknown
+    }
+}
+
 private struct PendingNotificationInfo: Sendable {
     let identifier: String
     let categoryIdentifier: String
@@ -58,14 +69,12 @@ public final class UserNotificationScheduler: ReminderScheduling {
     }
 
     public func authorizationStatus() async -> ReminderAuthorization {
-        let settings = await center.notificationSettings()
-        switch settings.authorizationStatus {
-        case .notDetermined: return .notDetermined
-        case .denied: return .denied
-        case .authorized: return .authorized
-        case .provisional: return .provisional
-        case .ephemeral: return .ephemeral
-        @unknown default: return .unknown
+        // UNNotificationSettings is not Sendable on the Xcode 16 SDK. Read the
+        // status inside the callback and resume with a Sendable enum value.
+        await withCheckedContinuation { continuation in
+            center.getNotificationSettings { settings in
+                continuation.resume(returning: reminderAuthorization(from: settings.authorizationStatus))
+            }
         }
     }
 
