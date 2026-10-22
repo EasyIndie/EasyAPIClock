@@ -1,5 +1,9 @@
 import Foundation
-import UserNotifications
+// The Xcode 16 SDK does not mark UNUserNotificationCenter/UNNotificationSettings
+// as Sendable. All calls below are made on the main actor; @preconcurrency keeps
+// the SDK's incomplete annotations from turning into false-positive concurrency
+// errors while leaving our own types under Swift 6 checking.
+@preconcurrency import UserNotifications
 import LiangWenCore
 
 #if os(macOS)
