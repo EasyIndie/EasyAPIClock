@@ -23,11 +23,12 @@
 2. **降级或重放**：仅当远端 `publishedAt` 晚于当前版本时才安装；未来 `effectiveFrom` 的包进入 pending 区，到期才启用。
 3. **网络中间人**：默认要求 HTTPS（仅 localhost 开发允许 HTTP）。当前不使用证书固定。
 4. **供应链**：应用无第三方运行时依赖；XcodeGen 仅用于生成工程，不参与运行时。其版本固定在 `.xcodegen-version`，安装脚本只接受官方 release 且校验 SHA-256，不使用 `latest`。
-5. **隐私**：应用不收集、上传或分析任何使用数据；唯一网络请求是用户主动触发的规则更新（默认未配置更新源）。
+5. **隐私**：应用不收集、上传或分析任何使用数据；唯一网络请求是用户主动触发的规则更新，默认读取仓库的 `rules` 分支。
 
 ## 已知限制
 
-- 规则包只有 SHA-256 完整性校验，**没有数字签名**。信任根是 HTTPS 与仓库/发布账号的控制权。数字签名方案见 [`docs/adr/0004-rule-bundles.md`](docs/adr/0004-rule-bundles.md) 的后续工作。
+- 规则包只有 SHA-256 完整性校验，**没有数字签名**。信任根是 HTTPS、GitHub 仓库控制权与 Actions 权限。数字签名方案见 [`docs/adr/0004-rule-bundles.md`](docs/adr/0004-rule-bundles.md) 的后续工作。
+- 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性与 CDN 缓存。发布 job 拥有 `contents: write`，仅用于推送生成的 `rules` 分支。
 - 规则更新源的可用性、缓存与域名安全由部署方负责。
 - 通知权限、专注模式与静音属于系统行为，应用无法绕过。
 - 本地偏好与已安装规则位于应用沙盒容器内，未做加密；其中不含敏感信息。

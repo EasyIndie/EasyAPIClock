@@ -28,12 +28,14 @@
 - 56 个 Swift Testing 单元测试，覆盖时段边界、周末/节假日、跨日、覆盖过期、规则完整性、提醒计划与文案。
 - XcodeGen 工程定义、Makefile、GitHub Actions CI、issue/PR 模板、安全与贡献文档。
 - 固定 XcodeGen 2.46.0 的安装脚本（官方 release + SHA-256 校验）与 `make doctor` 工具链检查。
+- GitHub `Rules` workflow：PR/主分支校验规则与测试，主分支通过后自动发布到 `rules` 分支；应用默认从该分支读取规则。
+- `make rules-publish` / `make rules-publish-dry-run` 与合作式 `Scripts/publish-rules.sh`。
 - 面向 AI 代理的 `AGENTS.md` 与分主题架构文档。
 
 ### Known limitations
 
 - 未签名、未公证、无应用图标；尚未发布正式二进制。
-- 远程规则源默认未配置；只有本地校验机制，没有数字签名。
+- 规则源默认指向仓库 `rules` 分支；fork 需要同时修改 `project.yml` 与发布远端。只有 SHA-256 完整性校验，没有数字签名。
 - 真实系统通知行为尚未在目标设备上记录验证结果。
 - 强提醒使用重复通知，不是独立浮层，无法覆盖专注模式或静音。
 - iOS 未设计，只有验证用外壳。

@@ -11,7 +11,8 @@
 - [ ] 通知真实设备验证（A15）已有记录。
 - [ ] 隐私说明：不收集数据；唯一网络请求是用户主动检查规则更新。
 - [ ] 确定分发渠道与 Bundle ID。
-- [ ] 在 `project.yml` 的 `LiangWenRuleSourceBaseURL` 填入发布用的 HTTPS 规则目录（留空则使用内置规则，且「检查更新」提示未配置）。该值在启动时读取，修改后需重新构建。
+- [ ] `project.yml` 的 `LiangWenRuleSourceBaseURL` 指向仓库 `rules` 分支（fork 需改成自己的地址）；`Rules` workflow 最近一次发布成功。
+- [ ] 用 raw URL 验证 manifest 与三个文件的 SHA-256；注意 CDN 可能有数分钟缓存。
 
 ## 2. Bundle ID 与团队
 
@@ -25,7 +26,7 @@
 - `project.yml` 的 `PRODUCT_BUNDLE_IDENTIFIER`
 - 通知授权/沙盒容器路径文档
 - 截图、README 与 issue 模板中的路径
-- 规则更新源（如果按 bundle 区分）
+- 规则更新源（`project.yml` 的 `LiangWenRuleSourceBaseURL`；fork 必须改）
 
 在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 证书提交到仓库。
 

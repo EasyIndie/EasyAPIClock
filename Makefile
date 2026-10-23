@@ -8,7 +8,7 @@ XCODEGEN := .build/tools/xcodegen/bin/xcodegen
 XCODEBUILD := xcodebuild -project $(PROJECT)
 
 .DEFAULT_GOAL := help
-.PHONY: help bootstrap doctor tool generate test validate-rules rules-manifest build-mac build-ios run-mac format lint check preview clean
+.PHONY: help bootstrap doctor tool generate test validate-rules rules-manifest rules-publish rules-publish-dry-run build-mac build-ios run-mac format lint check preview clean
 
 help:
 	@printf '%s\n' \
@@ -20,6 +20,8 @@ help:
 		'  make test            运行 SwiftPM 单元测试' \
 		'  make validate-rules  校验 Rules/ 规则包' \
 		'  make rules-manifest  重新计算 manifest 校验和' \
+		'  make rules-publish   校验并发布到 rules 分支（需要推送权限）' \
+		'  make rules-publish-dry-run  只校验发布条件，不推送' \
 		'  make build-mac       构建 macOS 应用（不签名）' \
 		'  make build-ios       构建 iOS 模拟器应用（不签名）' \
 		'  make run-mac         ad-hoc 签名并启动 macOS 应用' \
@@ -51,6 +53,12 @@ validate-rules:
 
 rules-manifest:
 	swift run --package-path $(PACKAGE) liangwen-rules manifest Rules
+
+rules-publish:
+	@Scripts/publish-rules.sh
+
+rules-publish-dry-run:
+	@Scripts/publish-rules.sh --dry-run
 
 build-mac: generate
 	$(XCODEBUILD) -scheme LiangWenMac -configuration Debug \

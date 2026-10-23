@@ -33,6 +33,7 @@ adr/
   0004-rule-bundles.md
   0005-reminder-scheduling.md
   0006-chinese-first-and-ios-shell.md
+  0007-github-rules-branch.md
 ops/
   release.md           签名、公证、发布检查
   rule-update-runbook.md 规则更新操作手册

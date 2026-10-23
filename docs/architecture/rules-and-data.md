@@ -182,6 +182,7 @@ GET <base>/manifest.json
 ```
 
 - 只允许 HTTPS；仅 `localhost` / `127.0.0.1` 允许 HTTP 开发。
+- 默认 base URL：`https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules`。
 - `URLSession` 使用 `reloadIgnoringLocalCacheData` 并发送 `Cache-Control: no-cache`。
 - 无数字签名。SHA-256 只能防止传输损坏/意外编辑，不能防止控制更新源的人发布恶意规则。见 [ADR-0004](../adr/0004-rule-bundles.md)。
 - 不跟随任何远程脚本；JSON 只被解码为有限结构。
@@ -190,7 +191,9 @@ GET <base>/manifest.json
 
 | 情况 | 结果 |
 |---|---|
-| 更新源未配置 | 使用内置/已安装规则；设置显示「未配置更新源」 |
+| 更新源未配置（fork 未改 URL） | 使用内置/已安装规则；设置显示「未配置更新源」 |
+| `rules` 分支未发布 / manifest 404 | 保留旧规则；显示失败原因 |
+| raw CDN 仍缓存旧 manifest | 可能暂时看不到新版本；稍后重试 |
 | manifest 404/超时/坏 JSON | 保留旧规则；显示失败原因 |
 | 校验和不匹配 | 整包拒绝；保留旧规则 |
 | 文件名含路径 | 整包拒绝，不发起文件下载 |
@@ -214,10 +217,45 @@ rm -rf ~/Library/Application\ Support/LiangWen/Rules/active
 
 删除后应用会回退到内置规则（可能是旧版本）。远程回滚的正确方式是发布一个 `publishedAt` 更新、内容修正的规则包，而不是让旧包“降级”。
 
-## 托管建议
+## 托管与发布（当前实现）
 
-- 静态 HTTPS 目录，`manifest.json` 与三个文件同源同目录。
-- 推荐把 `Rules/` 作为发布产物上传到带版本标签的静态路径（例如 GitHub Release 资产或 `raw.githubusercontent.com/<owner>/<repo>/rules-2026.10.23/`）。
-- `manifest.json` 用短缓存或 `no-cache`；文件名带版本号时其余文件可长缓存。
-- 发布前在测试设备上走一次「成功更新 + 坏包回退 + 未来生效」三条路径。
-- 上线后保留上一版文件，避免客户端请求到半更新目录；规则包应整目录发布。
+本项目不依赖额外托管，直接使用仓库：
+
+```
+main/Rules/                 唯一数据源（可评审的规则改动）
+        │  PR / push 触发 Rules workflow
+        │  validate + tests
+        ▼
+rules 分支（生成物）         规则文件位于分支根目录
+        │
+        ▼
+https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules
+```
+
+- `.github/workflows/rules.yml`：
+  - PR / 主分支涉及 `Rules/**`、`LiangWenCore` 或发布脚本时，先跑 `make validate-rules` 与 `make test`。
+  - 只有主分支校验通过后，`publish` job 才运行 `Scripts/publish-rules.sh`。
+- `Scripts/publish-rules.sh`：
+  - 再次校验规则包；
+  - 要求新的 `publishedAt` **严格晚于** `rules` 分支当前值；完全相同视为已发布，更旧直接失败；
+  - 用 orphan 快照把 `Rules/` 内容放到分支根目录，强制推送；
+  - 推送后回读 `manifest.json` 校验版本。
+- `rules` 分支是生成物，**不要手工编辑**；主分支保留规则变更历史。
+- 应用默认 base URL 写在 `project.yml` 的 `LiangWenRuleSourceBaseURL`；fork 时必须同时改这里和 workflow 的发布远端。
+- 公开仓库的标准 GitHub Actions 免费；仓库转私有后 raw 需要认证，当前客户端不支持。
+- raw CDN 可能缓存数分钟；不要假设合并后客户端立即看到新版本。
+
+本地发布（仅维护者）：
+
+```bash
+make rules-publish-dry-run   # 校验 + 检查 publishedAt，不推送
+make rules-publish           # 校验 + 推送到 rules 分支
+```
+
+回滚：
+
+- 正确的回滚是**发布一个内容修正、`publishedAt` 更新的新包**；客户端不会降级安装更旧的包。
+- 本地可删除 active 目录回退到内置规则（见上节）。
+- 不要手工修改或回退 `rules` 分支；force-push 会被下一次发布覆盖。
+
+发布前在测试设备上走一次「成功更新 + 坏包回退 + 未来生效」三条路径。

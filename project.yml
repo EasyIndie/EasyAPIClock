@@ -62,7 +62,7 @@ targets:
         NSPrincipalClass: NSApplication
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
-        LiangWenRuleSourceBaseURL: ""
+        LiangWenRuleSourceBaseURL: "https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.liangwen.mac

@@ -1,0 +1,56 @@
+name: Rules
+
+on:
+  pull_request:
+    paths:
+      - "Rules/**"
+      - "Packages/LiangWen/Sources/LiangWenCore/**"
+      - "Packages/LiangWen/Tests/LiangWenCoreTests/**"
+      - "Scripts/publish-rules.sh"
+      - ".github/workflows/rules.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Rules/**"
+      - "Packages/LiangWen/Sources/LiangWenCore/**"
+      - "Packages/LiangWen/Tests/LiangWenCoreTests/**"
+      - "Scripts/publish-rules.sh"
+      - ".github/workflows/rules.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rules-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate rules
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate bundle
+        run: make validate-rules
+
+      - name: Run tests
+        run: make test
+
+  publish:
+    name: Publish rules branch
+    needs: validate
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Publish validated bundle
+        run: Scripts/publish-rules.sh

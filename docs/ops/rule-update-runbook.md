@@ -124,21 +124,36 @@ LIANGWEN_RULE_SOURCE=http://localhost:8000 \
 
 > 不要提交测试用的临时规则或修改过的窗口时间。
 
-## 8. 发布规则包
+## 8. 发布规则包（自动化）
 
-1. 将 `Rules/` 内容上传到固定的 HTTPS 目录（或带版本标签的静态路径）。
-   客户端的该地址来自 `project.yml` 的 `LiangWenRuleSourceBaseURL`（或开发时的 `LIANGWEN_RULE_SOURCE` 环境变量），修改后需要重新构建应用。
-2. `manifest.json` 与三个文件必须同源同目录，且整目录一致发布。
-3. 先上传数据文件，最后上传 manifest；避免客户端读到半更新目录。
-4. 用匿名网络拉取验证：
+正常流程不需要手动上传：
+
+1. 在 PR 中修改 `Rules/`，递增 `bundleVersion` 与 `publishedAt`（未来生效可设 `effectiveFrom`）。
+2. 运行 `make rules-manifest`、`make validate-rules`、`make test`。
+3. 推送 PR；`Rules` workflow 会校验规则并跑测试。
+4. 合并到 `main`；`Rules` workflow 的 `publish` job 会：
+   - 再次校验；
+   - 要求 `publishedAt` 严格晚于 `rules` 分支当前值；
+   - 把 `Rules/` 快照强制推送到 `rules` 分支。
+5. 验证：
 
 ```bash
-curl -fsSL https://<host>/<path>/manifest.json | head
-curl -fsSL https://<host>/<path>/pricing.json | shasum -a 256
+gh run list --workflow Rules --limit 3
+curl -fsSL https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules/manifest.json | head
 ```
 
-5. 用一台真实设备执行一次「检查更新」。
-6. 保留上一版目录，便于回滚。
+6. 在真实设备上执行一次「检查更新」。raw CDN 可能缓存数分钟；如果仍是旧版本，稍后重试，不要通过改客户端来“强制刷新”。
+
+维护者本地命令（通常不需要）：
+
+```bash
+make rules-publish-dry-run   # 校验 + 检查 publishedAt，不推送
+make rules-publish           # 校验 + 推送到 rules 分支
+```
+
+客户端的 base URL 来自 `project.yml` 的 `LiangWenRuleSourceBaseURL`（开发时可用 `LIANGWEN_RULE_SOURCE` 覆盖）。fork 需要同时修改 URL 与发布远端。
+
+**不要直接编辑 `rules` 分支。** 它是生成物，下一次发布会覆盖手工改动。
 
 ## 9. PR 与记录
 
@@ -146,10 +161,11 @@ curl -fsSL https://<host>/<path>/pricing.json | shasum -a 256
 - PR 描述包含：来源 URL、核对日期、旧值 → 新值、覆盖范围、验证结果、未覆盖风险。
 - 更新 `CHANGELOG.md`（用户可见变化）与相关文档。
 - 不把“更新规则”与代码重构混在一个 PR。
+- 合并后确认 `Rules` workflow 的 `publish` job 成功；失败时不要绕过，先修正 `publishedAt` 或规则内容。
 
 ## 10. 回滚
 
-**远端**：发布一个 `publishedAt` 更新、内容修正的规则包。客户端不会安装更旧的包，因此不能靠“重新上传旧文件”回滚。
+**远端**：发布一个 `publishedAt` 更新、内容修正的规则包（走正常 PR → 合并 → Rules workflow）。客户端不会安装更旧的包，因此不能靠“重新上传旧文件”回滚。不要手工改 `rules` 分支。
 
 **本地**：删除 active 目录，应用回退内置规则：
 
@@ -157,7 +173,7 @@ curl -fsSL https://<host>/<path>/pricing.json | shasum -a 256
 rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active
 ```
 
-**紧急**：先从远端撤下错误文件，避免更多客户端安装；再准备修正包。不要让目录处于“manifest 指向缺失文件”的状态。
+**紧急**：如果错误包已经发布，尽快准备一个 `publishedAt` 更新的修正包；不要在 `rules` 分支上手工删除文件，下一次发布会覆盖，且无法保证客户端看到一致状态。
 
 ## 11. 常见错误
 
@@ -170,3 +186,6 @@ rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/L
 | 覆盖过期 | 没有扩展 `coverage.through` 或没有加入新年度假期 |
 | 周末被算成峰 | 错误地把调休上班日当成工作日；应保持周末为谷 |
 | 用户强度被重置 | 不应发生；检查是否误写了 UserDefaults 或在更新流程中重建偏好 |
+| Rules workflow 发布失败「publishedAt 必须晚于」 | 合并前忘记递增 `publishedAt`，或 `rules` 分支已有更新版本 |
+| 合并后客户端看不到新规则 | Rules workflow 未完成 / 失败，或 raw CDN 仍在缓存；先看 workflow 与 raw URL |
+| `rules` 分支出现手工改动 | 不要手改；运行 `make rules-publish` 或重新触发 workflow 覆盖 |

@@ -7,6 +7,7 @@
 > 本项目是社区项目，与 DeepSeek 官方无隶属关系。价格以 [DeepSeek 官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为准。
 
 [![CI](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml/badge.svg)](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml)
+[![Rules](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/rules.yml/badge.svg)](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/rules.yml)
 ![Swift 6](https://img.shields.io/badge/Swift-6.0-orange)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
 ![iOS 17+](https://img.shields.io/badge/iOS-17%2B-blue)
@@ -24,7 +25,7 @@
 | 内置 2026 价格与节假日规则包，SHA-256 校验 | ✅ 已实现 |
 | macOS 菜单栏、主面板、内嵌设置、本地提醒偏好 | ✅ 已实现并可通过 `make run-mac` 启动 |
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 已实现；真实系统行为待设备验证 |
-| 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认未配置更新源 |
+| 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
 | 签名、公证、DMG、应用图标、英文界面 | ⛔ 未完成 |
@@ -96,7 +97,15 @@ make rules-manifest
 make validate-rules
 ```
 
-更新流程、来源要求和回滚方式见 [`docs/ops/rule-update-runbook.md`](docs/ops/rule-update-runbook.md)。
+`Rules/` 是唯一数据源。合并到 `main` 后，[`Rules` workflow](.github/workflows/rules.yml) 会重新校验并发布到独立的 `rules` 分支；应用默认读取：
+
+```
+https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules
+```
+
+`rules` 分支是生成物，不要手工编辑。发布要求 `publishedAt` 严格递增，否则发布 job 会失败。CDN 可能有数分钟缓存。
+
+更新流程、来源要求和回滚方式见 [`docs/ops/rule-update-runbook.md`](docs/ops/rule-update-runbook.md)，托管决策见 [ADR-0007](docs/adr/0007-github-rules-branch.md)。
 
 ## 文档
 

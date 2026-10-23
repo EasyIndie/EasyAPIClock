@@ -42,6 +42,8 @@ make generate         # 仅生成 Xcode 工程
 make test             # swift test --package-path Packages/LiangWen
 make validate-rules   # 校验 Rules/ 规则包
 make rules-manifest   # 重新计算 manifest 校验和（修改规则后必须执行）
+make rules-publish-dry-run  # 校验 + 检查 publishedAt，不推送
+make rules-publish    # 校验 + 发布到 rules 分支（通常由 Rules workflow 执行）
 make build-mac
 make build-ios
 make run-mac          # ad-hoc 签名并启动 macOS 应用
@@ -80,6 +82,8 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 4. 执行 `make rules-manifest`，再执行 `make validate-rules`。
 5. 运行 `make test`；如价格快照变化，同步更新 `RuleBundleTests.pricesMatchSnapshot` 与产品文档中的快照表。
 6. 在 PR 中附来源链接、核对日期、变更摘要与未覆盖风险。
+7. 合并到 `main` 后，`Rules` workflow 会再次校验并发布到 `rules` 分支。`publishedAt` 必须严格递增，否则发布 job 失败；完全相同视为已发布。
+8. **不要直接编辑 `rules` 分支。** 它是生成物，下一次发布（force push）会覆盖手工改动。
 
 不要为了让测试通过而放宽校验。不要在没有新来源时“顺手”改数字。
 
@@ -147,7 +151,8 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 
 - iOS 交互设计未确认；当前只是只读外壳。
 - 强提醒使用有界重复的系统通知，不是独立浮层，也无法覆盖专注模式/静音。
-- 规则包只有 SHA-256 完整性校验，没有数字签名；信任根是 HTTPS 与仓库控制权。
+- 规则包只有 SHA-256 完整性校验，没有数字签名；信任根是 HTTPS、GitHub 仓库控制权与 Actions 权限。
+- 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性，raw CDN 可能缓存数分钟；仓库转私有后客户端无法匿名读取。
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
 - 真实设备上的通知、睡眠唤醒、退出应用、权限与专注模式行为尚待验证，见 `docs/ops/platform-validation.md`。
 - 应用图标、签名、公证、DMG、英文界面尚未完成。
