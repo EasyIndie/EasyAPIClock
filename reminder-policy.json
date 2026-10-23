@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "version": "2026.1",
+  "defaultIntensity": "medium",
+  "advanceOptionsSeconds": [300],
+  "strongRepeatIntervalSeconds": 30,
+  "strongMaxRepeats": 10,
+  "soundEnabled": true,
+  "notes": [
+    "默认中等提醒：一次系统通知与短音，不循环。",
+    "强提醒通过重复通知实现，最多约 5 分钟，并提供“停止提醒”操作。",
+    "系统通知权限、静音、专注模式和跨设备差异会影响实际呈现；不能承诺覆盖所有系统限制。"
+  ]
+}
