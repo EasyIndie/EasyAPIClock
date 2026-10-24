@@ -26,8 +26,10 @@
   - 注意：必须从 GUI 会话运行；SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。
 - [ ] **公证**：创建 `notarytool` profile（`liangwen-notary`），运行 `make package-mac-notarized`，staple 后用 `spctl -a -vv` 验证。
   - 现状：公证凭据未配置；`spctl` 目前只报 `source=Unnotarized Developer ID`。
-- [ ] **应用图标与截图**：提供 1024pt 图标、菜单栏图形资产、README 截图；图标不暗示自动切换模型。
-  - 验收：Asset Catalog 完整；浅色/深色菜单栏可辨；README 使用真实截图。
+- [x] **应用图标**：提供 1024pt 峰谷分色时钟图标，AppIcon 10 个尺寸完整，`make icon` 可重复生成。
+  - 验收：Asset Catalog 编译通过；不暗示自动切换模型。
+- [ ] **README 截图**：当前 SSH 会话无屏幕录制权限，未能截取真实面板；需在本机 GUI 会话补图。
+  - 验收：README 使用真实截图，不使用设计稿冒充成品。
 - [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`LiangWenRuleSourceBaseURL` 默认指向该 raw 地址。
   - 验收：raw manifest 与三个文件 checksum 一致；一次成功更新与一次坏包回退待真机记录。
 - [x] **Release 打包骨架**：`make package-mac` 生成通用二进制 zip/dmg；CI 增加 Release 通用构建；手动 Release workflow 只产出 artifact。
@@ -37,7 +39,7 @@
 
 - [ ] **2027 节假日日历**：官方安排发布后新增 `calendar-2027.json`，更新 coverage 与 manifest；补测试。
 - [ ] **规则包数字签名**：Ed25519（CryptoKit）签名 + 公钥内置，解决 SHA-256 无法防篡改源的问题；写 ADR 并更新 runbook。
-- [ ] **可访问性审计**：VoiceOver 朗读、对比度、动态字体、键盘操作；记录未覆盖项。
+- [ ] **可访问性审计**：已补充设置按钮/强度选择器/检查更新的显式标签；VoiceOver 朗读、对比度、动态字体、键盘操作仍需真机记录。
 - [ ] **多语言**：把 `ClockText` / `ReminderCopy` 迁移到 String Catalog，至少提供英文。
 - [ ] **倒计时刷新边界**：验证跨分钟、跨日、系统时间跳变时无重复/漏排通知；补测试或手动记录。
 - [ ] **通知点击行为**：评估点击通知打开面板/设置的原生方案；无法实现时在文档中明确。

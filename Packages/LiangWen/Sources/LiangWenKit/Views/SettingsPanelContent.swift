@@ -18,6 +18,7 @@ struct SettingsPanelContent: View {
                 .labelsHidden()
                 .pickerStyle(.menu)
                 .frame(width: 88)
+                .accessibilityLabel("提醒强度")
             }
 
             Toggle(model.advanceLeadText, isOn: earlyBinding)
@@ -64,6 +65,7 @@ struct SettingsPanelContent: View {
                     .frame(maxWidth: .infinity)
             }
             .disabled(model.isCheckingForUpdates)
+            .accessibilityHint("从规则源检查并安装新版本")
 
             if !model.updateMessage.isEmpty {
                 Text(model.updateMessage)

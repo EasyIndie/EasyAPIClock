@@ -37,6 +37,7 @@ public struct ClockPanelView: View {
             .buttonStyle(.plain)
             .font(.system(size: 12))
             .foregroundStyle(.secondary)
+            .accessibilityLabel(showingSettings ? "完成设置" : "打开设置")
             .accessibilityHint(showingSettings ? "返回主面板" : "调整提醒与规则")
         }
         .padding(.horizontal, 19)

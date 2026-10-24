@@ -9,7 +9,7 @@
 - 提醒计划与文案、macOS 菜单栏应用、内嵌设置、本地偏好。
 - 2026 价格与节假日数据、56 个单元测试、CLI、CI、开源文档。
 
-明确未完成：公证、图标、真实设备通知验证、iOS 设计、英文界面、规则数字签名。
+明确未完成：公证、README 截图、真实设备通知验证、iOS 设计、英文界面、规则数字签名。
 
 ## M1：可发布（P0）
 
@@ -19,7 +19,8 @@
 - [x] Release 打包骨架：`make package-mac`、Release 通用构建、手动 Release artifact workflow。
 - [x] Developer ID 签名、Hardened Runtime、通用二进制 zip/dmg；必须从 GUI 会话运行 `make package-mac`。
 - [ ] 公证：配置 `notarytool` profile，staple 并通过 `spctl`。
-- [ ] 应用图标与菜单栏图形资产；README 真实截图。
+- [x] 应用图标：1024pt 峰谷分色时钟，AppIcon 全套尺寸。
+- [ ] README 真实截图（需 GUI 屏幕录制权限）。
 - [x] 规则托管：GitHub `rules` 分支 + `Rules` workflow 自动发布。
 - [ ] 一次成功更新与一次坏包回退的真机演练。
 - [ ] 版本号、CHANGELOG、发布说明、隐私说明。

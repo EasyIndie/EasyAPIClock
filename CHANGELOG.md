@@ -7,7 +7,7 @@
 ### Planned
 
 - 真实设备通知矩阵验证（Focus、静音、睡眠/唤醒、退出应用）
-- 应用图标、公证与正式分发 DMG
+- README 截图、公证与正式分发 DMG
 - 2027 年节假日日历（官方安排公布后）
 - 英文界面
 - iOS 交互设计与正式实现
@@ -39,11 +39,13 @@
 - 公证支持 `NOTARY_KEYCHAIN_PROFILE`，凭据可存放在钥匙串而不写入仓库或日志。
 - `package-mac` 改为先构建未签名产物、再手动 Developer ID 签名并加安全时间戳；修复 Xcode 默认 `--timestamp=none` 与 `pipefail` 下签名检查误判。
 - 已生成 Developer ID 签名、带时间戳、通用二进制的 zip/dmg；`spctl` 仅因未公证拒绝。
+- 新增 macOS AppIcon：深色圆角底、左橙右绿（峰/谷）、指针 09:00；10 个尺寸，`make icon` 可重建。
+- 补充设置切换、提醒强度选择器与检查更新的显式 VoiceOver 标签。
 - 面向 AI 代理的 `AGENTS.md` 与分主题架构文档。
 
 ### Known limitations
 
-- 未签名、未公证、无应用图标；尚未发布正式二进制。`make package-mac` 默认生成 ad-hoc 产物，仅用于本地验证。
+- 未公证；应用图标已完成，README 真实截图待补。`make package-mac` 默认生成 ad-hoc 产物，仅用于本地验证。
 - 规则源默认指向仓库 `rules` 分支；fork 需要同时修改 `project.yml` 与发布远端。只有 SHA-256 完整性校验，没有数字签名。
 - 2026-10-24 在 macOS 27 完成界面、周末状态、规则更新/离线回退、退出、偏好持久化与通知授权拒绝路径；通知投递、强提醒、Focus/静音、睡眠唤醒、权限允许路径与 macOS 14/15 尚未验证。
 - Developer ID 签名后通知授权仍为 denied；在 /Applications 启动也未出现权限弹窗。需公证/重启或清理系统通知状态后复测；不能据此判定通知实现失败。

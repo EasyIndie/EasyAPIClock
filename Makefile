@@ -9,7 +9,7 @@ XCODEGEN := .build/tools/xcodegen/bin/xcodegen
 XCODEBUILD := xcodebuild -project $(PROJECT)
 
 .DEFAULT_GOAL := help
-.PHONY: help bootstrap doctor tool generate test validate-rules rules-manifest rules-publish rules-publish-dry-run build-mac build-mac-adhoc build-ios run-mac package-mac package-mac-notarized serve-test-rules test-rules format lint check preview clean
+.PHONY: help bootstrap doctor tool generate test validate-rules rules-manifest rules-publish rules-publish-dry-run build-mac build-mac-adhoc build-ios run-mac package-mac package-mac-notarized serve-test-rules test-rules icon format lint check preview clean
 
 help:
 	@printf '%s\n' \
@@ -31,6 +31,7 @@ help:
 		'  make package-mac-notarized  使用 Developer ID 公证并打包' \
 		'  make serve-test-rules  生成近期切换测试规则并启动本地服务器' \
 		'  make test-rules      只生成测试规则包，不启动服务器' \
+		'  make icon            重新生成 macOS AppIcon 全套尺寸' \
 		'  make format          格式化 Swift 源码' \
 		'  make lint            检查 Swift 格式' \
 		'  make check           规则 + 测试 + 格式 + 双端构建' \
@@ -95,6 +96,9 @@ serve-test-rules:
 
 test-rules:
 	@Scripts/serve-test-rules.sh --no-serve
+
+icon:
+	@Scripts/generate-icon.sh
 
 format:
 	swift format format --in-place --recursive Packages Apps

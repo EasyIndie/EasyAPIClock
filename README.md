@@ -28,8 +28,9 @@
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
 | 发布打包 | ✅ `make package-mac` 生成 Developer ID 签名 + 时间戳的通用二进制 zip/dmg；公证待凭据 |
+| 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
-| 签名、公证、DMG、应用图标、英文界面 | ⛔ 未完成 |
+| 公证、README 截图、英文界面 | ⛔ 未完成 |
 | 规则包数字签名 | ⛔ 仅 SHA-256 完整性校验，见 [ADR-0004](docs/adr/0004-rule-bundles.md) |
 
 设计基准是 [`docs/handoff/design-preview.html`](docs/handoff/design-preview.html)。用浏览器直接打开即可查看，它是交互示意，不是生产实现。
@@ -46,6 +47,7 @@ make validate-rules
 make run-mac       # 构建并以 ad-hoc 签名启动菜单栏应用
 make package-mac   # Release 通用二进制 + zip/dmg（ad-hoc，本地验证）
 make serve-test-rules  # 生成近期切换测试规则并启动本地服务器
+make icon          # 重新生成 macOS AppIcon 全套尺寸
 ```
 
 XcodeGen 版本固定在 [`.xcodegen-version`](.xcodegen-version)，安装脚本只下载官方 release 并校验 SHA-256；不会使用“latest”。

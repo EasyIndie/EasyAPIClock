@@ -32,9 +32,10 @@
 
 ## 3. 图标与资源
 
-- 添加 `Assets.xcassets` 与 `AppIcon`（1024pt，含所需尺寸）。
+- 已提供 `Apps/Mac/Sources/Assets.xcassets/AppIcon.appiconset`（16–1024pt，10 个尺寸），由 `make icon` 重建。
+- 图标为深色圆角底、左橙右绿（峰/谷）、指针 09:00；不含文字，避免小尺寸不可读。
+- `project.yml` 已设置 `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon`；发布前确认 `Assets.car` 与 `CFBundleIconName`。
 - 菜单栏使用 SF Symbols，当前不需要独立模板图；若后续改为自定义图标，需提供 template image 并验证深浅色。
-- 在 `project.yml` 设置 `ASSETCATALOG_COMPILER_APPICON_NAME`。
 - README 使用真实截图，不使用设计稿冒充成品。
 
 ## 4. 版本号
