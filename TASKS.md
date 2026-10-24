@@ -28,8 +28,8 @@
   - 现状：公证凭据未配置；`spctl` 目前只报 `source=Unnotarized Developer ID`。
 - [x] **应用图标**：提供 1024pt 峰谷分色时钟图标，AppIcon 10 个尺寸完整，`make icon` 可重复生成。
   - 验收：Asset Catalog 编译通过；不暗示自动切换模型。
-- [ ] **README 截图**：当前 SSH 会话无屏幕录制权限，未能截取真实面板；需在本机 GUI 会话补图。
-  - 验收：README 使用真实截图，不使用设计稿冒充成品。
+- [x] **README 截图**：已在 macOS 27 通过 GUI 会话截取真实主面板与设置页；截图机器未授权通知，README 已说明。
+  - 验收：使用真实截图，不使用设计稿冒充成品。
 - [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`LiangWenRuleSourceBaseURL` 默认指向该 raw 地址。
   - 验收：raw manifest 与三个文件 checksum 一致；一次成功更新与一次坏包回退待真机记录。
 - [x] **Release 打包骨架**：`make package-mac` 生成通用二进制 zip/dmg；CI 增加 Release 通用构建；手动 Release workflow 只产出 artifact。

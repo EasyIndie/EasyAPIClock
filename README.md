@@ -19,6 +19,15 @@
 
 > 仓库：<https://github.com/wangzhizhou/liangwen-clock>。发布步骤见 [`docs/ops/release.md`](docs/ops/release.md)。
 
+## 截图
+
+<p align="center">
+  <img src="docs/images/panel.png" width="300" alt="梁文钟主面板：梁文谷、距高峰 1 天 10 小时">
+  <img src="docs/images/settings.png" width="300" alt="梁文钟设置面板：提醒强度、规则版本与来源">
+</p>
+
+> 真实截图（macOS 27，深色外观），不是设计稿。截图机器未授予通知权限，因此主面板显示「通知未授权」、设置页显示「系统通知未开启」；这是应用的真实降级提示。
+
 ## 当前状态
 
 这是 **v0.1.0 工程脚手架**，不是已发布产品。
@@ -34,7 +43,7 @@
 | 发布打包 | ✅ `make package-mac` 生成 Developer ID 签名 + 时间戳的通用二进制 zip/dmg；公证待凭据 |
 | 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
-| 公证、README 截图、英文界面 | ⛔ 未完成 |
+| 公证、英文界面 | ⛔ 未完成 |
 | 规则包数字签名 | ⛔ 仅 SHA-256 完整性校验，见 [ADR-0004](docs/adr/0004-rule-bundles.md) |
 
 设计基准是 [`docs/handoff/design-preview.html`](docs/handoff/design-preview.html)。用浏览器直接打开即可查看，它是交互示意，不是生产实现。
