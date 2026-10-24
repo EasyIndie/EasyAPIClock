@@ -70,11 +70,12 @@ APPLE_APP_PASSWORD="xxxx-xxxx-xxxx-xxxx" \
 make package-mac-notarized
 ```
 
-脚本会构建 `arm64 + x86_64`、校验签名、检查包内规则与 Info.plist，生成 `dist/LiangWenClock-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
+脚本会构建未签名的 `arm64 + x86_64` 产物，再手动签名（Developer ID + `--timestamp`；ad-hoc 不带时间戳），校验签名、检查包内规则与 Info.plist，生成 `dist/LiangWenClock-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
 
 签名失败排查：
 
 - `errSecInternalComponent` 或 `User interaction is not allowed`：login keychain 被锁定，或当前进程无法访问私钥。先解锁 Keychain Access 的 login 钥匙串，或在自己的终端执行 `security unlock-keychain ~/Library/Keychains/login.keychain-db`。
+- **SSH 会话即使钥匙串已解锁也可能无法访问**；请在本机图形界面的 Terminal 中运行签名/公证（`open -a Terminal` 打开脚本即可）。
 - 仍失败时，可在自己的终端执行一次（会要求钥匙串密码；不要把密码写进仓库、CI 或聊天）：
   ```bash
   security set-key-partition-list -S apple-tool:,apple: -s \

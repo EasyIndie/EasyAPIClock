@@ -30,20 +30,19 @@ if [[ ! -d "$PROJECT" ]]; then
 fi
 
 SIGN_ID="${DEVELOPER_ID_APPLICATION:-}"
-SIGN_ARGS=(CODE_SIGN_STYLE=Manual)
 if [[ -n "$SIGN_ID" ]]; then
   if [[ -z "${DEVELOPER_TEAM:-}" ]]; then
     echo "设置 DEVELOPER_ID_APPLICATION 时也必须设置 DEVELOPER_TEAM。" >&2
     exit 1
   fi
   echo "使用 Developer ID 签名：$SIGN_ID"
-  SIGN_ARGS+=(CODE_SIGN_IDENTITY="$SIGN_ID" DEVELOPMENT_TEAM="$DEVELOPER_TEAM" PROVISIONING_PROFILE_SPECIFIER="")
 else
   echo "未设置 DEVELOPER_ID_APPLICATION，使用 ad-hoc 签名（仅本地验证，不可分发）。"
-  SIGN_ARGS+=(CODE_SIGN_IDENTITY="-" DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER="")
 fi
 
 echo "构建 Release（arm64 + x86_64）…"
+# Build unsigned, then sign explicitly. Xcode defaults to --timestamp=none for
+# this target, which is not accepted by the notary service.
 xcodebuild -project "$PROJECT" \
   -scheme "$SCHEME" \
   -configuration Release \
@@ -51,7 +50,7 @@ xcodebuild -project "$PROJECT" \
   -derivedDataPath "$DERIVED" \
   ARCHS="arm64 x86_64" \
   ONLY_ACTIVE_ARCH=NO \
-  "${SIGN_ARGS[@]}" \
+  CODE_SIGNING_ALLOWED=NO \
   build
 
 if [[ ! -d "$APP" ]]; then
@@ -85,11 +84,30 @@ if [[ ! -f "$APP/Contents/Resources/Rules/manifest.json" ]]; then
   exit 1
 fi
 
+echo "签名…"
+if [[ -n "$SIGN_ID" ]]; then
+  codesign --force --deep --sign "$SIGN_ID" \
+    --options runtime \
+    --timestamp \
+    --entitlements "$ROOT/Apps/Mac/LiangWenMac.entitlements" \
+    "$APP"
+else
+  codesign --force --deep --sign - \
+    --options runtime \
+    --entitlements "$ROOT/Apps/Mac/LiangWenMac.entitlements" \
+    "$APP"
+fi
+
 codesign --verify --deep --strict --verbose=2 "$APP"
 
 if [[ -n "$SIGN_ID" ]]; then
-  if ! codesign -dv --verbose=4 "$APP" 2>&1 | grep -q "Authority=Developer ID Application"; then
+  SIGN_INFO="$(codesign -dv --verbose=4 "$APP" 2>&1)"
+  if [[ "$SIGN_INFO" != *"Authority=Developer ID Application"* ]]; then
     echo "签名不是 Developer ID Application，无法用于分发。" >&2
+    exit 1
+  fi
+  if [[ "$SIGN_INFO" != *"Timestamp="* ]]; then
+    echo "签名缺少安全时间戳，无法公证。" >&2
     exit 1
   fi
 fi

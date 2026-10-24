@@ -9,7 +9,7 @@
 - 提醒计划与文案、macOS 菜单栏应用、内嵌设置、本地偏好。
 - 2026 价格与节假日数据、56 个单元测试、CLI、CI、开源文档。
 
-明确未完成：签名/公证、图标、真实设备通知验证、iOS 设计、英文界面、规则数字签名。
+明确未完成：公证、图标、真实设备通知验证、iOS 设计、英文界面、规则数字签名。
 
 ## M1：可发布（P0）
 
@@ -17,13 +17,14 @@
 
 - [ ] 真实设备通知矩阵验证（Focus、静音、睡眠、退出、强提醒停止）；`make serve-test-rules` 已提供测试规则包。2026-10-24 macOS 27 已完成界面/更新/退出/权限拒绝，通知投递与 macOS 14/15 待测。
 - [x] Release 打包骨架：`make package-mac`、Release 通用构建、手动 Release artifact workflow。
-- [ ] Developer ID 签名、Hardened Runtime、公证、正式 DMG/zip。证书已存在；login keychain 未解锁，公证凭据待配置。
+- [x] Developer ID 签名、Hardened Runtime、通用二进制 zip/dmg；必须从 GUI 会话运行 `make package-mac`。
+- [ ] 公证：配置 `notarytool` profile，staple 并通过 `spctl`。
 - [ ] 应用图标与菜单栏图形资产；README 真实截图。
 - [x] 规则托管：GitHub `rules` 分支 + `Rules` workflow 自动发布。
 - [ ] 一次成功更新与一次坏包回退的真机演练。
 - [ ] 版本号、CHANGELOG、发布说明、隐私说明。
 
-发布门槛：`make check` 通过；A15 有记录；签名与公证通过 `spctl`。
+发布门槛：`make check` 通过；A15 有记录；公证后通过 `spctl`。
 
 ## M2：数据韧性（P1）
 

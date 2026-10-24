@@ -52,7 +52,7 @@ subsystem:app.liangwen
 
 - [ ] 通知真实显示与声音；授权为 denied，无法验证投递。
 - [ ] 中等提醒一次、强提醒重复与「停止提醒」、提前提醒实际到达。
-- [ ] 权限允许路径：System Settings 的“通知”列表未出现 ad-hoc 包；需 Developer ID 签名后复测。
+- [ ] 权限允许路径：Developer ID 签名并放到 /Applications 后仍为 denied，未出现权限弹窗；已尝试清理该测试 App 的通知登记与 usernoted 数据库记录，仍未恢复。需公证/重启或清理系统通知状态后复测。
 - [ ] Focus / 静音 / 低电量模式。
 - [ ] 睡眠跨切换、唤醒、系统改时/时区切换。
 - [ ] 点击通知激活应用。
@@ -61,8 +61,21 @@ subsystem:app.liangwen
 
 阻塞：
 
-- Developer ID 证书存在（`Developer ID Application: Zhizhou Wang (2N62934Y28)`），但当前进程无法访问 login keychain：`codesign` 返回 `errSecInternalComponent`，`security show-keychain-info` 返回 “User interaction is not allowed”。
-- 公证凭据未在 keychain 中配置；需要 `notarytool` profile 或 API key。
+- Developer ID 签名已完成（`Developer ID Application: Zhizhou Wang (2N62934Y28)`），带安全时间戳；`codesign --verify` 通过。
+- `spctl -a -vv` 仍拒绝，原因仅为 `source=Unnotarized Developer ID`；需要 `notarytool` profile 完成公证。
+- 通知授权在 Developer ID 签名后仍为 denied；这是当前未解决项，不等于通知实现失败。
+- SSH 会话无法访问 login keychain（`errSecInternalComponent`）；签名/公证必须在 GUI 会话的 Terminal 中运行。
+
+签名记录：
+
+```text
+Identifier=app.liangwen.mac
+Authority=Developer ID Application: Zhizhou Wang (2N62934Y28)
+TeamIdentifier=2N62934Y28
+Timestamp=Oct 24, 2026 at 20:05:34
+Runtime Version=27.0.0
+spctl: rejected (Unnotarized Developer ID)
+```
 
 ## 环境矩阵
 
