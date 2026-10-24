@@ -1,7 +1,7 @@
 # 平台验证矩阵（待执行）
 
-> 状态：**尚未完成真实设备验证**。本文件是执行清单与记录模板，不代表已通过。
-> 应用在同仓库开发机（macOS 27）上可以启动并保持运行，但没有进行通知外观、声音、Focus、睡眠唤醒与退出的可视验证。
+> 状态：**部分完成**。2026-10-24 在 macOS 27（Apple M1）完成界面、周末状态、设置、规则更新、退出与通知授权拒绝路径；通知真实投递、强提醒、权限允许路径与 macOS 14/15 仍未验证。
+> 本文件是执行清单与记录模板；未勾选项不代表已通过。
 
 ## 为什么要单独验证
 
@@ -30,6 +30,40 @@ subsystem:app.liangwen
 
 日志只用于定位系统通知/更新问题，不作为“已送达”的唯一证据；仍需记录通知中心与声音的实际表现。
 
+## 2026-10-24 · macOS 27.0.1 · Apple M1（开发机）
+
+- 应用：0.1.0 (1) / `fdc38f1`（Release ad-hoc，`app.liangwen.mac`）
+- 规则：`2026.10.23`；测试更新包：`2026.10.23-test-195218`
+- 系统：macOS 27.0.1 (26A434)，北京时间周六
+- UI 验证方式：Accessibility 层级 + CGEvent；本机未授予屏幕录制，未使用截图
+
+已通过：
+
+- [x] 菜单栏状态项存在；面板宽度 304pt；设置页可展开。
+- [x] 周六全天显示「梁文谷」；下一切换为周一 09:00（约 1 天 13 小时），没有午夜伪切换。
+- [x] 面板显示「周末 · 全天低价」；设置显示提醒强度、提前提醒开关、规则版本/覆盖/来源/核对日期。
+- [x] 通知授权为 denied 时，面板显示「通知未授权」，设置显示「系统通知未开启」与「打开系统设置」。
+- [x] 本地 `--install-only` 规则包安装成功；设置变为「已下载规则」并显示「已更新至 …」；通知计划重排。
+- [x] 同一规则包再次检查显示「已是最新」；停止本地服务器后显示「无法连接服务器。继续使用本地有效规则。」，旧规则保留。
+- [x] 「退出梁文钟」按钮退出进程；重新启动后规则回退内置（清理 active 后）。
+- [x] 「提前 5 分钟提醒」开启后退出/重启仍为开启；已恢复关闭。
+
+未通过 / 未验证：
+
+- [ ] 通知真实显示与声音；授权为 denied，无法验证投递。
+- [ ] 中等提醒一次、强提醒重复与「停止提醒」、提前提醒实际到达。
+- [ ] 权限允许路径：System Settings 的“通知”列表未出现 ad-hoc 包；需 Developer ID 签名后复测。
+- [ ] Focus / 静音 / 低电量模式。
+- [ ] 睡眠跨切换、唤醒、系统改时/时区切换。
+- [ ] 点击通知激活应用。
+- [ ] macOS 14 / 15；iOS。
+- [ ] 坏 checksum 在真机上的 UI 提示（单元测试已覆盖拒绝与旧规则保留）。
+
+阻塞：
+
+- Developer ID 证书存在（`Developer ID Application: Zhizhou Wang (2N62934Y28)`），但当前进程无法访问 login keychain：`codesign` 返回 `errSecInternalComponent`，`security show-keychain-info` 返回 “User interaction is not allowed”。
+- 公证凭据未在 keychain 中配置；需要 `notarytool` profile 或 API key。
+
 ## 环境矩阵
 
 | 环境 | 版本 | 状态 | 备注 |
@@ -55,6 +89,9 @@ make serve-test-rules
 
 # 测试提前提醒时，让峰期在 7 分钟后开始
 Scripts/serve-test-rules.sh --lead-minutes 7
+
+# 周末/任意一天只验证规则安装、重复检查与离线回退
+Scripts/serve-test-rules.sh --install-only
 ```
 
 脚本会复制 `Rules/` 到 `.build/test-rules`，只修改临时包，重新计算 manifest，并打印启动命令。另开终端：
@@ -62,10 +99,10 @@ Scripts/serve-test-rules.sh --lead-minutes 7
 ```bash
 make build-mac-adhoc
 LIANGWEN_RULE_SOURCE=http://127.0.0.1:8765 \
-  .build/DerivedData/Build/Products/Debug/LiangWenMac.app/Contents/MacOS/LiangWenMac
+  .build/DerivedDataAdhoc/Build/Products/Debug/LiangWenMac.app/Contents/MacOS/LiangWenMac
 ```
 
-然后在设置中点击「检查更新」。测试包只用于验证，不要提交或发布。**周末恒为谷，脚本会拒绝生成；请在工作日运行。** 测试结束后清理 active 规则，回退内置版本：
+然后在设置中点击「检查规则更新」。测试包只用于验证，不要提交或发布。**周末恒为谷，脚本会拒绝生成；请在工作日运行。** 测试结束后清理 active 规则，回退内置版本：
 
 ```bash
 rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active

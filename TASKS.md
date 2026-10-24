@@ -17,10 +17,13 @@
 
 ## P0 · 发布前
 
-- [ ] **真实设备通知验证**：按 `docs/ops/platform-validation.md` 在 macOS 14/15/26+ 上记录权限、Focus、静音、睡眠唤醒、退出应用、强提醒停止的结果；把结论写回文档。
+- [x] **2026-10-24 macOS 27 真机初验**：完成界面、周末状态、设置、规则更新/失败回退、退出、偏好持久化与通知授权拒绝路径；记录见 `docs/ops/platform-validation.md`。
+- [ ] **真实设备通知验证**：在 macOS 14/15 与当前系统上记录权限允许、通知投递、Focus、静音、睡眠唤醒、退出应用、强提醒停止的结果。
+  - 现状：ad-hoc 包在本机授权为 denied；需 Developer ID 签名后复测允许路径。
   - 验收：每个场景有“通过/失败/受限”与证据；失败项有 issue 或产品降级说明。
-- [ ] **签名与公证**：确定 Developer ID、Bundle ID、Hardened Runtime、公证流程；产出一个可验证的 release 构建。
-  - 验收：`spctl -a -vv` 通过；Gatekeeper 无警告；步骤写入 `docs/ops/release.md`。
+- [ ] **签名与公证**：Developer ID 证书已存在（`Developer ID Application: Zhizhou Wang (2N62934Y28)`）；当前 login keychain 未解锁，`codesign` 返回 `errSecInternalComponent`；公证 profile 未配置。
+  - 下一步：解锁 login keychain → `DEVELOPER_ID_APPLICATION=... DEVELOPER_TEAM=2N62934Y28 make package-mac` → 配置 `notarytool` profile → `make package-mac-notarized`。
+  - 验收：`codesign --verify` 通过；`spctl -a -vv` 通过；Gatekeeper 无警告；步骤写入 `docs/ops/release.md`。
 - [ ] **应用图标与截图**：提供 1024pt 图标、菜单栏图形资产、README 截图；图标不暗示自动切换模型。
   - 验收：Asset Catalog 完整；浅色/深色菜单栏可辨；README 使用真实截图。
 - [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`LiangWenRuleSourceBaseURL` 默认指向该 raw 地址。

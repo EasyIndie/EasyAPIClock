@@ -99,21 +99,26 @@ if [[ "$NOTARIZE" == "1" ]]; then
     echo "公证需要 Developer ID 签名；请设置 DEVELOPER_ID_APPLICATION 与 DEVELOPER_TEAM。" >&2
     exit 1
   fi
-  : "${APPLE_ID:?公证需要 APPLE_ID}"
-  : "${APPLE_TEAM_ID:?公证需要 APPLE_TEAM_ID}"
-  : "${APPLE_APP_PASSWORD:?公证需要 APPLE_APP_PASSWORD（app-specific password）}"
-
   mkdir -p "$DIST"
   NOTARY_ZIP="$DIST/notarize-upload.zip"
   rm -f "$NOTARY_ZIP"
   ditto -c -k --sequesterRsrc --keepParent "$APP" "$NOTARY_ZIP"
 
   echo "提交 Apple 公证…"
-  xcrun notarytool submit "$NOTARY_ZIP" \
-    --apple-id "$APPLE_ID" \
-    --team-id "$APPLE_TEAM_ID" \
-    --password "$APPLE_APP_PASSWORD" \
-    --wait
+  if [[ -n "${NOTARY_KEYCHAIN_PROFILE:-}" ]]; then
+    xcrun notarytool submit "$NOTARY_ZIP" \
+      --keychain-profile "$NOTARY_KEYCHAIN_PROFILE" \
+      --wait
+  else
+    : "${APPLE_ID:?公证需要 APPLE_ID 或 NOTARY_KEYCHAIN_PROFILE}"
+    : "${APPLE_TEAM_ID:?公证需要 APPLE_TEAM_ID 或 NOTARY_KEYCHAIN_PROFILE}"
+    : "${APPLE_APP_PASSWORD:?公证需要 APPLE_APP_PASSWORD 或 NOTARY_KEYCHAIN_PROFILE}"
+    xcrun notarytool submit "$NOTARY_ZIP" \
+      --apple-id "$APPLE_ID" \
+      --team-id "$APPLE_TEAM_ID" \
+      --password "$APPLE_APP_PASSWORD" \
+      --wait
+  fi
   rm -f "$NOTARY_ZIP"
 
   echo "staple 并验证…"

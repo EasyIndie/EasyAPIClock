@@ -15,9 +15,9 @@
 
 目标：可以对外提供一个可信、可安装的 macOS 预览版。
 
-- [ ] 真实设备通知矩阵验证（Focus、静音、睡眠、退出、强提醒停止）；`make serve-test-rules` 已提供测试规则包。
+- [ ] 真实设备通知矩阵验证（Focus、静音、睡眠、退出、强提醒停止）；`make serve-test-rules` 已提供测试规则包。2026-10-24 macOS 27 已完成界面/更新/退出/权限拒绝，通知投递与 macOS 14/15 待测。
 - [x] Release 打包骨架：`make package-mac`、Release 通用构建、手动 Release artifact workflow。
-- [ ] Developer ID 签名、Hardened Runtime、公证、正式 DMG/zip。
+- [ ] Developer ID 签名、Hardened Runtime、公证、正式 DMG/zip。证书已存在；login keychain 未解锁，公证凭据待配置。
 - [ ] 应用图标与菜单栏图形资产；README 真实截图。
 - [x] 规则托管：GitHub `rules` 分支 + `Rules` workflow 自动发布。
 - [ ] 一次成功更新与一次坏包回退的真机演练。

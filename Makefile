@@ -3,6 +3,7 @@ SHELL := /bin/bash
 PACKAGE := Packages/LiangWen
 PROJECT := LiangWenClock.xcodeproj
 DERIVED := .build/DerivedData
+DERIVED_ADHOC := .build/DerivedDataAdhoc
 DERIVED_IOS := .build/DerivedData-iOS
 XCODEGEN := .build/tools/xcodegen/bin/xcodegen
 XCODEBUILD := xcodebuild -project $(PROJECT)
@@ -71,7 +72,7 @@ build-mac: generate
 
 build-mac-adhoc: generate
 	$(XCODEBUILD) -scheme LiangWenMac -configuration Debug \
-		-derivedDataPath $(DERIVED) \
+		-derivedDataPath $(DERIVED_ADHOC) \
 		CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="-" \
 		DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER="" build
 
@@ -81,7 +82,7 @@ build-ios: generate
 		-derivedDataPath $(DERIVED_IOS) CODE_SIGNING_ALLOWED=NO build
 
 run-mac: build-mac-adhoc
-	open "$(DERIVED)/Build/Products/Debug/LiangWenMac.app"
+	open "$(DERIVED_ADHOC)/Build/Products/Debug/LiangWenMac.app"
 
 package-mac: generate
 	@Scripts/package-mac.sh

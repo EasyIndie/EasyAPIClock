@@ -34,13 +34,16 @@
 - `make serve-test-rules`：生成近期峰谷切换的临时规则包并启动 localhost 规则源，辅助真机通知验证。
 - 手动 `Release` workflow：只产出 workflow artifact，不创建公开 Release。
 - 规则/通知/刷新路径加入 OSLog 诊断（`subsystem:app.liangwen`），便于真机 A15 取证。
+- `serve-test-rules --install-only`：任意一天验证规则安装/重复检查/离线回退，不影响价格时段。
+- ad-hoc 构建使用独立 DerivedData，避免与未签名 Debug 产物混用导致签名失效。
+- 公证支持 `NOTARY_KEYCHAIN_PROFILE`，凭据可存放在钥匙串而不写入仓库或日志。
 - 面向 AI 代理的 `AGENTS.md` 与分主题架构文档。
 
 ### Known limitations
 
 - 未签名、未公证、无应用图标；尚未发布正式二进制。`make package-mac` 默认生成 ad-hoc 产物，仅用于本地验证。
 - 规则源默认指向仓库 `rules` 分支；fork 需要同时修改 `project.yml` 与发布远端。只有 SHA-256 完整性校验，没有数字签名。
-- 真实系统通知行为尚未在目标设备上记录验证结果。
+- 2026-10-24 在 macOS 27 完成界面、周末状态、规则更新/离线回退、退出、偏好持久化与通知授权拒绝路径；通知投递、强提醒、Focus/静音、睡眠唤醒、权限允许路径与 macOS 14/15 尚未验证。ad-hoc 包通知授权为 denied，待 Developer ID 签名后复测。
 - 强提醒使用重复通知，不是独立浮层，无法覆盖专注模式或静音。
 - iOS 未设计，只有验证用外壳。
 - 界面仅中文。

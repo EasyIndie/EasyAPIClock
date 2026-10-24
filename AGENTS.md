@@ -161,7 +161,8 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 - 规则包只有 SHA-256 完整性校验，没有数字签名；信任根是 HTTPS、GitHub 仓库控制权与 Actions 权限。
 - 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性，raw CDN 可能缓存数分钟；仓库转私有后客户端无法匿名读取。
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
-- 真实设备上的通知、睡眠唤醒、退出应用、权限与专注模式行为尚待验证，见 `docs/ops/platform-validation.md`。
+- 2026-10-24 macOS 27 已初验界面、规则更新/离线回退、退出、偏好持久化与通知授权拒绝；通知投递、强提醒、睡眠唤醒、权限允许路径与 macOS 14/15 尚待验证，见 `docs/ops/platform-validation.md`。
+- Developer ID 证书已存在，但 login keychain 未解锁时 `codesign` 会返回 `errSecInternalComponent`；公证 profile 尚未配置。
 - 应用图标、签名、公证、DMG、英文界面尚未完成；`make package-mac` 的默认产物是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
