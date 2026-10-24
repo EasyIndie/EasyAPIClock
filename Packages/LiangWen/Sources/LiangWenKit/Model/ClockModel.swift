@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import OSLog
 import LiangWenCore
 
 @MainActor
@@ -21,6 +22,7 @@ public final class ClockModel {
     @ObservationIgnored private var engine: ClockEngine
     @ObservationIgnored private var planSignature = ""
     @ObservationIgnored private var didPrepare = false
+    @ObservationIgnored private let logger = Logger(subsystem: "app.liangwen", category: "clock")
 
     public init(
         active: RuleRepository.Active,
@@ -56,6 +58,9 @@ public final class ClockModel {
         if authorization == .notDetermined, preferences.intensity != .off {
             authorization = await scheduler.requestAuthorization()
         }
+        logger.info(
+            "启动：规则 \(self.rules.bundleVersion, privacy: .public)，提醒 \(self.preferences.intensity.rawValue, privacy: .public)，授权 \(self.authorization.rawValue, privacy: .public)"
+        )
         await refresh(now: Date(), forceReload: true)
     }
 
@@ -85,6 +90,9 @@ public final class ClockModel {
         ].joined(separator: "#")
         guard signature != planSignature else { return }
         planSignature = signature
+        logger.info(
+            "刷新：状态 \(self.snapshot.state?.rawValue ?? "unknown", privacy: .public)，计划 \(plan.count, privacy: .public) 个事件"
+        )
         await scheduler.replacePlan(plan, policy: rules.reminderPolicy)
     }
 
@@ -124,11 +132,14 @@ public final class ClockModel {
                 try repository.install(bundle, at: Date())
                 await refresh(now: Date(), forceReload: true)
                 updateState = .updated(bundle.manifest.bundleVersion)
+                logger.info("规则更新成功：\(bundle.manifest.bundleVersion, privacy: .public)")
             } else {
                 updateState = .upToDate(rules.bundleVersion)
+                logger.info("规则已是最新：\(self.rules.bundleVersion, privacy: .public)")
             }
         } catch {
             updateState = .failed(error.localizedDescription)
+            logger.error("规则更新失败：\(error.localizedDescription, privacy: .public)")
         }
     }
 

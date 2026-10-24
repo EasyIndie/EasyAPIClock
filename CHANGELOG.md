@@ -33,6 +33,7 @@
 - `make package-mac`：Release 通用二进制、签名/公证校验、zip/dmg 与 SHA-256；默认 ad-hoc。
 - `make serve-test-rules`：生成近期峰谷切换的临时规则包并启动 localhost 规则源，辅助真机通知验证。
 - 手动 `Release` workflow：只产出 workflow artifact，不创建公开 Release。
+- 规则/通知/刷新路径加入 OSLog 诊断（`subsystem:app.liangwen`），便于真机 A15 取证。
 - 面向 AI 代理的 `AGENTS.md` 与分主题架构文档。
 
 ### Known limitations

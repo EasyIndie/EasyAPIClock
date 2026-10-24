@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 // The Xcode 16 SDK does not mark UNUserNotificationCenter/UNNotificationSettings
 // as Sendable. All calls below are made on the main actor; @preconcurrency keeps
 // the SDK's incomplete annotations from turning into false-positive concurrency
@@ -49,6 +50,7 @@ private enum NotificationID {
 @MainActor
 public final class UserNotificationScheduler: ReminderScheduling {
     private let center: UNUserNotificationCenter
+    private let logger = Logger(subsystem: "app.liangwen", category: "notifications")
     private lazy var delegate = NotificationDelegate { [weak self] eventID in
         Task { @MainActor in
             await self?.stop(eventID: eventID)
@@ -75,17 +77,20 @@ public final class UserNotificationScheduler: ReminderScheduling {
     public func authorizationStatus() async -> ReminderAuthorization {
         // UNNotificationSettings is not Sendable on the Xcode 16 SDK. Read the
         // status inside the callback and resume with a Sendable enum value.
-        await withCheckedContinuation { continuation in
+        let status: ReminderAuthorization = await withCheckedContinuation { continuation in
             center.getNotificationSettings { settings in
                 continuation.resume(returning: reminderAuthorization(from: settings.authorizationStatus))
             }
         }
+        logger.debug("通知授权状态：\(status.rawValue, privacy: .public)")
+        return status
     }
 
     public func requestAuthorization() async -> ReminderAuthorization {
         do {
             _ = try await center.requestAuthorization(options: [.alert, .sound])
         } catch {
+            logger.error("请求通知授权失败：\(error.localizedDescription, privacy: .public)")
             return .denied
         }
         return await authorizationStatus()
@@ -113,6 +118,9 @@ public final class UserNotificationScheduler: ReminderScheduling {
         if !stale.isEmpty {
             center.removePendingNotificationRequests(withIdentifiers: stale)
         }
+        logger.info(
+            "重排通知：\(reminders.count, privacy: .public) 个事件，清理 \(stale.count, privacy: .public) 个旧请求，保留强提醒重复：\(keepLiveStrongRepeats, privacy: .public)"
+        )
         guard !reminders.isEmpty else { return }
 
         for reminder in reminders {
@@ -125,7 +133,13 @@ public final class UserNotificationScheduler: ReminderScheduling {
                 let interval = max(1, fireDate.timeIntervalSinceNow)
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
                 let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-                try? await center.add(request)
+                do {
+                    try await center.add(request)
+                } catch {
+                    logger.error(
+                        "安排通知失败 \(identifier, privacy: .public)：\(error.localizedDescription, privacy: .public)"
+                    )
+                }
             }
         }
     }
@@ -137,6 +151,7 @@ public final class UserNotificationScheduler: ReminderScheduling {
             center.removePendingNotificationRequests(withIdentifiers: identifiers)
         }
         center.removeAllDeliveredNotifications()
+        logger.info("已取消全部通知计划")
     }
 
     public func stop(eventID: String) async {
@@ -151,6 +166,9 @@ public final class UserNotificationScheduler: ReminderScheduling {
         if !deliveredIDs.isEmpty {
             center.removeDeliveredNotifications(withIdentifiers: deliveredIDs)
         }
+        logger.info(
+            "停止强提醒 \(eventID, privacy: .public)：pending \(pendingIDs.count, privacy: .public)，delivered \(deliveredIDs.count, privacy: .public)"
+        )
     }
 
     public func openSystemSettings() {

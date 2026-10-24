@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import LiangWenCore
 
 /// Installed rules live beside the app, with the bundled bundle as a fallback.
@@ -28,6 +29,7 @@ public final class RuleRepository: Sendable {
 
     private let bundledDirectory: URL
     private let supportDirectory: URL
+    private let logger = Logger(subsystem: "app.liangwen", category: "rules")
 
     public init(bundledDirectory: URL, supportDirectory: URL) {
         self.bundledDirectory = bundledDirectory
@@ -52,6 +54,7 @@ public final class RuleRepository: Sendable {
                 )
             } catch {
                 installedError = error.localizedDescription
+                logger.error("已安装规则损坏，回退内置：\(error.localizedDescription, privacy: .public)")
             }
         }
 
@@ -95,6 +98,9 @@ public final class RuleRepository: Sendable {
             }
             _ = try RuleBundleLoader.load(from: staging)
             try replaceDirectory(at: target, with: staging)
+            logger.info(
+                "安装规则 \(bundle.manifest.bundleVersion, privacy: .public) → \(useActive ? "active" : "pending", privacy: .public)"
+            )
             if useActive {
                 try? fileManager.removeItem(at: pendingDirectory)
             }
@@ -111,6 +117,7 @@ public final class RuleRepository: Sendable {
         else {
             return
         }
+        logger.info("待启用规则已到期：\(pending.manifest.bundleVersion, privacy: .public)")
         try? install(pending, at: now)
     }
 
