@@ -25,6 +25,8 @@
   - 验收：Asset Catalog 完整；浅色/深色菜单栏可辨；README 使用真实截图。
 - [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`LiangWenRuleSourceBaseURL` 默认指向该 raw 地址。
   - 验收：raw manifest 与三个文件 checksum 一致；一次成功更新与一次坏包回退待真机记录。
+- [x] **Release 打包骨架**：`make package-mac` 生成通用二进制 zip/dmg；CI 增加 Release 通用构建；手动 Release workflow 只产出 artifact。
+- [x] **A15 测试工具**：`make serve-test-rules` 生成近期切换规则包并本地提供，支持提前提醒场景。
 
 ## P1 · 首版应有
 

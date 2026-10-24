@@ -15,8 +15,9 @@
 
 目标：可以对外提供一个可信、可安装的 macOS 预览版。
 
-- [ ] 真实设备通知矩阵验证（Focus、静音、睡眠、退出、强提醒停止）。
-- [ ] Developer ID 签名、Hardened Runtime、公证、DMG/zip。
+- [ ] 真实设备通知矩阵验证（Focus、静音、睡眠、退出、强提醒停止）；`make serve-test-rules` 已提供测试规则包。
+- [x] Release 打包骨架：`make package-mac`、Release 通用构建、手动 Release artifact workflow。
+- [ ] Developer ID 签名、Hardened Runtime、公证、正式 DMG/zip。
 - [ ] 应用图标与菜单栏图形资产；README 真实截图。
 - [x] 规则托管：GitHub `rules` 分支 + `Rules` workflow 自动发布。
 - [ ] 一次成功更新与一次坏包回退的真机演练。

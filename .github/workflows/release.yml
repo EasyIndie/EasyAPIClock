@@ -1,0 +1,63 @@
+name: Release
+
+# Manual only. Builds a release candidate and uploads a workflow artifact.
+# It does NOT create a GitHub Release, upload to a public server, or notarize
+# unless explicitly requested and the required secrets are configured.
+on:
+  workflow_dispatch:
+    inputs:
+      notarize:
+        description: "Notarize with Developer ID (requires secrets)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package macOS
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Cache pinned XcodeGen
+        uses: actions/cache@v6
+        with:
+          path: .build/tools
+          key: xcodegen-${{ runner.os }}-${{ hashFiles('.xcodegen-version', 'Scripts/install-xcodegen.sh') }}
+
+      - name: Install pinned XcodeGen
+        run: Scripts/install-xcodegen.sh
+
+      - name: Check toolchain
+        run: Scripts/doctor.sh
+
+      - name: Check
+        run: make check
+
+      - name: Package
+        env:
+          DEVELOPER_ID_APPLICATION: ${{ secrets.DEVELOPER_ID_APPLICATION }}
+          DEVELOPER_TEAM: ${{ secrets.DEVELOPER_TEAM }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          if [[ "${{ inputs.notarize }}" == "true" ]]; then
+            Scripts/package-mac.sh --notarize
+          else
+            Scripts/package-mac.sh
+          fi
+
+      - name: Upload release candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: LiangWenClock-macOS
+          path: |
+            dist/*.zip
+            dist/*.dmg
+            dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14

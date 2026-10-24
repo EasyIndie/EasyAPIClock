@@ -27,6 +27,7 @@
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 已实现；真实系统行为待设备验证 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
+| 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg；签名/公证待授权 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
 | 签名、公证、DMG、应用图标、英文界面 | ⛔ 未完成 |
 | 规则包数字签名 | ⛔ 仅 SHA-256 完整性校验，见 [ADR-0004](docs/adr/0004-rule-bundles.md) |
@@ -43,6 +44,8 @@ make doctor        # 检查 macOS / Xcode / Swift / XcodeGen
 make test          # 运行核心与界面文案测试
 make validate-rules
 make run-mac       # 构建并以 ad-hoc 签名启动菜单栏应用
+make package-mac   # Release 通用二进制 + zip/dmg（ad-hoc，本地验证）
+make serve-test-rules  # 生成近期切换测试规则并启动本地服务器
 ```
 
 XcodeGen 版本固定在 [`.xcodegen-version`](.xcodegen-version)，安装脚本只下载官方 release 并校验 SHA-256；不会使用“latest”。

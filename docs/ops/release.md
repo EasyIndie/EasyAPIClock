@@ -48,7 +48,33 @@ CURRENT_PROJECT_VERSION: "1" # 构建号，每次上传递增
 
 ## 5. 签名与 Hardened Runtime
 
-`project.yml` 已启用 `ENABLE_HARDENED_RUNTIME` 与 App Sandbox（含网络客户端）。发布构建应使用 Developer ID Application 证书：
+`project.yml` 已启用 `ENABLE_HARDENED_RUNTIME` 与 App Sandbox（含网络客户端）。
+
+### 5.1 快速打包（推荐先跑）
+
+```bash
+# ad-hoc：仅本地验证，产物在 dist/
+make package-mac
+
+# Developer ID 签名（不公证）
+DEVELOPER_ID_APPLICATION="Developer ID Application: ..." \
+DEVELOPER_TEAM="TEAMID" \
+make package-mac
+
+# Developer ID + 公证；需要 Apple 账号与 app-specific password
+DEVELOPER_ID_APPLICATION="Developer ID Application: ..." \
+DEVELOPER_TEAM="TEAMID" \
+APPLE_ID="you@example.com" \
+APPLE_TEAM_ID="TEAMID" \
+APPLE_APP_PASSWORD="xxxx-xxxx-xxxx-xxxx" \
+make package-mac-notarized
+```
+
+脚本会构建 `arm64 + x86_64`、校验签名、检查包内规则与 Info.plist，生成 `dist/LiangWenClock-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
+
+### 5.2 手动 archive（需要 Xcode 归档时）
+
+使用 Developer ID Application 证书：
 
 ```bash
 xcodebuild -project LiangWenClock.xcodeproj \
@@ -73,6 +99,8 @@ spctl -a -vv .build/export/LiangWenMac.app
 
 ## 6. 公证
 
+优先使用 `make package-mac-notarized`；手动流程如下：
+
 ```bash
 ditto -c -k --keepParent .build/export/LiangWenMac.app .build/LiangWenMac.zip
 xcrun notarytool submit .build/LiangWenMac.zip \
@@ -84,6 +112,8 @@ spctl -a -vv .build/export/LiangWenMac.app
 凭据放在钥匙串，不写入仓库或 CI 日志。公证通过后重新打包 DMG/zip。
 
 ## 7. 打包与校验
+
+`make package-mac` 已生成 zip、dmg 与 `SHA256SUMS`。手动方式：
 
 ```bash
 hdiutil create -volname "LiangWen Clock" -srcfolder .build/export/LiangWenMac.app \
@@ -99,6 +129,8 @@ shasum -a 256 .build/LiangWenClock-0.1.0.dmg
 - 已知限制（通知、强提醒、iOS 外壳）
 
 ## 8. GitHub Release
+
+`.github/workflows/release.yml` 只能手动触发，产出 **workflow artifact**（zip/dmg/SHA256SUMS），不会创建 GitHub Release，也不会上传到公开服务器。正式发布仍需下面的命令与明确授权。
 
 ```bash
 git tag -a v0.1.0 -m "LiangWen Clock 0.1.0"

@@ -45,8 +45,13 @@ make rules-manifest   # 重新计算 manifest 校验和（修改规则后必须�
 make rules-publish-dry-run  # 校验 + 检查 publishedAt，不推送
 make rules-publish    # 校验 + 发布到 rules 分支（通常由 Rules workflow 执行）
 make build-mac
+make build-mac-adhoc  # ad-hoc 签名构建，不启动
 make build-ios
 make run-mac          # ad-hoc 签名并启动 macOS 应用
+make package-mac      # Release 通用二进制 + zip/dmg（ad-hoc）
+make package-mac-notarized  # Developer ID 公证并打包（需授权与凭据）
+make serve-test-rules # 生成近期切换测试规则并启动本地服务器
+make test-rules       # 只生成测试规则包
 make format           # swift format 全量格式化
 make lint             # swift format lint
 make check            # 规则校验 + 测试 + lint + 双端构建
@@ -133,7 +138,7 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 - 提交信息使用 Conventional Commits：`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`, `rules:`。
 - 一个提交只做一件事；不要格式化无关文件。
 - PR 使用 `.github/PULL_REQUEST_TEMPLATE.md`；规则变更使用 `rule_update` issue 模板先记录来源。
-- 未获明确授权不得发布、公证、上传规则包到线上或创建 Release。
+- 未获明确授权不得发布、公证、上传规则包到线上或创建 Release。`make package-mac` 只做本地 ad-hoc 打包；`make package-mac-notarized` 会提交 Apple 公证，必须获得授权。`.github/workflows/release.yml` 只手动产出 workflow artifact，不创建公开 Release。
 
 ## 10. 文档同步表
 
@@ -155,7 +160,7 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 - 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性，raw CDN 可能缓存数分钟；仓库转私有后客户端无法匿名读取。
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
 - 真实设备上的通知、睡眠唤醒、退出应用、权限与专注模式行为尚待验证，见 `docs/ops/platform-validation.md`。
-- 应用图标、签名、公证、DMG、英文界面尚未完成。
+- 应用图标、签名、公证、DMG、英文界面尚未完成；`make package-mac` 的默认产物是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。

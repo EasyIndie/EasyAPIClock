@@ -21,6 +21,7 @@ LiangWenClock.xcodeproj/
 .netrc
 
 # Tooling
+dist/
 .venv/
 node_modules/
 .env

@@ -31,7 +31,29 @@
 三种方式，按风险从低到高：
 
 1. **等待真实边界**（推荐）：工作日 08:59、11:59、13:59、17:59 前 1–10 分钟启动应用。默认中等提醒会在切换时触发。
-2. **本地规则源**：复制 `Rules/` 到临时目录，把某个 `weeklyPeakWindows` 改成几分钟后开始/结束，重算 manifest，用 `python3 -m http.server` 提供，并在启动应用时设置 `LIANGWEN_RULE_SOURCE=http://localhost:8000`，然后在设置中检查更新。仅用于测试，不要提交。
+2. **本地规则源（推荐）**：
+
+```bash
+# 生成一个 3 分钟后进入峰期的测试包，并启动 localhost 服务器
+make serve-test-rules
+
+# 测试提前提醒时，让峰期在 7 分钟后开始
+Scripts/serve-test-rules.sh --lead-minutes 7
+```
+
+脚本会复制 `Rules/` 到 `.build/test-rules`，只修改临时包，重新计算 manifest，并打印启动命令。另开终端：
+
+```bash
+make build-mac-adhoc
+LIANGWEN_RULE_SOURCE=http://127.0.0.1:8765 \
+  .build/DerivedData/Build/Products/Debug/LiangWenMac.app/Contents/MacOS/LiangWenMac
+```
+
+然后在设置中点击「检查更新」。测试包只用于验证，不要提交或发布。**周末恒为谷，脚本会拒绝生成；请在工作日运行。** 测试结束后清理 active 规则，回退内置版本：
+
+```bash
+rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active
+```
 3. **修改系统时间**：可以验证唤醒/重算，但会影响其他应用与通知计时；测试后立即恢复，并记录风险。
 
 ## macOS 检查清单
