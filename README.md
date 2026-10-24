@@ -1,5 +1,9 @@
 # 梁文钟 · LiangWen Clock
 
+<p align="center">
+  <img src="Apps/Mac/Sources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png" width="72" alt="梁文钟图标">
+</p>
+
 > 一个极简的 API 峰谷价格时钟：现在贵还是便宜、距离下次切换还有多久、切换时怎么提醒我。
 
 梁文钟常驻 macOS 菜单栏，用「峰 / 谷 + 剩余时间」回答 DeepSeek API 的当前价格时段。点击展开一个小面板，只显示价格状态、模型单价差异、下一切换倒计时和一句日期摘要。它不做账号、API Key、用量统计、任务调度，也不会替你切换模型。

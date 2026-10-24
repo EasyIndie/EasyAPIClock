@@ -61,7 +61,7 @@ subsystem:app.liangwen
 
 阻塞：
 
-- Developer ID 签名已完成（`Developer ID Application: Zhizhou Wang (2N62934Y28)`），带安全时间戳；`codesign --verify` 通过。
+- Developer ID 签名已完成（`Developer ID Application: Zhizhou Wang (2N62934Y28)`），带安全时间戳；`codesign --verify` 通过。最新签名包已包含 AppIcon 与可访问性标签。
 - `spctl -a -vv` 仍拒绝，原因仅为 `source=Unnotarized Developer ID`；需要 `notarytool` profile 完成公证。
 - 通知授权在 Developer ID 签名后仍为 denied；这是当前未解决项，不等于通知实现失败。
 - SSH 会话无法访问 login keychain（`errSecInternalComponent`）；签名/公证必须在 GUI 会话的 Terminal 中运行。
@@ -72,7 +72,7 @@ subsystem:app.liangwen
 Identifier=app.liangwen.mac
 Authority=Developer ID Application: Zhizhou Wang (2N62934Y28)
 TeamIdentifier=2N62934Y28
-Timestamp=Oct 24, 2026 at 20:05:34
+Timestamp=Oct 24, 2026 at 21:34:47
 Runtime Version=27.0.0
 spctl: rejected (Unnotarized Developer ID)
 ```
