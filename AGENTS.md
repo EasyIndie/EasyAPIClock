@@ -61,6 +61,8 @@ make check            # 规则校验 + 测试 + lint + 双端构建
 
 XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh` 下载官方 release 并校验 SHA-256。不要用 `brew install/upgrade xcodegen` 绕过固定版本；升级流程见 ADR-0002。
 
+`.swift-format` 必须保持与 CI 的 Xcode 16.4 / swift-format 600 兼容；不要加入只有新工具链才支持的键（例如 `reflowMultilineStringLiterals`）。CI 会执行 `make lint`。
+
 ## 5. 代码地图与依赖方向
 
 ```

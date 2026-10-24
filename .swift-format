@@ -9,7 +9,6 @@
   "lineBreakBeforeEachArgument": false,
   "maximumBlankLines": 1,
   "multiElementCollectionTrailingCommas": true,
-  "reflowMultilineStringLiterals": "never",
   "prioritizeKeepingFunctionOutputTogether": true,
   "rules": {
     "AllPublicDeclarationsHaveDocumentation": false,

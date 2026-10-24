@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   test:
-    name: Rules + tests
+    name: Rules + tests + lint
     runs-on: macos-15
     timeout-minutes: 20
     steps:
@@ -25,6 +25,9 @@ jobs:
         run: |
           swift --version
           xcodebuild -version
+
+      - name: Lint Swift
+        run: make lint
 
       - name: Validate bundled rule bundle
         run: swift run --package-path Packages/LiangWen liangwen-rules validate Rules

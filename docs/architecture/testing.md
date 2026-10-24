@@ -123,7 +123,7 @@ make run-mac
 
 `.github/workflows/ci.yml`：
 
-1. **Rules + tests**：校验内置规则包（含 checksum 与语义）→ `swift test`。
+1. **Rules + tests + lint**：校验内置规则包（含 checksum 与语义）→ `swift test` → `swift format lint`（与 CI 的 Xcode 16.4 / swift-format 600 配置兼容）。
 2. **Build**：安装 `.xcodegen-version` 指定的 XcodeGen（SHA-256 校验）→ `doctor` → 生成工程 → 构建 macOS Debug（不签名）→ 检查 bundle 内 `Rules/manifest.json` → 构建 macOS Release 通用二进制（`arm64 + x86_64`，不签名）→ 构建 iOS 模拟器目标。
 3. **Rules**（独立 workflow）：PR/主分支涉及规则或核心引擎时校验规则并跑测试；主分支通过后发布到 `rules` 分支，`publishedAt` 必须严格递增。
 
