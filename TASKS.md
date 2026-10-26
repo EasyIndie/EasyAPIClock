@@ -37,7 +37,8 @@
 
 ## P1 · 首版应有
 
-- [ ] **最低系统版本降至 macOS 13**（等待当前界面迭代验收完成并经用户确认后再开始）：目前 `project.yml`、SwiftPM 与 ADR-0001 均要求 macOS 14；评估并适配 Observation 等 macOS 14 API，保持 iOS 最低版本不变。
+- [ ] **最低系统版本降至 macOS 13**（2026-10-26用户已确认进入准备阶段；兼容实现与旧系统实测尚未开始）：目前 `project.yml`、SwiftPM 与 ADR-0001 均要求 macOS 14；评估并适配 Observation 等 macOS 14 API，保持 iOS 最低版本不变。
+  - 准备：临时副本13目标编译确认Observation阻塞，移除宏后的共享包编译通过；见 `docs/ops/macos-13-compatibility.md` 与提议ADR-0010。
   - 范围：审核 macOS 13 API 可用性；处理 `ClockModel`、`LoginItemController` 的 `@Observable` 依赖（优先评估系统自带 `ObservableObject` 方案）；更新部署目标、ADR 与用户文档。
   - 验收：macOS 13 上构建并实测核心菜单栏、设置、登录启动与通知路径；Release 仍同时包含 `arm64` 与 `x86_64`，通过架构断言并验证两种架构可启动。现有 Release 已配置通用二进制，需确认不回归；Debug 按当前架构构建策略维持单架构。
   - 不在范围：不改 iOS 最低版本、不改当前界面设计；在界面迭代验收前不开始此项。

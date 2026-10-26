@@ -22,7 +22,7 @@ make check                                    # 规则 + 测试 + 格式 + 双�
 | 强提醒保留 | 刷新时不取消进行中的重复，窗口外/非强提醒移除 | `StrongRepeatRetentionTests` |
 | 界面文案 | 倒计时、菜单栏、日期摘要、通知文案 | `ClockTextTests` / `ReminderCopyTests` |
 
-当前共 **56** 个测试，全部为 Swift Testing。
+当前共 **67** 个测试，全部为 Swift Testing。
 
 ## 确定性规则
 

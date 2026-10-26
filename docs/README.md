@@ -37,8 +37,11 @@ adr/
   0006-chinese-first-and-ios-shell.md
   0007-github-rules-branch.md
   0008-product-name-gudeng.md
+  0009-settings-services.md
+  0010-macos-13-observation-compatibility.md  提议，待实施
 ops/
   release.md           签名、公证、发布检查
+  macos-13-compatibility.md macOS13编译审计、迁移方案与验收门槛
   rule-update-runbook.md 规则更新操作手册
   platform-validation.md 真实设备验证矩阵（待执行）
 design/
