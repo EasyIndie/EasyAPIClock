@@ -12,7 +12,7 @@ struct ClockTextTests {
         #expect(ClockText.stateName(snapshot.state) == "低价")
         #expect(ClockText.priceLine(for: snapshot) == "模型单价较峰期低 50%")
         #expect(ClockText.countdownLabel(for: snapshot) == "距离高峰")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "01:30")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "1小时30分")
         #expect(ClockText.nextTransitionLine(for: snapshot, now: now) == "14:00 切换")
         #expect(ClockText.daySummary(for: snapshot) == "工作日 · 午间")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "谷 · 1小时30分")
@@ -25,7 +25,7 @@ struct ClockTextTests {
         #expect(ClockText.stateName(snapshot.state) == "高峰")
         #expect(ClockText.priceLine(for: snapshot) == "模型单价为谷期的 2 倍")
         #expect(ClockText.countdownLabel(for: snapshot) == "距离低价")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "02:00")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "2小时")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "峰 · 2小时")
         #expect(ClockText.daySummary(for: snapshot) == "工作日 · 上午高峰")
     }
@@ -78,6 +78,7 @@ struct ClockTextTests {
         let now = KitFixture.date("2026-10-23T19:00:00+08:00")
         let snapshot = KitFixture.snapshot(at: "2026-10-23T19:00:00+08:00")
         #expect(ClockText.panelStateName(snapshot.state) == "谷期")
+        #expect(ClockText.panelCountdownLabel(for: snapshot) == "后进入峰期")
         #expect(ClockText.panelTransitionLine(for: snapshot, now: now) == "2026-10-26 09:00 进入峰期")
         let unknown = KitFixture.snapshot(at: "2027-01-05T10:00:00+08:00")
         #expect(ClockText.panelStateName(unknown.state) == "待确认")
@@ -88,8 +89,13 @@ struct ClockTextTests {
     func consistentCountdownRounding() {
         let now = KitFixture.date("2026-10-21T06:52:06+08:00")
         let snapshot = KitFixture.snapshot(at: "2026-10-21T06:52:06+08:00")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "02:08")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "2小时8分")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "谷 · 2小时8分")
+        let minutesOnly = KitFixture.date("2026-10-21T08:44:01+08:00")
+        #expect(
+            ClockText.countdown(
+                for: KitFixture.snapshot(at: "2026-10-21T08:44:01+08:00"), now: minutesOnly
+            ).value == "16分")
         let imminent = KitFixture.date("2026-10-21T08:59:01+08:00")
         let imminentSnapshot = KitFixture.snapshot(at: "2026-10-21T08:59:01+08:00")
         #expect(ClockText.countdown(for: imminentSnapshot, now: imminent).value == "即将切换")

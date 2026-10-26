@@ -167,3 +167,7 @@ LiangWenRuntimeTests仅依赖Core/Runtime，覆盖规则源配置、多观察者
 ### macOS13观察桥接
 
 ObservationCompatibilityTests覆盖$state同步发布、多个界面适配器、固定时间刷新、异步预览及更新结果、登录子对象的审批与错误独立发布。CI的Release通用构建调用Scripts/verify-mac-build.py，同时断言arm64/x86_64与Info.plist/Mach-O最低系统13.0。
+
+时长语义回归：ClockTextTests中的面板期望改为带单位的时长，验证整小时、小时分钟、天小时、即将切换与未知状态；菜单栏/辅助功能取整语义不变。图标与文字视觉对齐仍需原生截图验证。
+
+紧凑设置原生回归：默认提醒三行、外观/通用/规则折叠及底部更新/退出在275pt滚动区内完整可见；最终菜单栏截图验证原生符号箭头与图文对齐，详见 `../design/verification-2026-10-26/duration-alignment/`。展开可达性结果以目录README为准。

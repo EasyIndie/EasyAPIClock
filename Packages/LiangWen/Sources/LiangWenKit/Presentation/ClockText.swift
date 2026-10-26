@@ -83,7 +83,7 @@ public enum ClockText {
 
     public static func panelCountdownLabel(for snapshot: PriceSnapshot) -> String {
         guard snapshot.nextChangeAt != nil else { return "下次切换待确认" }
-        let label = snapshot.nextChangeState == .peak ? "距峰期" : "距谷期"
+        let label = snapshot.nextChangeState == .peak ? "后进入峰期" : "后进入谷期"
         return label
     }
 
@@ -167,8 +167,8 @@ public enum ClockText {
             let hours = totalMinutes / 60
             let minutes = totalMinutes % 60
             return CountdownDisplay(
-                value: String(format: "%02d:%02d", hours, minutes),
-                unitCaption: "小时 : 分钟",
+                value: hours == 0 ? "\(minutes)分" : (minutes == 0 ? "\(hours)小时" : "\(hours)小时\(minutes)分"),
+                unitCaption: "剩余时长",
                 isExtended: false
             )
         }

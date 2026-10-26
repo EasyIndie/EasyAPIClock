@@ -5,7 +5,7 @@ struct ReminderSettingsSection: View {
     @ObservedObject var model: ClockModel
 
     var body: some View {
-        SettingsSection(ClockText.remindersTitle) {
+        VStack(alignment: .leading, spacing: 4) {
             SettingsRow(ClockText.reminderIntensityTitle) {
                 Picker(ClockText.reminderIntensityTitle, selection: intensityBinding) {
                     ForEach(ReminderIntensity.allCases, id: \.self) { intensity in
@@ -38,10 +38,12 @@ struct ReminderSettingsSection: View {
                 .disabled(model.preferences.intensity == .off)
                 .help(ClockText.previewExplanation)
             }
-            Text(model.isPreviewing ? ClockText.previewExplanation : ClockText.previewSummary)
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            if model.isPreviewing {
+                Text(ClockText.previewExplanation)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if !model.previewMessage.isEmpty {
                 Text(model.previewMessage)
                     .font(.system(size: 11))
