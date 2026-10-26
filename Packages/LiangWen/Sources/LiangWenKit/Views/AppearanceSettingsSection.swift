@@ -10,14 +10,10 @@ struct AppearanceSettingsSection: View {
         DisclosureGroup(ClockText.appearanceTitle, isExpanded: $expanded) {
             VStack(alignment: .leading, spacing: 4) {
                 SettingsRow(ClockText.displayModeTitle) {
-                    Picker(ClockText.displayModeTitle, selection: $appearance) {
-                        Text(ClockText.systemAppearance).tag("system")
-                        Text(ClockText.lightAppearance).tag("light")
-                        Text(ClockText.darkAppearance).tag("dark")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                    .frame(width: 174)
+                    SettingsSegments(
+                        title: ClockText.displayModeTitle,
+                        titles: [ClockText.systemAppearance, ClockText.lightAppearance, ClockText.darkAppearance],
+                        selection: appearanceBinding)
                 }
                 SettingsRow(ClockText.animationsTitle) {
                     Toggle(ClockText.animationsTitle, isOn: $animations)
@@ -30,4 +26,15 @@ struct AppearanceSettingsSection: View {
         }
         .frame(minHeight: 24)
     }
+
+    private var appearanceBinding: Binding<Int> {
+        let values = ["system", "light", "dark"]
+        return Binding(
+            get: { values.firstIndex(of: appearance) ?? 0 },
+            set: { index in
+                guard values.indices.contains(index) else { return }
+                appearance = values[index]
+            })
+    }
+
 }

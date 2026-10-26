@@ -7,14 +7,11 @@ struct ReminderSettingsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             SettingsRow(ClockText.reminderIntensityTitle) {
-                Picker(ClockText.reminderIntensityTitle, selection: intensityBinding) {
-                    ForEach(ReminderIntensity.allCases, id: \.self) { intensity in
-                        Text(ClockText.intensityName(intensity)).tag(intensity)
-                    }
-                }
-                .labelsHidden()
-                .pickerStyle(.segmented)
-                .frame(width: 174)
+                SettingsSegments(
+                    title: ClockText.reminderIntensityTitle,
+                    titles: ReminderIntensity.allCases.map(ClockText.intensityName),
+                    selection: intensityBinding
+                )
                 .help(ClockText.reminderExplanation)
             }
             SettingsRow(model.advanceLeadText) {
@@ -65,11 +62,12 @@ struct ReminderSettingsSection: View {
         if model.isPreviewing { model.stopPreview() } else { model.startPreview() }
     }
 
-    private var intensityBinding: Binding<ReminderIntensity> {
+    private var intensityBinding: Binding<Int> {
         Binding(
-            get: { model.preferences.intensity },
-            set: { value in
-                Task { await model.setIntensity(value) }
+            get: { ReminderIntensity.allCases.firstIndex(of: model.preferences.intensity) ?? 0 },
+            set: { index in
+                guard ReminderIntensity.allCases.indices.contains(index) else { return }
+                Task { await model.setIntensity(ReminderIntensity.allCases[index]) }
             })
     }
 

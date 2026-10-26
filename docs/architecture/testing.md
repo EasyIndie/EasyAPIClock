@@ -171,3 +171,7 @@ ObservationCompatibilityTests覆盖$state同步发布、多个界面适配器、
 时长语义回归：ClockTextTests中的面板期望改为带单位的时长，验证整小时、小时分钟、天小时、即将切换与未知状态；菜单栏/辅助功能取整语义不变。图标与文字视觉对齐仍需原生截图验证。
 
 紧凑设置原生回归：默认提醒三行、外观/通用/规则折叠及底部更新/退出在275pt滚动区内完整可见；最终菜单栏截图验证原生符号箭头与图文对齐，详见 `../design/verification-2026-10-26/duration-alignment/`。展开可达性结果以目录README为准。
+
+2026-10-27精确对齐：以真实2×像素量测替代目测，菜单圆心/谷字中心目标差0px、提醒强度可见右缘对齐内容分隔线。Core和排程不变，完整make check仍73项通过；脚本与截图限制见precision-alignment记录。
+
+SettingsSegments原生适配器在实际窗口截图中验证默认强度和展开显示模式的bezel右缘均627px、边界差0px，AX三段50pt；外观回调及恢复结果以precision-alignment/README为准。
