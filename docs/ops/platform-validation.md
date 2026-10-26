@@ -246,3 +246,13 @@ rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/L
 ### 预览中等/关闭及退出补验
 
 本机ad-hoc Debug允许路径：中等仅一条系统送达记录，结束后清空；关闭强度时预览按钮禁用且无新增预览排程。正常退出及3条尚待发送时快速退出，均在重新启动只读快照中确认全部预览pending/delivered为空。临时强度已恢复为原强提醒，系统外观保持原值；普通启动恢复。证据见verification-2026-10-26中三份preview追加jsonl。声音与Focus/静音、真实切换及其他系统版本仍待验证。
+
+## 2026-10-26 macOS13代码适配后的回归
+
+最低构建目标现为macOS13.0，iOS17.0不变。73测试、Debug双端构建及Release arm64/x86_64通用构建通过，两架构Mach-O及Info.plist最低系统均为13.0；证据见verification-2026-10-26/macos13-adapter/build-metadata.json。本地为macOS27.0.1 arm64；本轮后续新增pro的macOS13.7.8 Intel实际运行证据，见下一节。独立Intel小程序因Bad CPU type不能启动，本机未发现Rosetta收据；不把编译结果记作Intel启动通过。UI操作回归由同目录单独记录，声音／Focus／正式切换及重新登录仍沿用未完成状态。
+
+## 2026-10-26 · macOS13.7.8 · Intel（pro）
+
+本地构建的13.0目标通用Release经临时副本ad-hoc签名，通过SSH传入专用临时目录，在远端原生x86_64进程启动。主面板334×322pt、北京时间状态与分钟倒计时刷新、设置展开和亮暗选中状态已通过AX检查；深色与关闭自动更新经退出重启后保持。远端仅有Command Line Tools，未在旧系统执行Swift6构建。
+
+完整证据与后续重启结果见 `../design/verification-2026-10-26/macos13-intel/README.md`。多显示器全屏及区域截图的应用内容全黑，不作为视觉通过证据；未改变系统权限。登录项临时安装限制、实际重登录、通知投递/声音/Focus/睡眠及macOS13 arm64仍待验。

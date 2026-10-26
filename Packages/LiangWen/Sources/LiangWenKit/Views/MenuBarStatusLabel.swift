@@ -5,7 +5,7 @@ import LiangWenCore
 #endif
 
 public struct MenuBarStatusLabel: View {
-    private let model: ClockModel
+    @ObservedObject private var model: ClockModel
 
     public init(model: ClockModel) {
         self.model = model

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsPanelContent: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
     let onQuit: (() -> Void)?
 
     var body: some View {

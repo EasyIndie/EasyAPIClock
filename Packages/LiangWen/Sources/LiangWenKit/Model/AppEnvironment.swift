@@ -1,3 +1,4 @@
+import LiangWenRuntime
 import Foundation
 import LiangWenCore
 
@@ -38,7 +39,7 @@ public final class AppEnvironment {
             ?? UserPreferences.initial(policy: active.bundle.ruleSet.reminderPolicy)
 
         let configuration = RuleSourceConfiguration.resolve()
-        let updater = configuration.baseURL.map { RemoteRuleUpdater(baseURL: $0) }
+        let updater = configuration.baseURL.map { RemoteRuleUpdater(baseURL: $0, fetcher: URLSessionRuleDataFetcher()) }
 
         self.model = ClockModel(
             active: active,

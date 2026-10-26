@@ -1,3 +1,4 @@
+@testable import LiangWenRuntime
 import Foundation
 import Testing
 @testable import LiangWenKit

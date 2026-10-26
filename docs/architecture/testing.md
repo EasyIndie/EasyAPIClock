@@ -22,7 +22,7 @@ make check                                    # 规则 + 测试 + 格式 + 双�
 | 强提醒保留 | 刷新时不取消进行中的重复，窗口外/非强提醒移除 | `StrongRepeatRetentionTests` |
 | 界面文案 | 倒计时、菜单栏、日期摘要、通知文案 | `ClockTextTests` / `ReminderCopyTests` |
 
-当前共 **67** 个测试，全部为 Swift Testing。
+当前共 **73** 个测试，全部为 Swift Testing。
 
 ## 确定性规则
 
@@ -159,3 +159,11 @@ SettingsServicesTests覆盖预览次数/ID隔离/结束上限、自动更新节�
 `malformedManifestKeepsRules` 用内存坏JSON验证失败提示、不伪造最新状态、保留旧规则及一分钟内不重复下载。本组无真实网络、真实时钟断言或等待；它证明逻辑时序，不能替代真机长期运行和唤醒验收。
 
 设置更新隔离补充：SettingsModelTests.staleAutomaticFailure 使用挂起的内存请求，在关闭再开启后返回离线失败，验证旧请求不展示过时错误、忙碌状态退出、旧规则与正式提醒不变，且一分钟后仍受节流。
+
+### 共享业务会话与模块边界
+
+LiangWenRuntimeTests仅依赖Core/Runtime，覆盖规则源配置、多观察者与独立解绑、固定时间状态、提醒去重、类型化预览拒绝。SettingsModelTests.sharedPresentationAdapters验证两个ClockModel共享会话并可独立释放。make check-layers及CI检查Core/Runtime不导入UI观察／平台通知框架。
+
+### macOS13观察桥接
+
+ObservationCompatibilityTests覆盖$state同步发布、多个界面适配器、固定时间刷新、异步预览及更新结果、登录子对象的审批与错误独立发布。CI的Release通用构建调用Scripts/verify-mac-build.py，同时断言arm64/x86_64与Info.plist/Mach-O最低系统13.0。

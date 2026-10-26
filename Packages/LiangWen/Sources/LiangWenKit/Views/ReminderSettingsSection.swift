@@ -2,7 +2,7 @@ import SwiftUI
 import LiangWenCore
 
 struct ReminderSettingsSection: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
 
     var body: some View {
         SettingsSection(ClockText.remindersTitle) {

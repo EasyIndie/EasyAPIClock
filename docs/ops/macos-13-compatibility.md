@@ -1,6 +1,18 @@
 # macOS 13 兼容准备
 
-核对日期：2026-10-26。当前已推送基线：`da496a8`。正式代码仍要求macOS14 / iOS17，本阶段没有降低部署目标。
+核对日期：2026-10-26。当前已推送基线：`da496a8`。该段为准备阶段历史；本轮正式代码已降至macOS13.0 / iOS17.0。
+
+
+## 最新状态：代码适配完成，macOS13 Intel基础运行已验证
+
+- 工程与SwiftPM最低目标均为macOS13.0，iOS仍为17.0。
+- Kit的ClockModel改为ObservableObject/@Published，借入模型的视图显式@ObservedObject；LoginSettingsContent独立订阅登录控制器，避免嵌套更新遗漏。Runtime不依赖Combine，业务流程未随UI观察技术重写。
+- make check通过73项测试、模块边界、规则校验、lint及双端构建。
+- Release通用构建通过；Info.plist与arm64、x86_64的Mach-O最低系统均为13.0。verify-mac-build.py反向指定14.0时按预期拒绝，确认元数据断言生效；CI执行相同校验。
+- 当前主机macOS27.0.1 arm64已启动新版；当前系统界面回归见macos13-adapter记录。现已通过SSH连接pro（macOS13.7.8 x86_64），通用Release已原生启动，菜单栏和设置基础路径可用；详细结果见macos13-intel记录。系统true和独立编译的x86_64小程序都返回Bad CPU type，且无Rosetta安装收据；本机未执行Intel启动；Intel原生启动改由pro真机验证，没有自动安装Rosetta。
+- macOS13 Intel的菜单栏与设置已有基础证据；macOS13 arm64、登录启动和通知完整矩阵仍须实测，通用二进制编译通过不能替代这些证据。
+
+构建证据：`docs/design/verification-2026-10-26/macos13-adapter/build-metadata.json`。当前工作完成代码及构建阶段，平台运行验收门槛继续保留。
 
 ## 已做的编译审计
 
@@ -36,8 +48,14 @@ swift build --package-path <临时包目录> --target LiangWenKit
 | 平台 | 构建 | 启动／菜单栏／设置 | 登录启动 | 通知 | 状态 |
 |---|---|---|---|---|---|
 | macOS13 arm64 | 待验证 | 待验证 | 待验证 | 待验证 | 未开始 |
-| macOS13 x86_64 | 待验证 | 待验证 | 待验证 | 待验证 | 未开始 |
-| 当前macOS arm64 | 现有14目标已通过 | 现有界面已有记录，迁移后需复测 | 稳定安装待验 | 预览已验，正式矩阵未完 | 兼容迁移后重验 |
+| macOS13.7.8 x86_64（pro） | 本地交叉构建已验证；远端仅CLT | 原生启动、菜单栏刷新、设置AX和偏好跨重启已验；截图受限 | 临时安装禁用；重登录未验 | 完整矩阵待验 | 基础运行通过 |
+| macOS27.0.1 arm64 | 13目标双端及通用构建通过 | 新版已启动；观察适配AX回归记录已保存 | 稳定安装待验 | 正式矩阵未完 | 基础回归通过 |
 | iOS17最低目标 | 现有构建已通过 | 仍是只读外壳 | 不适用 | 未设计 | 保持现状 |
 
-测试机器当前为macOS27，不能证明macOS13上的启动、通知或登录项行为。没有下载系统镜像、创建VM或改变当前系统设置。
+本地测试机器为macOS27；新增pro为macOS13.7.8 Intel，平台证据分别记录。没有下载系统镜像、创建VM或改变当前系统设置。
+
+## ADR-0011分层后的增量验证
+
+共享业务已迁入无Observation依赖的LiangWenRuntime，ClockModel变为Kit中的薄观察适配器。对本次工作区复制到独立临时目录，仅将Package.swift设为macOS13，再执行 `swift build --target LiangWenRuntime`，退出0。它证明共享Runtime在13部署目标下可编译，不代表整个Kit、应用启动、登录项或通知已完成macOS13验收。
+
+后续ADR-0010迁移范围相应缩小：ClockModel只需替换值状态的观察桥接，LoginItemController及其视图订阅仍需处理；业务会话无需随UI观察技术重写。

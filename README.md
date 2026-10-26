@@ -15,7 +15,7 @@
 [![CI](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml/badge.svg)](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/ci.yml)
 [![Rules](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/rules.yml/badge.svg)](https://github.com/wangzhizhou/liangwen-clock/actions/workflows/rules.yml)
 ![Swift 6](https://img.shields.io/badge/Swift-6.0-orange)
-![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
+![macOS target 13+](https://img.shields.io/badge/macOS_target-13%2B-blue)
 ![iOS 17+](https://img.shields.io/badge/iOS-17%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
@@ -36,7 +36,7 @@
 
 | 能力 | 状态 |
 |---|---|
-| 北京时间峰谷规则、节假日覆盖、下次真实切换计算 | ✅ 已实现，56 个单元测试覆盖 |
+| 北京时间峰谷规则、节假日覆盖、下次真实切换计算 | ✅ 已实现；当前全套73个单元测试 |
 | 内置 2026 价格与节假日规则包，SHA-256 校验 | ✅ 已实现 |
 | macOS 菜单栏、主面板、内嵌设置、本地提醒偏好 | ✅ 已实现并可通过 `make run-mac` 启动 |
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 计划/去重已实现；macOS 27 已验权限拒绝降级；Developer ID 签名后仍 denied，待公证后复测 |
@@ -52,7 +52,9 @@
 
 ## 快速开始
 
-要求：macOS 14+、Xcode 16+（Swift 6）。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
+应用最低构建目标：macOS13.0，iOS维持17.0。macOS13.7.8 Intel真机已原生启动并完成菜单栏、设置及偏好跨重启持久化检查；arm64的macOS13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
+
+开发主机要求：macOS14+、Xcode16+（Swift6），具体主机版本还需满足所用Xcode要求。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
 
 ```bash
 make bootstrap     # 安装固定 2.46.0 XcodeGen（SHA-256 校验）+ 生成工程 + 环境检查
@@ -60,6 +62,7 @@ make doctor        # 检查 macOS / Xcode / Swift / XcodeGen
 make test          # 运行核心与界面文案测试
 make validate-rules
 make run-mac       # 构建并以 ad-hoc 签名启动菜单栏应用
+make build-mac-universal  # Release双架构及13.0最低系统元数据检查
 make package-mac   # Release 通用二进制 + zip/dmg（ad-hoc，本地验证）
 make serve-test-rules  # 生成近期切换测试规则并启动本地服务器
 make icon          # 重新生成 macOS AppIcon 全套尺寸
@@ -84,14 +87,15 @@ Apps/
   iOS/                 最小 iOS 外壳（仅验证共享引擎，设计未确认）
 Packages/LiangWen/
   Sources/LiangWenCore   纯逻辑：规则、日历、引擎、提醒计划、更新校验
-  Sources/LiangWenKit    SwiftUI 面板/设置、偏好、通知调度、规则安装
+  Sources/LiangWenRuntime 共享业务会话、值状态、规则仓库与能力协议
+  Sources/LiangWenKit    SwiftUI界面适配、中文文案、系统偏好/通知/登录项
   Sources/LiangWenRuleTool 规则包校验与 manifest 重新计算 CLI
 Rules/                 内置规则包（价格、2026 节假日、提醒策略、manifest）
 Scripts/               固定版本工具安装、开发环境检查
 docs/                  产品、架构、ADR、运维与原始交接包
 ```
 
-依赖方向固定为 `Apps → LiangWenKit → LiangWenCore`。`LiangWenCore` 不依赖 SwiftUI、AppKit 或网络，所有时间答案由传入的 `Date` 和已验证规则决定。
+依赖方向固定为 `Apps → LiangWenKit → LiangWenRuntime → LiangWenCore`。`LiangWenCore` 不依赖 SwiftUI、AppKit 或网络，所有时间答案由传入的 `Date` 和已验证规则决定。共享业务接入见 [SDK边界](docs/architecture/shared-sdk.md)；`make check-layers`检查UI依赖不会进入业务模块。
 
 ## 关键约束
 

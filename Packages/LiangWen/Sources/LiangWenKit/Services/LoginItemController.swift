@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 #if os(macOS)
     import ServiceManagement
 #endif
@@ -16,11 +16,10 @@ public enum LoginItemState: Sendable {
 }
 
 @MainActor
-@Observable
-public final class LoginItemController {
-    public private(set) var state: LoginItemState = .unavailable
-    public private(set) var errorMessage: String?
-    @ObservationIgnored private let service: any LoginItemManaging
+public final class LoginItemController: ObservableObject {
+    @Published public private(set) var state: LoginItemState = .unavailable
+    @Published public private(set) var errorMessage: String?
+    private let service: any LoginItemManaging
 
     public init(service: any LoginItemManaging = SystemLoginItemService()) {
         self.service = service

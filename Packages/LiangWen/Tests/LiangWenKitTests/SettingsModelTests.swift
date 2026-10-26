@@ -1,3 +1,4 @@
+@testable import LiangWenRuntime
 import Foundation
 import Testing
 @testable import LiangWenCore
@@ -19,6 +20,30 @@ struct SettingsModelTests {
             preferences: UserPreferences(intensity: .strong, earlyReminderEnabled: true),
             repository: repository, preferencesStore: UserDefaultsPreferences(defaults: defaults),
             scheduler: scheduler, updater: updater, settingsDefaults: defaults, initialNow: now)
+    }
+
+    @Test("两个界面适配器共享会话状态，不重复业务排程且可独立释放")
+    func sharedPresentationAdapters() async throws {
+        let suite = "gudeng-test-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(suite)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let scheduler = TestSettingsScheduler()
+        let primary = model(root: root, defaults: defaults, scheduler: scheduler)
+        var secondary: ClockModel? = ClockModel(session: primary.session)
+        weak var released = secondary
+        primary.setAutomaticUpdatesEnabled(false)
+        #expect(secondary?.state.automaticUpdatesEnabled == false)
+        let now = KitFixture.date("2026-10-26T08:00:00+08:00")
+        await secondary?.checkForUpdates(now: now)
+        #expect(primary.state.updateState == .notConfigured)
+        #expect(secondary?.state == primary.state)
+        #expect(scheduler.formalReplacements == 0)
+        secondary = nil
+        #expect(released == nil)
+        primary.setAutomaticUpdatesEnabled(true)
+        #expect(primary.state.automaticUpdatesEnabled)
     }
 
     @Test("权限拒绝和投递失败不伪造预览成功，停止不碰正式排程")

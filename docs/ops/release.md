@@ -197,6 +197,10 @@ Release notes 必须包含：
 - **规则**：发布 `publishedAt` 更新、内容修正的新规则包；不要指望客户端降级旧包。
 - **紧急**：删除远端规则目录会让客户端保留本地有效版本；不要让目录处于半更新状态。
 
+## macOS13兼容构建检查
+
+`make build-mac-universal`生成未签名Release通用产物，并由`Scripts/verify-mac-build.py`核验arm64/x86_64与Info.plist及两种Mach-O最低系统均为13.0；CI同样执行。该检查不启动应用，不代替macOS13运行验证。开发主机仍须满足Xcode要求。
+
 ## App Store 备注
 
 若考虑 Mac App Store：

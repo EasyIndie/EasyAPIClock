@@ -37,11 +37,12 @@
 
 ## P1 · 首版应有
 
-- [ ] **最低系统版本降至 macOS 13**（2026-10-26用户已确认进入准备阶段；兼容实现与旧系统实测尚未开始）：目前 `project.yml`、SwiftPM 与 ADR-0001 均要求 macOS 14；评估并适配 Observation 等 macOS 14 API，保持 iOS 最低版本不变。
-  - 准备：临时副本13目标编译确认Observation阻塞，移除宏后的共享包编译通过；见 `docs/ops/macos-13-compatibility.md` 与提议ADR-0010。
+- [ ] **最低系统版本降至 macOS 13**（2026-10-26代码适配、73测试、双端及Release通用构建完成；macOS13.7.8 Intel已启动，完整平台矩阵待验）：`project.yml` 与 SwiftPM 已调整至 13.0；以 ADR-0010 替代原观察方案，保持 iOS 最低版本不变。
+  - 准备：临时副本13目标编译确认Observation阻塞，移除宏后的共享包编译通过；见 `docs/ops/macos-13-compatibility.md` 与已接受ADR-0010。
   - 范围：审核 macOS 13 API 可用性；处理 `ClockModel`、`LoginItemController` 的 `@Observable` 依赖（优先评估系统自带 `ObservableObject` 方案）；更新部署目标、ADR 与用户文档。
   - 验收：macOS 13 上构建并实测核心菜单栏、设置、登录启动与通知路径；Release 仍同时包含 `arm64` 与 `x86_64`，通过架构断言并验证两种架构可启动。现有 Release 已配置通用二进制，需确认不回归；Debug 按当前架构构建策略维持单架构。
-  - 不在范围：不改 iOS 最低版本、不改当前界面设计；在界面迭代验收前不开始此项。
+  - 已实施：ClockModel/登录项改用Combine发布，全部消费视图显式订阅，嵌套登录行单独观察；project.yml与SwiftPM均为13.0，iOS17保持不变。
+  - 不在范围：不改 iOS 最低版本、不改当前界面设计；macOS13 arm64、登录启动与通知等矩阵未完成前不关闭本项。
 - [ ] **2027 节假日日历**：官方安排发布后新增 `calendar-2027.json`，更新 coverage 与 manifest；补测试。
 - [ ] **规则包数字签名**：Ed25519（CryptoKit）签名 + 公钥内置，解决 SHA-256 无法防篡改源的问题；写 ADR 并更新 runbook。
 - [ ] **可访问性审计**：已补充设置按钮/强度选择器/检查更新的显式标签；VoiceOver 朗读、对比度、动态字体、键盘操作仍需真机记录。
@@ -108,3 +109,5 @@
 - [x] 中断恢复后核对最终按钮点击框：返回28×32pt、预览28×28pt、设置32×36pt；返回框边缘实点成功，窗口尺寸不变。
 
 - [x] 主面板辅助功能倒计时文案与画面统一：分钟向上取整、不足一分钟“即将切换”、未知状态不报精确时间；固定时间测试覆盖。VoiceOver真机朗读仍待验。
+
+- [x] 共享业务与界面适配拆层：Core → Runtime（ClockSession／值状态／协议）→ Kit（观察／文案／系统实现）；无界面测试与模块边界检查。SDK通用化与macOS13界面适配仍按后续任务执行。

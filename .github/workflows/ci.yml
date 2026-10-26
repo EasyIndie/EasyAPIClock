@@ -26,6 +26,9 @@ jobs:
           swift --version
           xcodebuild -version
 
+      - name: Check module boundaries
+        run: make check-layers
+
       - name: Lint Swift
         run: make lint
 
@@ -78,7 +81,7 @@ jobs:
             ARCHS="arm64 x86_64" \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGNING_ALLOWED=NO build
-          lipo -info .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app/Contents/MacOS/LiangWenMac
+          python3 Scripts/verify-mac-build.py .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app
           test -f .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app/Contents/Resources/Rules/manifest.json
 
       - name: Build iOS app

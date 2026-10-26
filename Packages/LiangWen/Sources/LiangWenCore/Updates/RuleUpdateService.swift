@@ -27,31 +27,12 @@ public protocol RuleDataFetching: Sendable {
     func data(from url: URL) async throws -> Data
 }
 
-public struct URLSessionRuleDataFetcher: RuleDataFetching {
-    public init() {}
-
-    public func data(from url: URL) async throws -> Data {
-        var request = URLRequest(url: url)
-        request.cachePolicy = .reloadIgnoringLocalCacheData
-        request.timeoutInterval = 20
-        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-        guard (200..<300).contains(http.statusCode) else {
-            throw RuleUpdateError.badHTTPStatus(http.statusCode)
-        }
-        return data
-    }
-}
-
 /// Fetches and validates a complete rule bundle. It never executes downloaded code.
 public struct RemoteRuleUpdater: Sendable {
     public let baseURL: URL
     private let fetcher: any RuleDataFetching
 
-    public init(baseURL: URL, fetcher: any RuleDataFetching = URLSessionRuleDataFetcher()) {
+    public init(baseURL: URL, fetcher: any RuleDataFetching) {
         self.baseURL = baseURL
         self.fetcher = fetcher
     }
@@ -79,44 +60,5 @@ public struct RemoteRuleUpdater: Sendable {
             files[name] = try await fetcher.data(from: baseURL.appendingPathComponent(name))
         }
         return try RuleBundleLoader.load(manifestData: manifestData, files: files)
-    }
-}
-
-/// Reads the optional rule source from Info.plist or an environment override.
-///
-/// HTTPS is required except for local development on localhost. The placeholder
-/// value `OWNER` is treated as "not configured" so a fork cannot fetch silently.
-public struct RuleSourceConfiguration: Sendable {
-    public static let infoPlistKey = "LiangWenRuleSourceBaseURL"
-    public static let environmentKey = "LIANGWEN_RULE_SOURCE"
-
-    public let baseURL: URL?
-    public let rawValue: String?
-
-    public init(baseURL: URL?, rawValue: String? = nil) {
-        self.baseURL = baseURL
-        self.rawValue = rawValue
-    }
-
-    public static func resolve(
-        infoDictionary: [String: Any]? = Bundle.main.infoDictionary,
-        environment: [String: String] = ProcessInfo.processInfo.environment
-    ) -> RuleSourceConfiguration {
-        let raw = (environment[environmentKey] ?? infoDictionary?[infoPlistKey] as? String ?? "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !raw.isEmpty, !raw.contains("OWNER") else {
-            return RuleSourceConfiguration(baseURL: nil, rawValue: raw)
-        }
-        guard let url = URL(string: raw),
-            let scheme = url.scheme?.lowercased(),
-            let host = url.host
-        else {
-            return RuleSourceConfiguration(baseURL: nil, rawValue: raw)
-        }
-        let isLocal = host == "localhost" || host == "127.0.0.1"
-        guard scheme == "https" || (scheme == "http" && isLocal) else {
-            return RuleSourceConfiguration(baseURL: nil, rawValue: raw)
-        }
-        return RuleSourceConfiguration(baseURL: url, rawValue: raw)
     }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 import LiangWenCore
 
 struct MainPanelContent: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {

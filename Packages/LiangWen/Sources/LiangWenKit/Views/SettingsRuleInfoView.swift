@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsRuleInfoView: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
     @State private var expanded = false
 
     var body: some View {

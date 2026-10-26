@@ -2,7 +2,7 @@ import SwiftUI
 import LiangWenCore
 
 public struct ClockPanelView: View {
-    private let model: ClockModel
+    @ObservedObject private var model: ClockModel
     private let onQuit: (() -> Void)?
     @State private var showingSettings = false
     @AppStorage("gudeng.appearance") private var appearance = "system"

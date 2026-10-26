@@ -3,7 +3,7 @@ name: LiangWenClock
 options:
   bundleIdPrefix: app.liangwen
   deploymentTarget:
-    macOS: "14.0"
+    macOS: "13.0"
     iOS: "17.0"
   createIntermediateGroups: true
   generateEmptyDirectories: true

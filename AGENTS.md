@@ -46,6 +46,7 @@ make rules-publish-dry-run  # 校验 + 检查 publishedAt，不推送
 make rules-publish    # 校验 + 发布到 rules 分支（通常由 Rules workflow 执行）
 make build-mac
 make build-mac-adhoc  # ad-hoc 签名构建，不启动
+make build-mac-universal # Release双架构及13.0部署元数据检查
 make build-ios
 make run-mac          # ad-hoc 签名并启动 macOS 应用
 make package-mac      # Release 通用二进制 + zip/dmg（ad-hoc）
@@ -55,7 +56,8 @@ make test-rules       # 只生成测试规则包
 make icon             # 重新生成 macOS AppIcon 全套尺寸
 make format           # swift format 全量格式化
 make lint             # swift format lint
-make check            # 规则校验 + 测试 + lint + 双端构建
+make check-layers     # 检查业务模块不依赖UI框架
+make check            # 分层 + 规则校验 + 测试 + lint + 双端构建
 ```
 
 `make check` 是提交前的最低门槛。CI 会重复执行这些检查。
@@ -68,12 +70,13 @@ XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh`
 
 ```
 Apps/Mac  ──┐
-Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
-                  SwiftUI/通知/偏好/安装      纯逻辑，无 SwiftUI/AppKit
+Apps/iOS  ──┴──> LiangWenKit ──> LiangWenRuntime ──> LiangWenCore
+                  UI/系统服务       共享会话/协议         纯规则逻辑
 ```
 
 - `LiangWenCore`：规则解码与校验、`ClockEngine`、`PriceComparison`、`ReminderPlanner`、`RuleBundleLoader`、`RemoteRuleUpdater`。必须保持可测试、确定性、无 UI 依赖。
-- `LiangWenKit`：`ClockModel`（@MainActor @Observable）、`AppEnvironment`、通知调度、UserDefaults 偏好、规则安装、所有 SwiftUI 视图与中文文案。
+- `LiangWenRuntime`：无UI框架的`ClockSession`、值状态、偏好/排程协议、规则仓库、预览/自动更新策略及Foundation网络适配；Core更新器必须显式注入fetcher。
+- `LiangWenKit`：基于ObservableObject/@Published的薄`ClockModel`观察适配器、`AppEnvironment`、系统通知/UserDefaults/登录项实现、SwiftUI视图与中文文案。不得把业务流程放回视图适配器。
 - `Apps/Mac`：只做应用入口、`MenuBarExtra` 场景、唤醒/改时观察。
 - `Apps/iOS`：只做最小只读外壳。不要在这里发明 iOS 交互；先补设计文档与 ADR。
 - `Rules/`：唯一规则数据源；应用通过 folder reference 打包。不要在其他地方复制规则 JSON。

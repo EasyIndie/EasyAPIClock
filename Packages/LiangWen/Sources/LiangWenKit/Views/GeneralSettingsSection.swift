@@ -1,29 +1,13 @@
 import SwiftUI
 
 struct GeneralSettingsSection: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
     let onQuit: (() -> Void)?
 
     var body: some View {
         SettingsSection(ClockText.generalTitle) {
             #if os(macOS)
-                SettingsRow(ClockText.loginTitle) {
-                    Toggle(ClockText.loginTitle, isOn: loginBinding)
-                        .labelsHidden()
-                        .toggleStyle(.switch)
-                        .controlSize(.small)
-                        .disabled(model.loginItem.state == .unavailable)
-                }
-                if model.loginItem.state == .requiresApproval {
-                    Text(ClockText.loginApproval).font(.system(size: 11)).foregroundStyle(.secondary)
-                    Button(ClockText.loginSettings, action: model.loginItem.openSettings).controlSize(.small)
-                }
-                if model.loginItem.state == .unavailable {
-                    Text(ClockText.loginUnavailable).font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                if let message = model.loginItem.errorMessage {
-                    Text(message).font(.system(size: 11)).foregroundStyle(.orange)
-                }
+                LoginSettingsContent(controller: model.loginItem)
                 SettingsRow(ClockText.automaticUpdatesTitle) {
                     Toggle(ClockText.automaticUpdatesTitle, isOn: automaticUpdatesBinding)
                         .labelsHidden()
@@ -63,12 +47,6 @@ struct GeneralSettingsSection: View {
     }
 
     private func checkRules() { Task { await model.checkForUpdates() } }
-
-    private var loginBinding: Binding<Bool> {
-        Binding(
-            get: { model.loginItem.state == .enabled || model.loginItem.state == .requiresApproval },
-            set: { model.loginItem.setEnabled($0) })
-    }
 
     private var automaticUpdatesBinding: Binding<Bool> {
         Binding(get: { model.automaticUpdatesEnabled }, set: { model.setAutomaticUpdatesEnabled($0) })
