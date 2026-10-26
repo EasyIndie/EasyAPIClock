@@ -21,6 +21,8 @@
 - macOS：`app.liangwen.mac`
 - iOS：`app.liangwen.ios`
 
+品牌显示名为「谷蹬」，副标题为「DeepSeek API 峰谷钟点提醒」。Bundle ID 仍是工程占位值，上架前须按开发者实际控制的域名确认唯一标识。
+
 正式发布前改为你拥有控制权的反向域名，并同步：
 
 - `project.yml` 的 `PRODUCT_BUNDLE_IDENTIFIER`
@@ -71,7 +73,7 @@ APPLE_APP_PASSWORD="xxxx-xxxx-xxxx-xxxx" \
 make package-mac-notarized
 ```
 
-脚本会构建未签名的 `arm64 + x86_64` 产物，再手动签名（Developer ID + `--timestamp`；ad-hoc 不带时间戳），校验签名、检查包内规则与 Info.plist，生成 `dist/LiangWenClock-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
+脚本会构建未签名的 `arm64 + x86_64` 产物，再手动签名（Developer ID + `--timestamp`；ad-hoc 不带时间戳），校验签名、检查包内规则与 Info.plist，生成 `dist/Gudeng-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
 
 签名失败排查：
 
@@ -149,9 +151,9 @@ spctl -a -vv .build/export/LiangWenMac.app
 `make package-mac` 已生成 zip、dmg 与 `SHA256SUMS`。手动方式：
 
 ```bash
-hdiutil create -volname "LiangWen Clock" -srcfolder .build/export/LiangWenMac.app \
-  -ov -format UDZO .build/LiangWenClock-0.1.0.dmg
-shasum -a 256 .build/LiangWenClock-0.1.0.dmg
+hdiutil create -volname "谷蹬" -srcfolder .build/export/LiangWenMac.app \
+  -ov -format UDZO .build/Gudeng-0.1.0.dmg
+shasum -a 256 .build/Gudeng-0.1.0.dmg
 ```
 
 同时发布：
@@ -166,9 +168,9 @@ shasum -a 256 .build/LiangWenClock-0.1.0.dmg
 `.github/workflows/release.yml` 只能手动触发，产出 **workflow artifact**（zip/dmg/SHA256SUMS），不会创建 GitHub Release，也不会上传到公开服务器。正式发布仍需下面的命令与明确授权。
 
 ```bash
-git tag -a v0.1.0 -m "LiangWen Clock 0.1.0"
+git tag -a v0.1.0 -m "谷蹬 0.1.0"
 git push origin v0.1.0
-gh release create v0.1.0 .build/LiangWenClock-0.1.0.dmg \
+gh release create v0.1.0 .build/Gudeng-0.1.0.dmg \
   --notes-file RELEASE_NOTES.md
 ```
 

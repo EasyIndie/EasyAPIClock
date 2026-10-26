@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Material Landscape Round",
+    "file": "material-landscape-round.svg",
+    "source": "https://github.com/google/material-design-icons/blob/master/src/image/landscape/materialiconsround/24px.svg",
+    "retrievedOn": "2026-10-26",
+    "license": "Apache-2.0",
+    "licenseFile": "material-LICENSE",
+    "sha256": "b0c2682bce02751f579c62d332fdba3b84a7023af94ebf2212af9023a2ed9fe5"
+  },
+  {
+    "name": "Phosphor Mountains Fill",
+    "file": "phosphor-mountains-fill.svg",
+    "source": "https://github.com/phosphor-icons/core/blob/main/assets/fill/mountains-fill.svg",
+    "retrievedOn": "2026-10-26",
+    "license": "MIT",
+    "licenseFile": "phosphor-LICENSE",
+    "sha256": "84d635ae899a9eb916fc1ed698d809cca60be8650bd0c2e83144899ff0498b18"
+  },
+  {
+    "name": "Tabler Mountain Filled",
+    "file": "tabler-mountain-filled.svg",
+    "source": "https://github.com/tabler/tabler-icons/blob/main/icons/filled/mountain.svg",
+    "retrievedOn": "2026-10-26",
+    "license": "MIT",
+    "licenseFile": "tabler-LICENSE",
+    "sha256": "6869787a2a7f0db16fad0d05a80b3c3bbc5a16265d02a07d616af03c03e018d5"
+  }
+]

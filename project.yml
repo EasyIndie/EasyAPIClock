@@ -51,14 +51,14 @@ targets:
     info:
       path: Build/Generated/LiangWenMac-Info.plist
       properties:
-        CFBundleDisplayName: 梁文钟
+        CFBundleDisplayName: 谷蹬
         CFBundleName: LiangWenMac
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         CFBundleDevelopmentRegion: zh-Hans
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities
-        NSHumanReadableCopyright: "Copyright © 2026 LiangWen Clock contributors"
+        NSHumanReadableCopyright: "Copyright © 2026 Gudeng contributors"
         NSPrincipalClass: NSApplication
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
@@ -88,7 +88,7 @@ targets:
     info:
       path: Build/Generated/LiangWeniOS-Info.plist
       properties:
-        CFBundleDisplayName: 梁文钟
+        CFBundleDisplayName: 谷蹬
         CFBundleName: LiangWeniOS
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"

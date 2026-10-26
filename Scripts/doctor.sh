@@ -14,7 +14,7 @@ ok() { printf '  ✅ %s\n' "$1"; }
 bad() { printf '  ❌ %s\n' "$1"; FAILED=1; }
 info() { printf '  • %s\n' "$1"; }
 
-printf '梁文钟 · 开发环境检查\n\n'
+printf '谷蹬 · 开发环境检查\n\n'
 
 printf '系统\n'
 OS_VERSION="$(sw_vers -productVersion 2>/dev/null || echo 0)"

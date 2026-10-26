@@ -41,9 +41,9 @@ public enum ReminderCopy {
         case .off:
             return nil
         case .medium:
-            return "梁文钟 · 中等提醒 · 短音一次"
+            return "谷蹬 · 中等提醒 · 短音一次"
         case .strong:
-            return "梁文钟 · 强提醒 · 持续至关闭"
+            return "谷蹬 · 强提醒 · 持续至关闭"
         }
     }
 

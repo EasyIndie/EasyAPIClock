@@ -52,5 +52,7 @@ public protocol ReminderScheduling: AnyObject {
     func replacePlan(_ reminders: [PlannedReminder], policy: ReminderPolicy) async
     func cancelAll() async
     func stop(eventID: String) async
+    func schedulePreview(id: String, intensity: ReminderIntensity, soundEnabled: Bool) async throws
+    func stopPreview(id: String)
     func openSystemSettings()
 }

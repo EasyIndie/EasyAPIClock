@@ -1,12 +1,14 @@
-# 梁文钟 · LiangWen Clock
+# 谷蹬
 
 <p align="center">
-  <img src="Apps/Mac/Sources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png" width="72" alt="梁文钟图标">
+  <img src="Apps/Mac/Sources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png" width="72" alt="谷蹬图标">
 </p>
 
+> **DeepSeek API 峰谷钟点提醒**
+>
 > 一个极简的 API 峰谷价格时钟：现在贵还是便宜、距离下次切换还有多久、切换时怎么提醒我。
 
-梁文钟常驻 macOS 菜单栏，用「峰 / 谷 + 剩余时间」回答 DeepSeek API 的当前价格时段。点击展开一个小面板，只显示价格状态、模型单价差异、下一切换倒计时和一句日期摘要。它不做账号、API Key、用量统计、任务调度，也不会替你切换模型。
+谷蹬常驻 macOS 菜单栏，用「峰 / 谷 + 剩余时间」回答 DeepSeek API 的当前价格时段。点击展开一个小面板，只显示价格状态、模型单价差异、下一切换倒计时和一句日期摘要。它不做账号、API Key、用量统计、任务调度，也不会替你切换模型。
 
 > 本项目是社区项目，与 DeepSeek 官方无隶属关系。价格以 [DeepSeek 官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为准。
 
@@ -22,8 +24,8 @@
 ## 截图
 
 <p align="center">
-  <img src="docs/images/panel.png" width="300" alt="梁文钟主面板：梁文谷、距高峰 1 天 10 小时">
-  <img src="docs/images/settings.png" width="300" alt="梁文钟设置面板：提醒强度、规则版本与来源">
+  <img src="docs/images/panel.png" width="300" alt="谷蹬主面板：低价时段、距高峰 17 小时 35 分">
+  <img src="docs/images/settings.png" width="300" alt="谷蹬设置面板：提醒强度、规则版本与来源">
 </p>
 
 > 真实截图（macOS 27，深色外观），不是设计稿。截图机器未授予通知权限，因此主面板显示「通知未授权」、设置页显示「系统通知未开启」；这是应用的真实降级提示。
@@ -40,7 +42,7 @@
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 计划/去重已实现；macOS 27 已验权限拒绝降级；Developer ID 签名后仍 denied，待公证后复测 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
-| 发布打包 | ✅ `make package-mac` 生成 Developer ID 签名 + 时间戳的通用二进制 zip/dmg；公证待凭据 |
+| 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；配置 Developer ID 后可签名；公证待凭据 |
 | 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
 | 公证、英文界面 | ⛔ 未完成 |
@@ -65,7 +67,7 @@ make icon          # 重新生成 macOS AppIcon 全套尺寸
 
 XcodeGen 版本固定在 [`.xcodegen-version`](.xcodegen-version)，安装脚本只下载官方 release 并校验 SHA-256；不会使用“latest”。
 
-`LiangWenClock.xcodeproj` 是生成产物，不提交到仓库。修改工程结构请编辑 [`project.yml`](project.yml)。
+`LiangWenClock.xcodeproj` 是生成产物，不提交到仓库。`LiangWenClock` 是暂保留的工程技术标识；对外产品名为「谷蹬」。修改工程结构请编辑 [`project.yml`](project.yml)。
 
 只运行 SwiftPM 部分：
 
@@ -141,8 +143,12 @@ https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules
 
 ## English summary
 
-LiangWen Clock is a minimal, open-source API price-window clock for macOS (with a shared Swift core and an iOS shell). It shows whether DeepSeek API model tokens are currently in peak or valley pricing, the next real transition, and an optional notification. It is not affiliated with DeepSeek. Rules are declarative JSON with SHA-256-verified bundles; the app never executes remote code and always degrades to "rules need update" instead of guessing. See `docs/architecture/` for the design.
+Gudeng (谷蹬) is a minimal, open-source API price-window clock for macOS (with a shared Swift core and an iOS shell). It shows whether DeepSeek API model tokens are currently in peak or valley pricing, the next real transition, and an optional notification. Rules are declarative JSON with SHA-256-verified bundles; the app never executes remote code and always degrades to "rules need update" instead of guessing. The Chinese subtitle is “DeepSeek API 峰谷钟点提醒”. The project is not affiliated with DeepSeek. See `docs/architecture/` for the design.
 
 ## License
 
-[MIT](LICENSE) © 2026 LiangWen Clock contributors.
+[MIT](LICENSE) © 2026 Gudeng contributors.
+
+`make run-mac` 会在构建成功后退出同一 ad-hoc 构建路径的旧实例，再启动最新二进制；不会按应用名终止其他安装路径。旧实例未在限定时间退出时命令会失败，需手动退出后重试。
+
+Mac 设置支持测试提醒预览、登录时启动和自动规则更新。预览与正式通知隔离并在十秒内结束；未授权时只提示权限状态。登录启动默认不主动注册，以系统状态为准。自动规则更新默认开启，自动尝试间隔至少六小时，关闭后仍能手动检查。iOS 外壳不提供这些设置；真实通知投递和实际重新登录启动仍待目标系统验证。

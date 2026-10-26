@@ -1,0 +1,16 @@
+ObjC.import('CoreGraphics');
+var se = Application('System Events');
+var targets = se.applicationProcesses.whose({bundleIdentifier: 'app.liangwen.mac'});
+if (targets().length !== 1) throw new Error('Expected one Gudeng process');
+var target = targets[0];
+var statusItem = target.menuBars[1].menuBarItems[0];
+var label = statusItem.name();
+if (label.indexOf('谷蹬') === -1) throw new Error('Unexpected status item: ' + label);
+var pos = statusItem.position();
+var size = statusItem.size();
+var point = {x: pos[0] + size[0]/2, y: pos[1] + size[1]/2};
+var down = $.CGEventCreateMouseEvent(null, $.kCGEventLeftMouseDown, point, $.kCGMouseButtonLeft);
+var up = $.CGEventCreateMouseEvent(null, $.kCGEventLeftMouseUp, point, $.kCGMouseButtonLeft);
+$.CGEventPost($.kCGHIDEventTap, down);
+$.CGEventPost($.kCGHIDEventTap, up);
+JSON.stringify({label: label, point: point});

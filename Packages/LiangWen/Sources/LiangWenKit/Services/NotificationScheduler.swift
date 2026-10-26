@@ -49,6 +49,9 @@ private enum NotificationID {
 /// suppress sound or presentation. The settings panel surfaces denied permission.
 @MainActor
 public final class UserNotificationScheduler: ReminderScheduling {
+    #if DEBUG
+        private var previewProbes: [String: Task<Void, Never>] = [:]
+    #endif
     private let center: UNUserNotificationCenter
     private let logger = Logger(subsystem: "app.liangwen", category: "notifications")
     private lazy var delegate = NotificationDelegate { [weak self] eventID in
@@ -72,6 +75,13 @@ public final class UserNotificationScheduler: ReminderScheduling {
         )
         center.setNotificationCategories([category])
         center.delegate = delegate
+        #if DEBUG
+            if previewDiagnosticsEnabled {
+                Task { [weak self] in
+                    await self?.diagnosePreview(id: nil, phase: "launch-snapshot")
+                }
+            }
+        #endif
     }
 
     public func authorizationStatus() async -> ReminderAuthorization {
@@ -171,6 +181,87 @@ public final class UserNotificationScheduler: ReminderScheduling {
         )
     }
 
+    public func schedulePreview(id: String, intensity: ReminderIntensity, soundEnabled: Bool) async throws {
+        let plan = ReminderPreviewPlan(intensity: intensity)
+        let identifiers = plan.identifiers(id: id)
+        do {
+            for (identifier, offset) in zip(identifiers, plan.offsets) {
+                try Task.checkCancellation()
+                let content = UNMutableNotificationContent()
+                content.title = ClockText.previewNotificationTitle
+                content.body = ClockText.previewNotificationBody
+                content.subtitle = ClockText.intensityName(intensity)
+                content.sound = soundEnabled ? .default : nil
+                content.threadIdentifier = "gudeng.preview"
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: offset, repeats: false)
+                try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger))
+                try Task.checkCancellation()
+            }
+            #if DEBUG
+                await diagnosePreview(id: id, phase: "scheduled")
+                try Task.checkCancellation()
+                startPreviewProbe(id: id)
+            #endif
+        } catch {
+            stopPreview(id: id)
+            throw error
+        }
+    }
+
+    public func stopPreview(id: String) {
+        #if DEBUG
+            previewProbes.removeValue(forKey: id)?.cancel()
+        #endif
+        let identifiers = ReminderPreviewPlan(intensity: .strong).identifiers(id: id)
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+        center.removeDeliveredNotifications(withIdentifiers: identifiers)
+        #if DEBUG
+            if previewDiagnosticsEnabled {
+                Task { [weak self] in
+                    await self?.diagnosePreview(id: id, phase: "stop-snapshot")
+                }
+            }
+        #endif
+    }
+
+    #if DEBUG
+        private var previewDiagnosticsEnabled: Bool {
+            ProcessInfo.processInfo.environment["LIANGWEN_NOTIFICATION_DIAGNOSTICS"] == "1"
+        }
+
+        private func startPreviewProbe(id: String) {
+            guard previewDiagnosticsEnabled else { return }
+            previewProbes[id] = Task { [weak self] in
+                for delay in [2, 3, 3] {
+                    do { try await Task.sleep(for: .seconds(delay)) } catch { return }
+                    guard !Task.isCancelled else { return }
+                    await self?.diagnosePreview(id: id, phase: "delivery-probe")
+                }
+            }
+        }
+
+        private func diagnosePreview(id: String?, phase: String) async {
+            guard previewDiagnosticsEnabled else { return }
+            let prefix = id.map { "gudeng.preview.\($0)." } ?? "gudeng.preview."
+            let pending = await pendingNotificationInfos()
+            let delivered = await deliveredNotificationInfos()
+            let status = await authorizationStatus()
+            let record: [String: Any] = [
+                "event": "gudeng.preview.diagnostic",
+                "phase": phase,
+                "previewID": id ?? "all",
+                "authorization": status.rawValue,
+                "pendingPreviewIDs": pending.map(\.identifier).filter { $0.hasPrefix(prefix) },
+                "deliveredPreviewIDs": delivered.map(\.identifier).filter { $0.hasPrefix(prefix) },
+                "formalPendingCount": pending.filter { $0.identifier.hasPrefix(NotificationID.prefix) }.count,
+            ]
+            if let data = try? JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]) {
+                FileHandle.standardOutput.write(data)
+                FileHandle.standardOutput.write(Data([10]))
+            }
+        }
+    #endif
+
     public func openSystemSettings() {
         #if os(macOS)
             if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
@@ -247,7 +338,21 @@ private final class NotificationDelegate: NSObject, UNUserNotificationCenterDele
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        [.banner, .list, .sound]
+        #if DEBUG
+            if ProcessInfo.processInfo.environment["LIANGWEN_NOTIFICATION_DIAGNOSTICS"] == "1",
+                notification.request.identifier.hasPrefix("gudeng.preview.")
+            {
+                let record = [
+                    "event": "gudeng.preview.diagnostic", "phase": "will-present",
+                    "identifier": notification.request.identifier,
+                ]
+                if let data = try? JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]) {
+                    FileHandle.standardOutput.write(data)
+                    FileHandle.standardOutput.write(Data([10]))
+                }
+            }
+        #endif
+        return [.banner, .list, .sound]
     }
 
     func userNotificationCenter(

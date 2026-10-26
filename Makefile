@@ -13,7 +13,7 @@ XCODEBUILD := xcodebuild -project $(PROJECT)
 
 help:
 	@printf '%s\n' \
-		'梁文钟 · 常用命令' \
+		'谷蹬 · 常用命令' \
 		'' \
 		'  make bootstrap       安装固定版本 XcodeGen 并生成工程' \
 		'  make doctor          检查 macOS / Xcode / Swift / XcodeGen 版本' \
@@ -83,7 +83,7 @@ build-ios: generate
 		-derivedDataPath $(DERIVED_IOS) CODE_SIGNING_ALLOWED=NO build
 
 run-mac: build-mac-adhoc
-	open "$(DERIVED_ADHOC)/Build/Products/Debug/LiangWenMac.app"
+	bash Scripts/run-mac.sh "$(DERIVED_ADHOC)/Build/Products/Debug/LiangWenMac.app"
 
 package-mac: generate
 	@Scripts/package-mac.sh

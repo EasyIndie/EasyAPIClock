@@ -54,7 +54,7 @@ jobs:
       - name: Upload release candidate
         uses: actions/upload-artifact@v7
         with:
-          name: LiangWenClock-macOS
+          name: Gudeng-macOS
           path: |
             dist/*.zip
             dist/*.dmg

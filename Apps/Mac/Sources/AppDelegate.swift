@@ -8,6 +8,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         observeSystemChanges()
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        AppEnvironment.shared.model.stopPreview()
+    }
+
     /// Recalculate immediately after wake, manual clock changes and time-zone changes.
     private func observeSystemChanges() {
         NSWorkspace.shared.notificationCenter.addObserver(

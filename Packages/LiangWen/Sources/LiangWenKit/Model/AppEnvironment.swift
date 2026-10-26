@@ -11,6 +11,7 @@ public final class AppEnvironment {
 
     public let model: ClockModel
     private var loop: Task<Void, Never>?
+    private var updateTask: Task<Void, Never>?
 
     private init() {
         let fileManager = FileManager.default
@@ -57,6 +58,9 @@ public final class AppEnvironment {
             while !Task.isCancelled {
                 let now = Date()
                 await self.model.refresh(now: now)
+                #if os(macOS)
+                    self.requestAutomaticRuleCheck(now: now)
+                #endif
                 let nextMinute = (Int(now.timeIntervalSince1970 / 60) + 1) * 60
                 let delay = max(1, Double(nextMinute) - now.timeIntervalSince1970)
                 try? await Task.sleep(for: .seconds(delay))
@@ -64,8 +68,23 @@ public final class AppEnvironment {
         }
     }
 
+    private func requestAutomaticRuleCheck(now: Date) {
+        guard updateTask == nil else { return }
+        updateTask = Task { [weak self] in
+            guard let self else { return }
+            defer { updateTask = nil }
+            await model.checkForAutomaticUpdates(now: now)
+        }
+    }
+
     /// Used for wake, clock change and time-zone change notifications.
     public func refreshNow() {
-        Task { await model.refresh(now: Date()) }
+        Task {
+            let now = Date()
+            await model.refresh(now: now)
+            #if os(macOS)
+                requestAutomaticRuleCheck(now: now)
+            #endif
+        }
     }
 }

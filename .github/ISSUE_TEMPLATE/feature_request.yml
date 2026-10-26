@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        梁文钟刻意保持极小范围。请先确认提议属于首版范围（见 docs/product/requirements.md），
+        谷蹬刻意保持极小范围。请先确认提议属于首版范围（见 docs/product/requirements.md），
         并说明它如何帮助用户回答「现在贵还是便宜 / 还有多久切换 / 如何提醒」。
 
   - type: textarea

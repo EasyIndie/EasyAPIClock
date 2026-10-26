@@ -2,6 +2,8 @@
 
 本目录同时保存 **当前实现文档** 与 **原始设计交接包**。两者冲突时，按下方权威顺序处理。
 
+当前产品名为「谷蹬」，副标题「DeepSeek API 峰谷钟点提醒」。原始交接包中的旧名称仅为历史来源记录，当前产品文案以 `product/` 为准。
+
 ## 权威顺序
 
 1. **产品范围与验收**：`product/requirements.md`、`product/overview.md`
@@ -34,6 +36,7 @@ adr/
   0005-reminder-scheduling.md
   0006-chinese-first-and-ios-shell.md
   0007-github-rules-branch.md
+  0008-product-name-gudeng.md
 ops/
   release.md           签名、公证、发布检查
   rule-update-runbook.md 规则更新操作手册

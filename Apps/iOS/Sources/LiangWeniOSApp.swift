@@ -35,7 +35,7 @@ struct IOSShellView: View {
         let snapshot = engine.snapshot(at: now)
         let countdown = ClockText.countdown(for: snapshot, now: now)
         return VStack(spacing: 0) {
-            Text("梁文钟")
+            Text("谷蹬")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 

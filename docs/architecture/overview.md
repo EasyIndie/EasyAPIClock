@@ -167,3 +167,13 @@ Rules/                       唯一规则数据源
 | 新 UI 区块 | `LiangWenKit/Views`，先对照设计基准与需求 |
 | 平台能力 | `LiangWenKit/Services`，通过协议注入模型 |
 | 规则数据 | `Rules/` + manifest + runbook |
+
+### 菜单栏面板外观
+
+`PanelAppearanceBridge` 位于 Kit 的 macOS 视图边界，用 NSViewRepresentable 将用户外观选择应用到所属 NSWindow；纯逻辑核心与 iOS 外壳不引入 AppKit。SwiftUI colorScheme 同步显式设置，避免菜单栏宿主未传递偏好导致视图颜色不变。
+
+本地 `make run-mac` 构建成功后调用 `Scripts/run-mac.sh`，仅退出相同可执行文件完整路径的旧进程，限时等待后重新 open；若未退出则停止启动，避免误验旧实例。
+
+### 设置平台服务与自动更新
+
+`LoginItemController` 通过可替换LoginItemManaging服务读取SMAppService真实状态，Mac主应用注册、不使用辅助进程；错误与审批显式呈现。`AutomaticUpdateSchedule` 用固定时间判断6小时节流，ClockModel持久化开关/最近尝试并校验自动请求代次，禁止关闭期间安装在途结果。AppEnvironment单独持有自动检查Task，不阻塞分钟刷新；手动检查和自动检查共用现有整包更新流程。iOS不调度自动更新。详见ADR-0009。

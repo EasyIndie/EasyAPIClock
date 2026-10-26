@@ -1,0 +1,2 @@
+{"authorization":"authorized","deliveredPreviewIDs":[],"event":"gudeng.preview.diagnostic","formalPendingCount":12,"pendingPreviewIDs":[],"phase":"launch-snapshot","previewID":"all"}
+{"authorization":"authorized","deliveredPreviewIDs":[],"event":"gudeng.preview.diagnostic","formalPendingCount":12,"pendingPreviewIDs":["gudeng.preview.A7D23F81-6DC1-4163-9690-3E76161BEFB1.2","gudeng.preview.A7D23F81-6DC1-4163-9690-3E76161BEFB1.0","gudeng.preview.A7D23F81-6DC1-4163-9690-3E76161BEFB1.1"],"phase":"scheduled","previewID":"A7D23F81-6DC1-4163-9690-3E76161BEFB1"}

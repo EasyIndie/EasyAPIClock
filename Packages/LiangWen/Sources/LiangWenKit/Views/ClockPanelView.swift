@@ -5,6 +5,11 @@ public struct ClockPanelView: View {
     private let model: ClockModel
     private let onQuit: (() -> Void)?
     @State private var showingSettings = false
+    @AppStorage("gudeng.appearance") private var appearance = "system"
+    @AppStorage("gudeng.animations") private var animations = true
+    @Environment(\.colorScheme) private var systemColorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     public init(model: ClockModel, onQuit: (() -> Void)? = nil) {
         self.model = model
@@ -12,51 +17,77 @@ public struct ClockPanelView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            header
+        ZStack {
             if showingSettings {
-                SettingsPanelContent(model: model, onQuit: onQuit)
+                VStack(spacing: 0) {
+                    HStack {
+                        Button {
+                            showingSettings = false
+                        } label: {
+                            Label(ClockText.backTitle, systemImage: "chevron.left")
+                                .labelStyle(.iconOnly)
+                                .frame(width: 28, height: 32)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        Spacer()
+                        Text(ClockText.settingsTitle).font(.headline)
+                        Spacer()
+                        Color.clear.frame(width: 28, height: 32)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 7)
+                    .frame(height: 46)
+                    .layoutPriority(1)
+                    Divider().padding(.horizontal, 20)
+                    ScrollView {
+                        SettingsPanelContent(model: model, onQuit: onQuit)
+                    }
+                    .scrollIndicators(.visible)
+                    .frame(height: 275)
+                    .clipped()
+                }
+                .frame(width: 334, height: 322, alignment: .top)
+                .clipped()
             } else {
-                MainPanelContent(model: model)
-                Divider()
-                footer
+                VStack(spacing: 0) {
+                    MainPanelContent(model: model)
+                        .frame(maxHeight: .infinity)
+                    Divider().padding(.horizontal, 20)
+                    HStack(spacing: 8) {
+                        Text(ClockText.panelTransitionLine(for: model.snapshot, now: model.now))
+                            .font(.system(size: 13))
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                        Button {
+                            showingSettings = true
+                        } label: {
+                            Label(ClockText.settingsTitle, systemImage: "gearshape")
+                                .labelStyle(.iconOnly)
+                                .font(.system(size: 19))
+                                .frame(width: 32, height: 36)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                }
             }
         }
-        .frame(width: 304)
+        .frame(width: 334, height: 322)
+        .background(reduceTransparency ? AnyShapeStyle(.background) : AnyShapeStyle(.regularMaterial))
+        .environment(\.colorScheme, resolvedColorScheme)
+        #if os(macOS)
+            .background(PanelAppearanceBridge(mode: appearance).frame(width: 0, height: 0))
+        #endif
+        .animation(animations && !reduceMotion ? .easeInOut(duration: 0.2) : nil, value: showingSettings)
     }
-
-    private var header: some View {
-        HStack {
-            Text(showingSettings ? "设置" : "梁文钟")
-                .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-            Spacer(minLength: 8)
-            Button(showingSettings ? "完成" : "设置") {
-                showingSettings.toggle()
-            }
-            .buttonStyle(.plain)
-            .font(.system(size: 12))
-            .foregroundStyle(.secondary)
-            .accessibilityLabel(showingSettings ? "完成设置" : "打开设置")
-            .accessibilityHint(showingSettings ? "返回主面板" : "调整提醒与规则")
+    private var resolvedColorScheme: ColorScheme {
+        switch appearance {
+        case "light": .light
+        case "dark": .dark
+        default: systemColorScheme
         }
-        .padding(.horizontal, 19)
-        .padding(.top, 16)
-        .padding(.bottom, 4)
-    }
-
-    private var footer: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(ClockText.daySummary(for: model.snapshot))
-                .lineLimit(1)
-            Spacer(minLength: 8)
-            Text(model.reminderStatusText)
-                .lineLimit(1)
-        }
-        .font(.system(size: 12))
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 19)
-        .padding(.vertical, 13)
-        .accessibilityElement(children: .combine)
     }
 }

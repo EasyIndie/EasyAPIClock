@@ -193,7 +193,7 @@ swift run --package-path Packages/LiangWen liangwen-rules validate "$DIR"
 APP="${LIANGWEN_APP:-$ROOT/.build/DerivedDataAdhoc/Build/Products/Debug/LiangWenMac.app}"
 echo
 echo "规则包：$DIR"
-echo "先退出正在运行的梁文钟，然后构建并带环境变量启动："
+echo "先退出正在运行的谷蹬，然后构建并带环境变量启动："
 echo "  make build-mac-adhoc"
 echo "  LIANGWEN_RULE_SOURCE=http://127.0.0.1:$PORT \"$APP/Contents/MacOS/LiangWenMac\""
 echo "在设置中点击「检查更新」，安装测试包后等待窗口切换。"

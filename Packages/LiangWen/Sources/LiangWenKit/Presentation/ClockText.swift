@@ -6,6 +6,95 @@ import LiangWenCore
 /// These functions are deliberately free of SwiftUI so they can be unit tested.
 /// All times are rendered in Beijing time, matching the pricing rules.
 public enum ClockText {
+    public static let reminderIntensityTitle = "提醒强度"
+    public static let notificationDisabledTitle = "系统通知未开启"
+    public static let notificationSettingsTitle = "打开系统设置"
+    public static let ruleUpdateTitle = "检查规则更新"
+    public static let ruleCheckingTitle = "正在检查…"
+    public static let ruleUpdateHint = "从规则源检查并安装新版本"
+    public static let quitTitle = "退出谷蹬"
+    public static let quitHint = "退出应用后不再重新排定提醒"
+    public static let rulesTitle = "规则信息"
+    public static let officialRulesTitle = "DeepSeek 官方价格 · 北京时间"
+    public static let priceSourceTitle = "价格来源"
+    public static let calendarSourceTitle = "日期来源"
+    public static let invalidDownloadedRules = "已下载规则无效，继续使用内置规则。"
+    public static func ruleVersions(_ status: RuleStatus) -> String {
+        "价格规则 \(status.pricingVersion) · 日期数据 \(status.calendarVersion)"
+    }
+    public static func ruleCoverage(_ status: RuleStatus) -> String {
+        "覆盖 \(coverageText(status.coverage))"
+    }
+    public static func priceVerification(_ status: RuleStatus) -> String {
+        "\(status.originText) · 价格核对于 \(checkedAtText(status.checkedAt))"
+    }
+    public static func calendarVerification(_ status: RuleStatus) -> String {
+        "日期核对于 \(checkedAtText(status.calendarCheckedAt))"
+    }
+    public static func pendingRules(_ version: String) -> String {
+        "已下载规则包 \(version)，将在生效时间自动启用。"
+    }
+    public static var previewSummary: String {
+        let plan = ReminderPreviewPlan(intensity: .strong)
+        return "测试提醒 · 最多 \(plan.offsets.count) 次 · \(Int(plan.duration)) 秒结束"
+    }
+
+    public static let previewTitle = "预览提醒"
+    public static let previewStop = "立即停止预览"
+    public static var previewExplanation: String {
+        let plan = ReminderPreviewPlan(intensity: .strong)
+        return "测试最多 \(plan.offsets.count) 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+    }
+    public static let previewNotificationTitle = "谷蹬 · 测试提醒"
+    public static let previewNotificationBody = "这是提醒预览，不表示价格已切换。"
+    public static let previewPermissionRequired = "通知未获授权，未发送预览。请在系统设置中开启通知。"
+    public static let previewFinished = "预览已结束。"
+    public static let previewFailed = "预览失败："
+    public static let loginTitle = "登录时启动"
+    public static let loginApproval = "需在系统登录项设置中允许谷蹬。"
+    public static let loginUnavailable = "当前应用无法注册登录启动，请检查安装位置。"
+    public static let loginFailure = "登录项设置失败："
+    public static let loginSettings = "打开登录项设置"
+    public static let automaticUpdatesTitle = "自动更新规则"
+    public static var automaticUpdatesExplanation: String {
+        "开启后自动检查规则，每 \(Int(AutomaticUpdateSchedule.interval / 3600)) 小时最多一次；失败保留本地有效规则。"
+    }
+
+    public static let settingsTitle = "设置"
+    public static let backTitle = "返回主面板"
+    public static let remindersTitle = "提醒"
+    public static let appearanceTitle = "外观"
+    public static let generalTitle = "通用"
+    public static let displayModeTitle = "显示模式"
+    public static let systemAppearance = "系统"
+    public static let lightAppearance = "浅色"
+    public static let darkAppearance = "深色"
+    public static let animationsTitle = "动效"
+    public static let reminderExplanation = "中等：通知与短音一次；强：有界重复，可停止。"
+
+    public static func panelStateName(_ state: PriceState?) -> String {
+        switch state {
+        case .peak: "峰期"
+        case .valley: "谷期"
+        case nil: "待确认"
+        }
+    }
+
+    public static func panelCountdownLabel(for snapshot: PriceSnapshot) -> String {
+        guard snapshot.nextChangeAt != nil else { return "下次切换待确认" }
+        let label = snapshot.nextChangeState == .peak ? "距峰期" : "距谷期"
+        return label
+    }
+
+    public static func panelTransitionLine(for snapshot: PriceSnapshot, now: Date) -> String {
+        guard let next = snapshot.nextChangeAt else {
+            return nextTransitionLine(for: snapshot, now: now)
+        }
+        let calendar = RuleTime.makeCalendar()
+        let prefix = calendar.isDate(next, inSameDayAs: now) ? "" : "\(checkedAtText(next)) "
+        return "\(prefix)\(clockText(next)) 进入\(panelStateName(snapshot.nextChangeState))"
+    }
+
     public struct CountdownDisplay: Sendable, Equatable {
         public let value: String
         public let unitCaption: String?
@@ -20,8 +109,8 @@ public enum ClockText {
 
     public static func stateName(_ state: PriceState?) -> String {
         switch state {
-        case .peak: "梁文峰"
-        case .valley: "梁文谷"
+        case .peak: "高峰"
+        case .valley: "低价"
         case nil: "待确认"
         }
     }
@@ -69,7 +158,10 @@ public enum ClockText {
             return CountdownDisplay(value: "—", unitCaption: nil, isExtended: false)
         }
         let seconds = max(0, next.timeIntervalSince(now))
-        let totalMinutes = max(0, Int((seconds / 60).rounded(.up)))
+        guard seconds >= 60 else {
+            return CountdownDisplay(value: "即将切换", unitCaption: nil, isExtended: true)
+        }
+        let totalMinutes = Int((seconds / 60).rounded(.up))
         if totalMinutes < 1440 {
             let hours = totalMinutes / 60
             let minutes = totalMinutes % 60
@@ -118,17 +210,31 @@ public enum ClockText {
 
     public static func compactRemaining(until date: Date, now: Date) -> String {
         let seconds = max(0, date.timeIntervalSince(now))
-        let totalMinutes = max(1, Int(seconds / 60))
+        guard seconds >= 60 else { return "即将切换" }
+        let totalMinutes = Int((seconds / 60).rounded(.up))
         if totalMinutes < 60 {
             return "\(totalMinutes)分"
         }
         if totalMinutes < 1440 {
-            let hours = max(1, Int((Double(totalMinutes) / 60).rounded()))
-            return "\(hours)小时"
+            let hours = totalMinutes / 60
+            let minutes = totalMinutes % 60
+            return minutes == 0 ? "\(hours)小时" : "\(hours)小时\(minutes)分"
         }
         let days = totalMinutes / 1440
         let hours = (totalMinutes % 1440) / 60
         return hours == 0 ? "\(days)天" : "\(days)天\(hours)小时"
+    }
+
+    public static func panelAccessibilityLabel(for snapshot: PriceSnapshot, now: Date) -> String {
+        guard let state = snapshot.state else {
+            return "价格状态待确认。\(issueText(snapshot.issue ?? .nextChangeUnconfirmed))"
+        }
+        let description = "当前\(stateName(state))时段。\(priceLine(for: snapshot))。"
+        guard let next = snapshot.nextChangeAt else {
+            return description + "下次切换待确认。"
+        }
+        let remaining = compactRemaining(until: next, now: now)
+        return description + (remaining == "即将切换" ? "即将切换。" : "距离下次切换 \(remaining)。")
     }
 
     public static func durationPhrase(_ seconds: TimeInterval) -> String {

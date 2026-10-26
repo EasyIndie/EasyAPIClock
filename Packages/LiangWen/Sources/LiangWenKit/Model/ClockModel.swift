@@ -14,6 +14,15 @@ public final class ClockModel {
     public private(set) var ruleStatus: RuleStatus
     public private(set) var updateState: UpdateState = .idle
     public private(set) var isCheckingForUpdates = false
+    public private(set) var automaticUpdatesEnabled: Bool
+    public private(set) var isPreviewing = false
+    public private(set) var previewMessage = ""
+    public let loginItem: LoginItemController
+    @ObservationIgnored private let settingsDefaults: UserDefaults
+    @ObservationIgnored private var automaticSchedule: AutomaticUpdateSchedule
+    @ObservationIgnored private var automaticGeneration = 0
+    @ObservationIgnored private var previewTask: Task<Void, Never>?
+    @ObservationIgnored private var previewID: String?
 
     @ObservationIgnored private let repository: RuleRepository
     @ObservationIgnored private let preferencesStore: any PreferencesStoring
@@ -30,10 +39,18 @@ public final class ClockModel {
         repository: RuleRepository,
         preferencesStore: any PreferencesStoring,
         scheduler: any ReminderScheduling,
-        updater: RemoteRuleUpdater?
+        updater: RemoteRuleUpdater?,
+        settingsDefaults: UserDefaults = .standard,
+        loginItem: LoginItemController? = nil,
+        initialNow: Date = Date()
     ) {
-        let now = Date()
+        let now = initialNow
         let engine = ClockEngine(rules: active.bundle.ruleSet)
+        self.settingsDefaults = settingsDefaults
+        self.automaticUpdatesEnabled = settingsDefaults.object(forKey: "gudeng.automaticUpdates") as? Bool ?? true
+        self.automaticSchedule = AutomaticUpdateSchedule(
+            lastAttempt: settingsDefaults.object(forKey: "gudeng.lastAutomaticAttempt") as? Date)
+        self.loginItem = loginItem ?? LoginItemController()
         self.rules = active.bundle.ruleSet
         self.preferences = preferences
         self.now = now
@@ -66,6 +83,7 @@ public final class ClockModel {
 
     public func refresh(now: Date = Date(), forceReload: Bool = false) async {
         self.now = now
+        loginItem.refresh()
         reloadRules(force: forceReload)
 
         let newAuthorization = await scheduler.authorizationStatus()
@@ -100,6 +118,7 @@ public final class ClockModel {
 
     public func setIntensity(_ intensity: ReminderIntensity) async {
         guard preferences.intensity != intensity else { return }
+        stopPreview()
         preferences.intensity = intensity
         preferencesStore.save(preferences)
         planSignature = ""
@@ -117,20 +136,95 @@ public final class ClockModel {
         await refresh(now: Date())
     }
 
-    public func checkForUpdates() async {
+    public func setAutomaticUpdatesEnabled(_ enabled: Bool) {
+        automaticUpdatesEnabled = enabled
+        automaticGeneration += 1
+        settingsDefaults.set(enabled, forKey: "gudeng.automaticUpdates")
+    }
+
+    public func checkForAutomaticUpdates(now: Date) async {
+        guard updater != nil, !isCheckingForUpdates,
+            automaticSchedule.isDue(at: now, enabled: automaticUpdatesEnabled)
+        else { return }
+        automaticSchedule.recordAttempt(at: now)
+        settingsDefaults.set(now, forKey: "gudeng.lastAutomaticAttempt")
+        await checkForUpdates(automatic: true, now: now)
+    }
+
+    @discardableResult
+    public func startPreview() -> Task<Void, Never>? {
+        guard !isPreviewing, preferences.intensity != .off else { return nil }
+        let id = UUID().uuidString
+        let intensity = preferences.intensity
+        let plan = ReminderPreviewPlan(intensity: intensity)
+        previewID = id
+        isPreviewing = true
+        previewMessage = ""
+        previewTask = Task { [weak self] in
+            guard let self else { return }
+            let status = await scheduler.authorizationStatus()
+            guard !Task.isCancelled else {
+                finishPreview(id: id, message: "")
+                return
+            }
+            authorization = status
+            guard status.allowsNotifications else {
+                finishPreview(id: id, message: ClockText.previewPermissionRequired)
+                return
+            }
+            do {
+                try await scheduler.schedulePreview(
+                    id: id, intensity: intensity, soundEnabled: rules.reminderPolicy.soundEnabled)
+                try await Task.sleep(for: .seconds(plan.duration))
+                finishPreview(id: id, message: ClockText.previewFinished)
+            } catch is CancellationError {
+                scheduler.stopPreview(id: id)
+                finishPreview(id: id, message: "")
+            } catch {
+                finishPreview(id: id, message: ClockText.previewFailed + error.localizedDescription)
+            }
+        }
+        return previewTask
+    }
+
+    public func stopPreview() {
+        previewTask?.cancel()
+        previewTask = nil
+        if let id = previewID { scheduler.stopPreview(id: id) }
+        previewID = nil
+        isPreviewing = false
+        previewMessage = ""
+    }
+
+    private func finishPreview(id: String, message: String) {
+        guard previewID == id else { return }
+        scheduler.stopPreview(id: id)
+        previewID = nil
+        isPreviewing = false
+        previewTask = nil
+        previewMessage = message
+    }
+
+    public func checkForUpdates(automatic: Bool = false, now: Date = Date()) async {
         guard !isCheckingForUpdates else { return }
         guard let updater else {
             updateState = .notConfigured
             return
         }
+        let generation = automaticGeneration
         isCheckingForUpdates = true
         updateState = .checking
         defer { isCheckingForUpdates = false }
 
         do {
-            if let bundle = try await updater.checkForUpdate(current: rules) {
-                try repository.install(bundle, at: Date())
-                await refresh(now: Date(), forceReload: true)
+            let bundle = try await updater.checkForUpdate(current: rules)
+            if automatic, (!automaticUpdatesEnabled || generation != automaticGeneration) {
+                updateState = .idle
+                return
+            }
+            if let bundle {
+                try repository.install(bundle, at: now)
+                await refresh(now: now, forceReload: true)
                 updateState = .updated(bundle.manifest.bundleVersion)
                 logger.info("规则更新成功：\(bundle.manifest.bundleVersion, privacy: .public)")
             } else {
@@ -138,6 +232,10 @@ public final class ClockModel {
                 logger.info("规则已是最新：\(self.rules.bundleVersion, privacy: .public)")
             }
         } catch {
+            if automatic, (!automaticUpdatesEnabled || generation != automaticGeneration) {
+                updateState = .idle
+                return
+            }
             updateState = .failed(error.localizedDescription)
             logger.error("规则更新失败：\(error.localizedDescription, privacy: .public)")
         }

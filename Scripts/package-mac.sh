@@ -155,12 +155,12 @@ cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
 
 mkdir -p "$DIST"
-DMG="$DIST/LiangWenClock-$VERSION.dmg"
-ZIP="$DIST/LiangWenClock-$VERSION.zip"
+DMG="$DIST/Gudeng-$VERSION.dmg"
+ZIP="$DIST/Gudeng-$VERSION.zip"
 rm -f "$DMG" "$ZIP"
 
 echo "生成 DMG 与 zip…"
-hdiutil create -volname "LiangWenClock" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+hdiutil create -volname "谷蹬" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 
 (

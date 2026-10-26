@@ -1,6 +1,6 @@
 # 参与贡献
 
-感谢你愿意改进梁文钟。请先阅读 [`AGENTS.md`](AGENTS.md) 与 [`docs/product/requirements.md`](docs/product/requirements.md)，再开始改动。
+感谢你愿意改进谷蹬。请先阅读 [`AGENTS.md`](AGENTS.md) 与 [`docs/product/requirements.md`](docs/product/requirements.md)，再开始改动。
 
 ## 环境
 
