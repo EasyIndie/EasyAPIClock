@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-27",
+  "pid": 6997,
+  "installedPath": "/Applications/谷蹬.app",
+  "phase": "appearance flow before obtaining a selected mode snapshot",
+  "attempts": 2,
+  "error": "Expected one main panel: MenuBarExtra window temporarily absent",
+  "lastObservedWindows": [],
+  "appearanceSelectionConfirmed": false,
+  "businessButtonsTriggered": false,
+  "systemSettingsChanged": false,
+  "remainingVerification": [
+    "confirm/restore system appearance",
+    "light/dark main screenshots",
+    "all groups expanded and scrolled",
+    "RuleMetadataCard alignment",
+    "animation toggle restoration"
+  ],
+  "uiAutomationStopped": true
+}

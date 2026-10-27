@@ -18,6 +18,7 @@ public struct ClockPanelView: View {
 
     public var body: some View {
         ZStack {
+            PanelAmbientBackground(state: model.snapshot.state)
             if showingSettings {
                 VStack(spacing: 0) {
                     HStack {
@@ -29,7 +30,7 @@ public struct ClockPanelView: View {
                                 .frame(width: 28, height: 32)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PanelIconButtonStyle())
                         Spacer()
                         Text(ClockText.settingsTitle).font(.headline)
                         Spacer()
@@ -69,7 +70,7 @@ public struct ClockPanelView: View {
                                 .frame(width: 32, height: 36)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PanelIconButtonStyle())
                         .help(ClockText.settingsTitle)
                         if let onQuit {
                             Button(action: onQuit) {
@@ -79,7 +80,7 @@ public struct ClockPanelView: View {
                                     .frame(width: 32, height: 36)
                                     .contentShape(Rectangle())
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PanelIconButtonStyle(destructive: true))
                             .help(ClockText.quitTitle)
                             .accessibilityHint(ClockText.quitHint)
                         }

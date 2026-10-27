@@ -5,8 +5,7 @@ import Foundation
 // downsamples it into the required AppIcon sizes. No text is used so the mark
 // stays legible at 16pt.
 //
-// Left = peak (warm orange), right = valley (mint), with cream clock hands at
-// 9:00 — the start of the first weekday peak window.
+// A blue time orbit, mint valley and coral phase node convey the price clock.
 
 extension NSColor {
     convenience init(hex: String) {
@@ -47,59 +46,37 @@ NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmap)
 NSColor.clear.setFill()
 NSRect(x: 0, y: 0, width: canvas, height: canvas).fill()
 
+// A time orbit surrounds a soft valley; the coral node marks a changing price window.
+// Original artwork, not the DeepSeek logo. Native paths stay crisp at small sizes.
 let plateRect = NSRect(x: 64, y: 64, width: 896, height: 896)
 let plate = NSBezierPath(roundedRect: plateRect, xRadius: 204, yRadius: 204)
-NSColor(hex: "#242629").setFill()
-plate.fill()
-
-NSColor.white.withAlphaComponent(0.07).setStroke()
-plate.lineWidth = 6
+NSGradient(starting: NSColor(hex: "#17275C"), ending: NSColor(hex: "#4C6CF0"))!
+    .draw(in: plate, angle: 65)
+NSColor.white.withAlphaComponent(0.12).setStroke()
+plate.lineWidth = 5
 plate.stroke()
 
-let circleRect = NSRect(x: 214, y: 214, width: 596, height: 596)
-let circle = NSBezierPath(ovalIn: circleRect)
+let orbit = NSBezierPath()
+orbit.appendArc(
+    withCenter: NSPoint(x: 500, y: 514), radius: 278,
+    startAngle: 40, endAngle: 320, clockwise: false)
+orbit.lineWidth = 72
+orbit.lineCapStyle = .round
+NSColor(hex: "#F5F8FF").setStroke()
+orbit.stroke()
 
-NSGraphicsContext.saveGraphicsState()
-circle.addClip()
-NSColor(hex: "#E9B47E").setFill()
-NSRect(
-    x: circleRect.minX,
-    y: circleRect.minY,
-    width: circleRect.width / 2,
-    height: circleRect.height
-).fill()
-NSColor(hex: "#8ACEB4").setFill()
-NSRect(
-    x: circleRect.midX,
-    y: circleRect.minY,
-    width: circleRect.width / 2,
-    height: circleRect.height
-).fill()
-NSGraphicsContext.restoreGraphicsState()
+let valley = NSBezierPath()
+valley.move(to: NSPoint(x: 348, y: 582))
+valley.curve(to: NSPoint(x: 500, y: 406), controlPoint1: NSPoint(x: 406, y: 440), controlPoint2: NSPoint(x: 436, y: 406))
+valley.curve(to: NSPoint(x: 652, y: 582), controlPoint1: NSPoint(x: 564, y: 406), controlPoint2: NSPoint(x: 598, y: 460))
+valley.lineWidth = 76
+valley.lineCapStyle = .round
+NSColor(hex: "#64E6CE").setStroke()
+valley.stroke()
 
-NSColor(hex: "#FDFDFD").withAlphaComponent(0.92).setStroke()
-circle.lineWidth = 10
-circle.stroke()
-
-let center = NSPoint(x: 512, y: 512)
-
-func hand(to point: NSPoint, width: CGFloat) {
-    let path = NSBezierPath()
-    path.move(to: center)
-    path.line(to: point)
-    path.lineWidth = width
-    path.lineCapStyle = .round
-    NSColor(hex: "#FDFDFD").setStroke()
-    path.stroke()
-}
-
-// Minute hand up, hour hand left: 9:00, the first weekday peak boundary.
-hand(to: NSPoint(x: 512, y: 724), width: 20)
-hand(to: NSPoint(x: 300, y: 512), width: 28)
-
-let hub = NSBezierPath(ovalIn: NSRect(x: center.x - 24, y: center.y - 24, width: 48, height: 48))
-NSColor(hex: "#FDFDFD").setFill()
-hub.fill()
+let node = NSBezierPath(ovalIn: NSRect(x: 737, y: 467, width: 94, height: 94))
+NSColor(hex: "#FFAC83").setFill()
+node.fill()
 
 NSGraphicsContext.restoreGraphicsState()
 

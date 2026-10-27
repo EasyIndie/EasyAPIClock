@@ -3,6 +3,8 @@ import LiangWenCore
 
 struct ReminderSettingsSection: View {
     @ObservedObject var model: ClockModel
+    @AppStorage("gudeng.animations") private var animations = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -31,7 +33,13 @@ struct ReminderSettingsSection: View {
                     .frame(width: 28, height: 28)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PanelIconButtonStyle())
+                .scaleEffect(model.isPreviewing && animations && !reduceMotion ? 1.06 : 1)
+                .animation(
+                    model.isPreviewing && animations && !reduceMotion
+                        ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true) : nil,
+                    value: model.isPreviewing && animations && !reduceMotion
+                )
                 .disabled(model.preferences.intensity == .off)
                 .help(ClockText.previewExplanation)
             }

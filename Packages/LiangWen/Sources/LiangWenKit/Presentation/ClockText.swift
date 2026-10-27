@@ -7,6 +7,14 @@ import LiangWenCore
 /// These functions are deliberately free of SwiftUI so they can be unit tested.
 /// All times are rendered in Beijing time, matching the pricing rules.
 public enum ClockText {
+    public static let brandTitle = "DeepSeek API"
+    public static let brandCaption = "峰谷价格提醒 · 北京时间"
+    public static let communityNotice = "社区工具，与 DeepSeek 官方无隶属关系"
+    public static let versionsLabel = "价格 / 日历"
+    public static let coverageLabel = "覆盖日期"
+    public static let originLabel = "规则来源"
+    public static let priceCheckLabel = "价格核对"
+    public static let calendarCheckLabel = "日期核对"
     public static let reminderIntensityTitle = "提醒强度"
     public static let notificationDisabledTitle = "系统通知未开启"
     public static let notificationSettingsTitle = "打开系统设置"
@@ -89,8 +97,8 @@ public enum ClockText {
     public static let systemAppearance = "系统"
     public static let lightAppearance = "浅色"
     public static let darkAppearance = "深色"
-    public static let animationsTitle = "页面切换动效"
-    public static let animationsExplanation = "控制主面板与设置页切换的淡入淡出；系统减少动态效果优先。"
+    public static let animationsTitle = "界面动效"
+    public static let animationsExplanation = "控制入场、数字变化、页面切换与折叠反馈；系统减少动态效果优先。"
     public static let reminderExplanation = "中等：通知与短音一次；强：有界重复，可停止。"
 
     public static func panelStateName(_ state: PriceState?) -> String {

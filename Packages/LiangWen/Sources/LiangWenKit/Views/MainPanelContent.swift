@@ -4,14 +4,18 @@ import LiangWenCore
 struct MainPanelContent: View {
     @ObservedObject var model: ClockModel
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("gudeng.animations") private var animations = true
+    @State private var entered = false
 
     var body: some View {
         let snapshot = model.snapshot
         let countdown = ClockText.countdown(for: snapshot, now: model.now)
 
-        VStack(spacing: 5) {
+        VStack(spacing: 6) {
+            ClockBrandHeader().padding(.bottom, 3)
             Text(ClockText.panelStateName(snapshot.state))
-                .font(.system(size: 56, weight: .bold))
+                .font(.system(size: 48, weight: .bold))
                 .foregroundStyle(priceColor)
             CountdownValueView(display: countdown)
             Text(ClockText.panelCountdownLabel(for: snapshot))
@@ -26,18 +30,19 @@ struct MainPanelContent: View {
         }
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(ClockText.panelAccessibilityLabel(for: snapshot, now: model.now))
-    }
-
-    private var priceColor: Color {
-        switch model.snapshot.state {
-        case .peak:
-            colorScheme == .dark ? Color(red: 1, green: 0.76, blue: 0.24) : Color(red: 0.61, green: 0.31, blue: 0.02)
-        case .valley:
-            colorScheme == .dark ? Color(red: 0.42, green: 0.94, blue: 0.73) : Color(red: 0.02, green: 0.39, blue: 0.21)
-        case nil: .secondary
+        .scaleEffect(entered ? 1 : 0.97)
+        .opacity(entered ? 1 : 0.2)
+        .onAppear {
+            withAnimation(animations && !reduceMotion ? .spring(response: 0.4, dampingFraction: 0.9) : nil) {
+                entered = true
+            }
         }
+        .onDisappear { entered = false }
+        .animation(animations && !reduceMotion ? .easeInOut(duration: 0.3) : nil, value: snapshot.state)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            ClockText.brandTitle + "，" + ClockText.panelAccessibilityLabel(for: snapshot, now: model.now))
     }
 
+    private var priceColor: Color { ClockTheme.price(model.snapshot.state, scheme: colorScheme) }
 }

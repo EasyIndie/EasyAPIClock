@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "sourceURL": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "checkedAt": "2026-10-27T08:51:32.685912+00:00",
+  "status": "unchanged",
+  "observation": {
+    "prices": {
+      "deepseek-flash": {
+        "inputCacheHit": {
+          "valley": "0.02",
+          "peak": "0.04"
+        },
+        "inputCacheMiss": {
+          "valley": "1",
+          "peak": "2"
+        },
+        "output": {
+          "valley": "4",
+          "peak": "8"
+        }
+      },
+      "deepseek-v4-pro": {
+        "inputCacheHit": {
+          "valley": "0.15",
+          "peak": "0.3"
+        },
+        "inputCacheMiss": {
+          "valley": "4.5",
+          "peak": "9"
+        },
+        "output": {
+          "valley": "13.5",
+          "peak": "27"
+        }
+      }
+    },
+    "policySHA256": "6fc45cbb139ad9ba0aa882f2ca114e099f7e4155ddcf2260b31d674d40809a08"
+  },
+  "digest": "cad344f75fc89e9720ea879c1fd9fb43ca471b4137241f8897ecf6b4244b6dfb",
+  "pricingSHA256": "fc06e685e82015a82507535bce1ccc68df88b0a7662360e38316c76712a78500"
+}

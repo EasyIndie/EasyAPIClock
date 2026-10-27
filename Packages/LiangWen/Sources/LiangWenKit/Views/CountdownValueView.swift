@@ -3,13 +3,22 @@ import SwiftUI
 /// Keep duration units visible beside the digits so this cannot be read as a clock time.
 struct CountdownValueView: View {
     let display: ClockText.CountdownDisplay
+    @AppStorage("gudeng.animations") private var animations = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        Text(styledValue)
-            .monospacedDigit()
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
-            .frame(height: 72)
+        Group {
+            if #available(macOS 14.0, iOS 17.0, *) {
+                Text(styledValue).contentTransition(.numericText())
+            } else {
+                Text(styledValue)
+            }
+        }
+        .animation(animations && !reduceMotion ? .easeInOut(duration: 0.24) : nil, value: display.value)
+        .monospacedDigit()
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .frame(height: 72)
     }
 
     private var styledValue: AttributedString {
