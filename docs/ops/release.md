@@ -121,14 +121,14 @@ spctl -a -vv .build/export/LiangWenMac.app
 优先使用 `make package-mac-notarized`。推荐把凭据存入钥匙串：
 
 ```bash
-xcrun notarytool store-credentials "liangwen-notary" \
+xcrun notarytool store-credentials "gudeng-notary" \
   --apple-id "you@example.com" \
   --team-id "TEAMID" \
   --password "app-specific-password"
 
 DEVELOPER_ID_APPLICATION="Developer ID Application: ..." \
 DEVELOPER_TEAM="TEAMID" \
-NOTARY_KEYCHAIN_PROFILE="liangwen-notary" \
+NOTARY_KEYCHAIN_PROFILE="gudeng-notary" \
 make package-mac-notarized
 ```
 
@@ -139,7 +139,7 @@ make package-mac-notarized
 ```bash
 ditto -c -k --keepParent .build/export/LiangWenMac.app .build/LiangWenMac.zip
 xcrun notarytool submit .build/LiangWenMac.zip \
-  --keychain-profile "liangwen-notary" --wait
+  --keychain-profile "gudeng-notary" --wait
 xcrun stapler staple .build/export/LiangWenMac.app
 spctl -a -vv .build/export/LiangWenMac.app
 ```

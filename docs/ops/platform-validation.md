@@ -21,8 +21,10 @@
 应用使用 `OSLog`，不包含账号、Token 或价格请求内容。验证时在 Console.app 中选择对应设备，过滤：
 
 ```
-subsystem:app.liangwen
+subsystem:com.easyindie.easyapiclock
 ```
+
+（v0.1.0 及更早构建使用旧子系统 `app.liangwen`，仅作历史记录。）
 
 分类：
 
@@ -56,7 +58,7 @@ subsystem:app.liangwen
 - [ ] 中等提醒一次、强提醒重复与「停止提醒」、提前提醒实际到达。
 - [ ] 权限允许路径：Developer ID 签名并放到 /Applications 后仍为 denied，未出现权限弹窗；已尝试清理该测试 App 的通知登记与 usernoted 数据库记录，仍未恢复。需公证/重启或清理系统通知状态后复测。
 - [ ] Focus / 静音 / 低电量模式。
-- [ ] 睡眠跨切换、唤醒、系统改时/时区切换。
+- [ ] 睡眠跨切换、唤醒、系统改时/时区（用户明确本机不做睡眠测试；改时/时区也需单独安排）切换。
 - [ ] 点击通知激活应用。
 - [ ] macOS 14 / 15；iOS。
 - [ ] 坏 checksum 在真机上的 UI 提示（单元测试已覆盖拒绝与旧规则保留）。
@@ -120,7 +122,7 @@ LIANGWEN_RULE_SOURCE=http://127.0.0.1:8765 \
 然后在设置中点击「检查规则更新」。测试包只用于验证，不要提交或发布。**周末恒为谷，脚本会拒绝生成；请在工作日运行。** 测试结束后清理 active 规则，回退内置版本：
 
 ```bash
-rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
 ```
 3. **修改系统时间**：可以验证唤醒/重算，但会影响其他应用与通知计时；测试后立即恢复，并记录风险。
 
@@ -307,9 +309,9 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 
 未通过 / 未验证：
 
-- [ ] 实际听感：系统通知声音为 enabled、音量 6 未静音，但本轮没有任何“用户确认听见”的证据，不记声音通过
+- [ ] 实际听感：系统通知声音为 enabled、音量 6 未静音，但本轮没有任何“用户确认听见”的证据，不记声音通过。用户已决定本轮保持系统默认声音，自定义声音留待后续需求确认
 - [ ] Focus / 勿扰 / 静音对照（未改系统设置；2026-10-27 预览排查已说明勿扰会抑制）
-- [ ] 睡眠跨切换、唤醒、系统改时/时区
+- [ ] 睡眠跨切换、唤醒、系统改时/时区（用户明确本机不做睡眠测试；改时/时区也需单独安排）
 - [ ] 登录项注销后重新登录自动启动
 - [ ] macOS 14 / 15；macOS 13 arm64（`pro` 为 13.7.8 Intel）
 - [ ] 通知点击行为（当前只激活应用，不展开面板）
