@@ -5,7 +5,7 @@ struct RuleUpdateRow: View {
     @State private var showingDetails = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
                 Button(action: checkRules) {
                     Text(model.isCheckingForUpdates ? ClockText.ruleCheckingTitle : ClockText.ruleUpdateTitle)
@@ -40,7 +40,7 @@ struct RuleUpdateRow: View {
                 }
             }
             Text(ClockText.lastAutomaticAttemptText(model.lastAutomaticAttemptAt))
-                .font(.system(size: 10))
+                .font(.system(size: 9))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
