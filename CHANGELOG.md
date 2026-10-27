@@ -2,11 +2,18 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-10-28
+
+### Changed
+
+- macOS 发布 ZIP 改为 Developer ID 签名、Apple 公证并 staple；通过 EasyRelease 共享工作流发布。
+- 将应用版本与 build 号传入 manifest，记录为 0.1.1 / 3。
+
 ## [Unreleased]
 
 ### Changed
 
-- 准备 EasyAPIClock 迁入 EasyIndie：规则源与产品页链接切换至目标仓库；新增 GitHub Pages 产品页，并让 macOS ad-hoc Release 复用 EasyIndie/EasyRelease 的 apple-v0.6.4 reusable workflow。
+- 完成 EasyAPIClock 迁入 EasyIndie，配置规则源和 GitHub Pages 产品页；v0.1.0 曾通过 EasyRelease 发布 ad-hoc DMG。
 
 - 修正提醒预览说明：中等强度显示一次、强提醒显示最多三次，关闭强度时提示先开启提醒；设置页提示与悬停说明使用同一份强度文案。
 - Build2：原创时间环/谷口图标，主界面明确DeepSeek API峰谷价格提醒；蓝靛品牌、青绿/珊瑚状态色及可关闭的入场/数字/折叠/交互反馈，规则详情分层对齐。
