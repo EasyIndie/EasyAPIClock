@@ -95,4 +95,5 @@ jobs:
 
           EasyRelease 同时发布产物 manifest 和 SHA-256 校验文件。社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
           EOF
-          gh release edit "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
+            -f body="$(cat "$RUNNER_TEMP/release-notes.md")"
