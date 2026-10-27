@@ -29,6 +29,9 @@ jobs:
       - name: Check module boundaries
         run: make check-layers
 
+      - name: Test official-source monitor offline
+        run: make test-source-monitor
+
       - name: Lint Swift
         run: make lint
 

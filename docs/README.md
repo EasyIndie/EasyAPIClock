@@ -83,3 +83,8 @@ roadmap.md             里程碑、开放问题、明确不做
 | 时间语义 | `architecture/time-and-calendar.md`、测试 |
 | 通知行为 | `architecture/reminders.md`、`ops/platform-validation.md` |
 | 构建 / 发布 | `architecture/overview.md`、`ops/release.md`、`README.md` |
+
+- [官方价格自动化](ops/official-pricing-automation.md)
+- [ADR-0012 官方来源观察](adr/0012-official-pricing-observation.md)
+- [ADR-0013 品牌与动效](adr/0013-brand-and-controlled-motion.md)
+- [本轮视觉规范](design/brand-refresh-2026-10-27/README.md)

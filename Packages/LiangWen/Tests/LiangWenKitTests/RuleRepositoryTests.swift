@@ -31,7 +31,8 @@ struct RuleRepositoryTests {
         #expect(active.origin == .bundled)
         #expect(active.pendingVersion == nil)
         #expect(active.installedError == nil)
-        #expect(active.bundle.manifest.bundleVersion == "2026.10.23")
+        #expect(
+            active.bundle.manifest.bundleVersion == (try RuleBundleLoader.load(from: bundled)).manifest.bundleVersion)
     }
 
     @Test("未来生效的规则先进入待启用区")
@@ -77,8 +78,8 @@ struct RuleRepositoryTests {
         let support = root.appendingPathComponent("Support", isDirectory: true)
         let repository = RuleRepository(bundledDirectory: bundled, supportDirectory: support)
 
-        let now = KitFixture.date("2026-10-24T10:00:00+08:00")
         let base = try RuleBundleLoader.load(from: bundled)
+        let now = max(KitFixture.date("2026-10-24T10:00:00+08:00"), base.manifest.effectiveFrom)
         try repository.install(base, at: now)
         #expect(repository.active(at: now).origin == .installed)
 

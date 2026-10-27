@@ -226,7 +226,9 @@ struct SettingsModelTests {
                 with: Data(contentsOf: KitTestPaths.rulesDirectory.appendingPathComponent("manifest.json")))
                 as? [String: Any])
         manifest["bundleVersion"] = "test-disabled"
-        manifest["publishedAt"] = "2026-10-25T12:00:00+08:00"
+        let baseline = try RuleBundleLoader.load(from: KitTestPaths.rulesDirectory)
+        manifest["publishedAt"] = ISO8601DateFormatter().string(
+            from: baseline.manifest.publishedAt.addingTimeInterval(3600))
         manifest["effectiveFrom"] = "2026-10-25T12:00:00+08:00"
         var files: [String: Data] = ["manifest.json": try JSONSerialization.data(withJSONObject: manifest)]
         for name in ["pricing.json", "calendar-2026.json", "reminder-policy.json"] {

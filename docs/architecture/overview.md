@@ -186,3 +186,5 @@ Rules/                       唯一规则数据源
 ## SDK提取与多设备界面
 
 Core和Runtime已经各自导出SwiftPM library。设备界面共享会话流程，不复制价格或提醒逻辑；会话显式订阅后须removeObserver，ClockModel释放时自动解绑其订阅。SDK接入与已知边界见 [shared-sdk.md](shared-sdk.md) 和 ADR-0011。当前包部署目标为macOS13/iOS17。Kit用Combine桥接值状态，借入模型的视图通过@ObservedObject订阅；LoginSettingsContent单独订阅嵌套登录控制器。macOS13旧系统运行验收仍待完成。
+
+维护者侧来源观察/候选规则由Scripts/official_pricing*.py及Official pricing workflow处理（ADR-0012），不进入Core/Runtime/Kit运行时。构建号2包含原创图标与品牌化状态UI（ADR-0013），最低系统与iOS范围不变。
