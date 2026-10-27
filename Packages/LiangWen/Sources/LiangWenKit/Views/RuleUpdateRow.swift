@@ -43,7 +43,7 @@ struct RuleUpdateRow: View {
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, minHeight: 28)
     }
