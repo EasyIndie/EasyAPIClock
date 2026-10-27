@@ -39,10 +39,13 @@ jobs:
             exit 1
           fi
 
-          EXISTING_SHA="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' 2>/dev/null || true)"
+          # Use the Git transport to check the exact ref. GitHub's REST ref
+          # endpoint can follow repository-transfer redirects, which may
+          # report stale refs from the former repository owner.
+          EXISTING_SHA="$(git ls-remote --refs origin "refs/tags/$TAG" | awk 'NR == 1 { print $1 }')"
           if [[ -n "$EXISTING_SHA" ]]; then
             if [[ "$EXISTING_SHA" != "$GITHUB_SHA" ]]; then
-              echo "Tag $TAG already points to a different commit; refusing to move it." >&2
+              echo "Tag $TAG already points to $EXISTING_SHA, not $GITHUB_SHA; refusing to move it." >&2
               exit 1
             fi
           else
