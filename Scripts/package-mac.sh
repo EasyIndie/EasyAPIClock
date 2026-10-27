@@ -2,7 +2,8 @@
 #
 # Builds a distributable macOS app and packages it as zip + dmg.
 #
-# Default: ad-hoc signing, for local verification only.
+# Default: ad-hoc signing. This can be distributed as a disclosed test build,
+# but is neither Developer ID signed nor notarized.
 # Distribution: set DEVELOPER_ID_APPLICATION and DEVELOPER_TEAM.
 # Notarization: pass --notarize and set APPLE_ID / APPLE_TEAM_ID /
 # APPLE_APP_PASSWORD (app-specific password). Nothing is uploaded anywhere
@@ -37,7 +38,7 @@ if [[ -n "$SIGN_ID" ]]; then
   fi
   echo "使用 Developer ID 签名：$SIGN_ID"
 else
-  echo "未设置 DEVELOPER_ID_APPLICATION，使用 ad-hoc 签名（仅本地验证，不可分发）。"
+  echo "未设置 DEVELOPER_ID_APPLICATION，使用 ad-hoc 签名（未使用 Developer ID，未公证）。"
 fi
 
 echo "构建 Release（arm64 + x86_64）…"
@@ -177,7 +178,7 @@ echo
 echo "校验：cd dist && shasum -a 256 -c SHA256SUMS"
 if [[ -z "$SIGN_ID" ]]; then
   echo
-  echo "注意：当前为 ad-hoc 签名，只能本地验证；正式分发需要 Developer ID 与公证。"
+  echo "注意：当前为 ad-hoc 签名，macOS 可能拦截首次启动；分发说明必须披露未签名身份与未公证状态。"
 fi
 if [[ "$NOTARIZE" == "0" && -n "$SIGN_ID" ]]; then
   echo

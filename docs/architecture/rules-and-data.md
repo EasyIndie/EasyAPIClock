@@ -182,7 +182,7 @@ GET <base>/manifest.json
 ```
 
 - 只允许 HTTPS；仅 `localhost` / `127.0.0.1` 允许 HTTP 开发。
-- 默认 base URL：`https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules`。
+- 默认 base URL：`https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules`。
 - `URLSession` 使用 `reloadIgnoringLocalCacheData` 并发送 `Cache-Control: no-cache`。
 - 无数字签名。SHA-256 只能防止传输损坏/意外编辑，不能防止控制更新源的人发布恶意规则。见 [ADR-0004](../adr/0004-rule-bundles.md)。
 - 不跟随任何远程脚本；JSON 只被解码为有限结构。
@@ -229,7 +229,7 @@ main/Rules/                 唯一数据源（可评审的规则改动）
 rules 分支（生成物）         规则文件位于分支根目录
         │
         ▼
-https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules
+https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules
 ```
 
 - `.github/workflows/rules.yml`：

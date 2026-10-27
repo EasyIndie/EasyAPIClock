@@ -6,6 +6,9 @@
 
 ### Changed
 
+- 准备 EasyAPIClock 迁入 EasyIndie：规则源与产品页链接切换至目标仓库；新增 GitHub Pages 产品页，并让 macOS ad-hoc Release 复用 EasyIndie/EasyRelease 的 apple-v0.6.4 reusable workflow。
+
+- 修正提醒预览说明：中等强度显示一次、强提醒显示最多三次，关闭强度时提示先开启提醒；设置页提示与悬停说明使用同一份强度文案。
 - Build2：原创时间环/谷口图标，主界面明确DeepSeek API峰谷价格提醒；蓝靛品牌、青绿/珊瑚状态色及可关闭的入场/数字/折叠/交互反馈，规则详情分层对齐。
 - 新增官方HTTPS价格观察CI与10项离线测试：差异去重复核、维护者确认摘要/生效依据后生成完整单价候选，不自动合并或直接改价。
 

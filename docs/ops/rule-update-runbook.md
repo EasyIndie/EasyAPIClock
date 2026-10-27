@@ -139,7 +139,7 @@ LIANGWEN_RULE_SOURCE=http://localhost:8000 \
 
 ```bash
 gh run list --workflow Rules --limit 3
-curl -fsSL https://raw.githubusercontent.com/wangzhizhou/liangwen-clock/rules/manifest.json | head
+curl -fsSL https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules/manifest.json | head
 ```
 
 6. 在真实设备上执行一次「检查更新」。raw CDN 可能缓存数分钟；如果仍是旧版本，稍后重试，不要通过改客户端来“强制刷新”。
