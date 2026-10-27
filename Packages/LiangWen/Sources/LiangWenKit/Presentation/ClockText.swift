@@ -61,6 +61,11 @@ public enum ClockText {
         "开启后自动检查规则，每 \(Int(AutomaticUpdateSchedule.interval / 3600)) 小时最多一次；失败保留本地有效规则。"
     }
 
+    public static func lastAutomaticAttemptText(_ date: Date?) -> String {
+        guard let date else { return "尚无自动检查记录" }
+        return "上次尝试：\(checkedAtText(date)) \(clockText(date)) · 北京时间"
+    }
+
     public static let settingsTitle = "设置"
     public static let backTitle = "返回主面板"
     public static let remindersTitle = "提醒"
@@ -70,7 +75,8 @@ public enum ClockText {
     public static let systemAppearance = "系统"
     public static let lightAppearance = "浅色"
     public static let darkAppearance = "深色"
-    public static let animationsTitle = "动效"
+    public static let animationsTitle = "页面切换动效"
+    public static let animationsExplanation = "控制主面板与设置页切换的淡入淡出；系统减少动态效果优先。"
     public static let reminderExplanation = "中等：通知与短音一次；强：有界重复，可停止。"
 
     public static func panelStateName(_ state: PriceState?) -> String {

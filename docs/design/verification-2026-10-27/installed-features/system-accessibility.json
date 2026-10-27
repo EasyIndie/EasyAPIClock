@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-27",
+  "source": "NSWorkspace.shared read-only",
+  "accessibilityDisplayShouldReduceMotion": false,
+  "accessibilityDisplayShouldReduceTransparency": false,
+  "changedSystemSettings": false
+}

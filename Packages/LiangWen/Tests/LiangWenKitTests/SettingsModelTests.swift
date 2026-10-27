@@ -22,6 +22,36 @@ struct SettingsModelTests {
             scheduler: scheduler, updater: updater, settingsDefaults: defaults, initialNow: now)
     }
 
+    @Test("自动检查记录失败尝试并跨实例保留，禁用和手动检查不伪造记录")
+    func automaticAttemptReceipt() async throws {
+        let suite = "gudeng-test-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(suite)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let fetcher = FailingSettingsFetcher()
+        let updater = RemoteRuleUpdater(
+            baseURL: try #require(URL(string: "https://example.invalid/rules")), fetcher: fetcher)
+        let clock = model(root: root, defaults: defaults, scheduler: TestSettingsScheduler(), updater: updater)
+        let now = KitFixture.date("2026-10-26T08:00:00+08:00")
+        #expect(clock.lastAutomaticAttemptAt == nil)
+        clock.setAutomaticUpdatesEnabled(false)
+        await clock.checkForAutomaticUpdates(now: now)
+        #expect(clock.lastAutomaticAttemptAt == nil)
+        #expect(await fetcher.requestCount == 0)
+        clock.setAutomaticUpdatesEnabled(true)
+        await clock.checkForAutomaticUpdates(now: now)
+        #expect(clock.lastAutomaticAttemptAt == now)
+        #expect(clock.updateMessage.hasPrefix("检查失败："))
+        let restored = model(root: root, defaults: defaults, scheduler: TestSettingsScheduler(), updater: updater)
+        #expect(restored.lastAutomaticAttemptAt == now)
+        await restored.checkForAutomaticUpdates(now: now.addingTimeInterval(60))
+        #expect(await fetcher.requestCount == 1)
+        await restored.checkForUpdates(now: now.addingTimeInterval(120))
+        #expect(await fetcher.requestCount == 2)
+        #expect(restored.lastAutomaticAttemptAt == now)
+    }
+
     @Test("两个界面适配器共享会话状态，不重复业务排程且可独立释放")
     func sharedPresentationAdapters() async throws {
         let suite = "gudeng-test-\(UUID().uuidString)"

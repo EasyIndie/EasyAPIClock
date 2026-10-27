@@ -168,8 +168,12 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenRuntime ──> LiangWenC
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
 - 2026-10-24 macOS 27 已初验界面、规则更新/离线回退、退出、偏好持久化与通知授权拒绝；通知投递、强提醒、睡眠唤醒、权限允许路径与 macOS 14/15 尚待验证，见 `docs/ops/platform-validation.md`。
 - Developer ID 签名已完成；`make package-mac` 必须在 GUI 会话运行，SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。公证 profile 尚未配置。
-- Developer ID 签名后通知授权仍为 denied；权限允许路径待公证/重启或清理系统通知状态后复测。
+- 旧Developer ID构建曾返回denied；2026-10-27稳定安装版已为authorized，预览系统送达/清理已验，横幅可见、声音与完整正式矩阵仍未完成。不要据旧记录擅自清理系统通知或BTM。
 - 公证、英文界面尚未完成；应用图标、README 截图与 Developer ID 签名已完成，`make package-mac` 的默认产物是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。
+
+## 本机安装验收入口（2026-10-27）
+
+用户已要求安装，日常版本为`/Applications/谷蹬.app`，Developer ID本地签名、未公证。后续验收优先更新并从此路径启动；源码变更不会自动更新该副本。更新前退出该路径实例并备份旧版，再复制已构建/验证/同身份签名的包，避免同时启动旧开发副本。不要把本机安装等同对外发布授权。

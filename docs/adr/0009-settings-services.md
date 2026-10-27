@@ -18,3 +18,9 @@
 ## 平台依据
 
 Apple官方SMAppService文档：https://developer.apple.com/documentation/servicemanagement/smappservice 。主应用登录项通过register/unregister控制，系统审批状态与应用本地偏好分开；不承诺绕过系统审批或实际登录验证。
+
+## 2026-10-27 修正与可观察性
+
+Apple DTS指出notFound也可能表示系统从未见过服务（https://developer.apple.com/forums/thread/719862）。主应用服务的notFound不能先行禁用注册入口：表现为尚未启用，仅在用户明确开启时register；成功、需审批或错误仍以系统真实返回为准，不自动注册来“探测”。未知未来状态保持不可用降级，不清理系统BTM。
+
+自动检查继续沿用原6小时策略，并将既有lastAttempt作为只读值加入ClockSessionState，包含失败尝试且跨重启保留；手动检查不改变该记录，不把尝试时间当成功证明。页面动效明确为主面板/设置页的opacity过渡，不是装饰动效；系统减少动态效果优先。

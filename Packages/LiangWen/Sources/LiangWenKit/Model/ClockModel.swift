@@ -20,6 +20,7 @@ public final class ClockModel: ObservableObject {
     public var updateState: UpdateState { state.updateState }
     public var isCheckingForUpdates: Bool { state.isCheckingForUpdates }
     public var automaticUpdatesEnabled: Bool { state.automaticUpdatesEnabled }
+    public var lastAutomaticAttemptAt: Date? { state.lastAutomaticAttemptAt }
     public var isPreviewing: Bool { state.isPreviewing }
 
     public var previewMessage: String {

@@ -121,6 +121,13 @@ struct ClockTextTests {
         #expect(!label.contains("距离下次切换"))
     }
 
+    @Test("自动检查时间明确为北京时间，不把无记录伪装成已检查")
+    func automaticAttemptCopy() {
+        #expect(ClockText.lastAutomaticAttemptText(nil) == "尚无自动检查记录")
+        let date = KitFixture.date("2026-10-26T23:15:00+00:00")
+        #expect(ClockText.lastAutomaticAttemptText(date) == "上次尝试：2026-10-27 07:15 · 北京时间")
+    }
+
     @Test("时长短语")
     func durationPhrases() {
         #expect(ClockText.durationPhrase(7200) == "2 小时")

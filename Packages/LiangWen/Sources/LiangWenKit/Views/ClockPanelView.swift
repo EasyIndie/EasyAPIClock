@@ -49,6 +49,7 @@ public struct ClockPanelView: View {
                 }
                 .frame(width: 334, height: 322, alignment: .top)
                 .clipped()
+                .transition(.opacity)
             } else {
                 VStack(spacing: 0) {
                     MainPanelContent(model: model)
@@ -73,6 +74,7 @@ public struct ClockPanelView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
                 }
+                .transition(.opacity)
             }
         }
         .frame(width: 334, height: 322)

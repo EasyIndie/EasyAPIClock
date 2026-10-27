@@ -23,6 +23,10 @@ struct GeneralSettingsSection: View {
                                 .controlSize(.small)
                                 .help(ClockText.automaticUpdatesExplanation)
                         }
+                        Text(ClockText.lastAutomaticAttemptText(model.lastAutomaticAttemptAt))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                         Text(ClockText.automaticUpdatesExplanation)
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)

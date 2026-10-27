@@ -43,6 +43,7 @@ public final class ClockSession {
             updateState: updateState,
             isCheckingForUpdates: isCheckingForUpdates,
             automaticUpdatesEnabled: automaticUpdatesEnabled,
+            lastAutomaticAttemptAt: automaticSchedule.lastAttempt,
             isPreviewing: isPreviewing,
             previewOutcome: previewOutcome)
     }

@@ -256,3 +256,11 @@ rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/L
 本地构建的13.0目标通用Release经临时副本ad-hoc签名，通过SSH传入专用临时目录，在远端原生x86_64进程启动。主面板334×322pt、北京时间状态与分钟倒计时刷新、设置展开和亮暗选中状态已通过AX检查；深色与关闭自动更新经退出重启后保持。远端仅有Command Line Tools，未在旧系统执行Swift6构建。
 
 完整证据与后续重启结果见 `../design/verification-2026-10-26/macos13-intel/README.md`。多显示器全屏及区域截图的应用内容全黑，不作为视觉通过证据；未改变系统权限。登录项临时安装限制、实际重登录、通知投递/声音/Focus/睡眠及macOS13 arm64仍待验。
+
+## 2026-10-27 · 稳定安装版设置功能
+
+Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发副本已退出。首次notFound不再禁用登录注册；实际通过用户开关注册/取消回调，结束恢复关闭，尚未执行注销重新登录。
+
+自动更新已显示真实lastAttempt为2026-10-27 07:40（北京时间），跨重启保留，未人为清空节流；失败尝试与手动不改自动收据由固定时间内存测试覆盖。页面动效明确为主面板/设置opacity切换，系统减少动态效果优先。
+
+通知authorized，alerts/sound/notificationCenter均enabled、style=banner。实际预览有delivered记录，结束后预览pending/delivered清空，正式pending保持7；系统输出音量19、未静音只作辅助，不代表实际听见。通知区域截图为黑帧，不作为无横幅证据，也不作为可见通过。完整记录及后续手动源检查/Finder入口见`../design/verification-2026-10-27/installed-features/README.md`。未修改通知权限、Focus、音量或系统登录会话。

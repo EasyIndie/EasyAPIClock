@@ -12,6 +12,7 @@ public struct ClockSessionState: Sendable, Equatable {
     public let updateState: UpdateState
     public let isCheckingForUpdates: Bool
     public let automaticUpdatesEnabled: Bool
+    public let lastAutomaticAttemptAt: Date?
     public let isPreviewing: Bool
     public let previewOutcome: PreviewOutcome
 }

@@ -21,6 +21,10 @@ struct AppearanceSettingsSection: View {
                         .toggleStyle(.switch)
                         .controlSize(.small)
                 }
+                Text(ClockText.animationsExplanation)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 4)
         }
