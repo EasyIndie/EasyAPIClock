@@ -264,4 +264,4 @@ make rules-publish           # 校验 + 推送到 rules 分支
 
 ## 已安装规则的存储位置
 
-下载并校验后的规则保存在 `Application Support/Gudeng/Rules/active`（待生效在 `pending`）。从旧构建升级时，启动会把 `Application Support/LiangWen` 整体迁入 `Gudeng`；迁移失败则复制，内置规则始终作为回退。详见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。
+下载并校验后的规则保存在 `Application Support/Gudeng/Rules/active`（待生效在 `pending`）。MVP 未发布，首版直接使用该目录，不保留旧目录迁移；内置规则始终作为回退。详见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。

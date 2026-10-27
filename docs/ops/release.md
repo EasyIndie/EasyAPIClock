@@ -30,7 +30,7 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 - 截图、README 与 issue 模板中的路径
 - 规则更新源（`project.yml` 的 `GudengRuleSourceBaseURL`；fork 必须改）
 
-本次 0.1.1 公证发布将 Bundle ID 从 `app.gudeng.*` 切换到 EasyIndie 前缀；偏好、通知授权及沙盒容器不会自动从 v0.1.0 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
+0.1.1 起 Bundle ID 使用 EasyIndie 前缀（v0.1.0 为 `app.liangwen.mac`）；v0.1.1 尚未发布公开 Release。偏好、通知授权及沙盒容器不跨 Bundle ID 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
 
 ## 3. 图标与资源
 

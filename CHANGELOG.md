@@ -6,7 +6,7 @@
 
 ### Changed
 
-- macOS 发布 ZIP 改为 Developer ID 签名、Apple 公证并 staple；通过 EasyRelease 共享工作流发布。
+- macOS 打包流程改为 Developer ID 签名、Apple 公证并 staple；0.1.1 尚未发布公开 Release。
 - 将应用版本与 build 号传入 manifest，记录为 0.1.1 / 3。
 - 将 Bundle ID 从 `app.liangwen.*` 更换为 `com.easyindie.easyapiclock` 系列，移除旧品牌标识。
 
@@ -14,7 +14,7 @@
 
 ### Changed
 
-- 工程标识从 LiangWen 统一为 Gudeng：SwiftPM 包/模块、Xcode 工程与 target、`gudeng-rules` CLI 全部改名；偏好键、已安装规则目录与规则源配置提供一次性迁移，Bundle ID 与 `lw.` 通知协议 ID 保持不变（ADR-0014）。
+- 工程标识从 LiangWen 统一为 Gudeng：SwiftPM 包/模块、Xcode 工程与 target、`gudeng-rules` CLI 全部改名。MVP 尚未发布，不保留旧键/旧目录迁移；Bundle ID 与 `lw.` 通知协议 ID 保持不变（ADR-0014）。
 - 切换提醒文案精简为一眼可读：标题只保留「进入高峰 / 进入低价」，正文合并为「价格基准 · 持续时长」一行；中等提醒不再带副标题，强提醒只显示「持续提醒 · 可停止」。价格单位仍来自规则，不写死倍率。
 - macOS 27 arm64 真机完成真实切换通知验收：中等横幅、强提醒 30 秒重复、「停止提醒」、退出后仍送达、重启不补发；声音实际听感、Focus/静音、睡眠唤醒与 macOS 13 arm64 仍待验证。
 - 完成 EasyAPIClock 迁入 EasyIndie，配置规则源和 GitHub Pages 产品页；v0.1.0 曾通过 EasyRelease 发布 ad-hoc DMG。

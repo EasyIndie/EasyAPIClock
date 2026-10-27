@@ -21,7 +21,8 @@ public final class AppEnvironment {
             .urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? fileManager.temporaryDirectory
         let rulesSupport =
-            RuleStorageMigration.migrateIfNeeded(supportRoot: supportRoot)
+            supportRoot
+            .appendingPathComponent("Gudeng", isDirectory: true)
             .appendingPathComponent("Rules", isDirectory: true)
 
         let bundled =

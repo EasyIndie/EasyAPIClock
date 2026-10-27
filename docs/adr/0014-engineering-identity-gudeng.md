@@ -29,22 +29,21 @@
 - 规则 JSON 结构、manifest 字段、通知分类语义与提醒策略。
 - 历史记录：`docs/handoff/` 原始交接包、既有 ADR、`docs/design/verification-*` 证据与 `CHANGELOG` 历史条目保留旧名，作为事实记录，不追改。
 
-### 迁移
+### 不做旧数据兼容
 
-- 偏好：读取 `gudeng.preferences.v1`；缺失时回退读取 `liangwen.preferences.v1`，成功解码后写入新键，并保留旧键以支持回滚。
-- 已安装规则：启动时若 `Application Support/Gudeng` 不存在且旧目录 `Application Support/LiangWen` 存在，整体移动；移动失败则复制，避免丢失已校验的下载包。
-- 规则源：优先 `GudengRuleSourceBaseURL` / `GUDENG_RULE_SOURCE`，缺失时回退旧键，覆盖已发布的 v0.1.1 Info.plist。
-- 通知线程标识改为 `gudeng.price-transition`；它只影响系统分组，不参与去重或迁移。
+MVP 尚未对外发布，当前构建就是第一版。因此不实现旧键回退、目录迁移或旧配置键兼容：首次运行直接写入 `gudeng.preferences.v1` 并创建 `Application Support/Gudeng`。发布后再按正常版本演进原则处理偏好、规则目录与配置键的兼容。
+
+### 从第一版起固定的标识
+
+- 通知请求 ID 前缀 `lw.`、动作 `lw.stop`、分类 `lw.strong`、`userInfo` 键 `lw.eventID` 自第一版起就作为稳定协议标识使用，与模块名无关；后续如需改动必须提供迁移。
 
 ## 后果
 
 - 贡献者使用 `Packages/Gudeng`、`gudeng-rules`、`GudengClock.xcodeproj` 与 `Gudeng*` target；CI、脚本、Dependabot 与模块边界检查同步更新。
-- 升级用户保留提醒强度、提前提醒与已安装规则；通知 ID 不变，不会产生孤儿 pending。
+- 开发机或测试安装中遗留的旧容器数据不迁移；需要干净状态时删除对应容器即可。
 - 旧 ADR 与归档文档继续使用历史名称，引用新实现时以本 ADR 和当前架构文档为准。
 
 ## 验证
 
-- `PreferencesMigrationTests`：旧键读取、写入新键、新键优先、空存储返回 nil。
-- `RuleStorageMigrationTests`：旧目录整体迁移、已有新目录时不覆盖。
-- `RuleSourceConfigurationTests`：旧 plist/env 键回退、新键优先。
 - `make check` 通过；`GudengMac.app` 以 `com.easyindie.easyapiclock`、最低 macOS 13 构建并启动。
+- 改名后首次启动使用默认偏好与内置规则，菜单栏状态正常。

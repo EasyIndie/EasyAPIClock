@@ -1,4 +1,3 @@
-@testable import GudengCore
 @testable import GudengRuntime
 import Foundation
 import Testing
@@ -81,48 +80,4 @@ private final class TestLoginItemService: LoginItemManaging {
         state = enabled ? .requiresApproval : .disabled
     }
     func openSettings() {}
-}
-
-@MainActor
-@Suite("偏好键迁移")
-struct PreferencesMigrationTests {
-    private func makeDefaults() throws -> (UserDefaults, String) {
-        let name = "gudeng.tests.preferences.\(UUID().uuidString)"
-        let defaults = try #require(UserDefaults(suiteName: name))
-        defaults.removePersistentDomain(forName: name)
-        return (defaults, name)
-    }
-
-    @Test("旧 liangwen 偏好键读取后写入新键")
-    func migratesLegacyKey() throws {
-        let (defaults, name) = try makeDefaults()
-        defer { defaults.removePersistentDomain(forName: name) }
-        let legacy = UserPreferences(intensity: .strong, earlyReminderEnabled: true)
-        defaults.set(try JSONEncoder().encode(legacy), forKey: UserDefaultsPreferences.legacyKey)
-
-        let store = UserDefaultsPreferences(defaults: defaults)
-        #expect(store.load() == legacy)
-        #expect(defaults.data(forKey: UserDefaultsPreferences.defaultKey) != nil)
-        // The legacy value stays for rollback.
-        #expect(defaults.data(forKey: UserDefaultsPreferences.legacyKey) != nil)
-    }
-
-    @Test("新键优先，旧键不再覆盖")
-    func currentKeyWins() throws {
-        let (defaults, name) = try makeDefaults()
-        defer { defaults.removePersistentDomain(forName: name) }
-        let legacy = UserPreferences(intensity: .medium, earlyReminderEnabled: false)
-        let current = UserPreferences(intensity: .strong, earlyReminderEnabled: true)
-        defaults.set(try JSONEncoder().encode(legacy), forKey: UserDefaultsPreferences.legacyKey)
-        defaults.set(try JSONEncoder().encode(current), forKey: UserDefaultsPreferences.defaultKey)
-
-        #expect(UserDefaultsPreferences(defaults: defaults).load() == current)
-    }
-
-    @Test("没有偏好时返回空，由策略默认值接管")
-    func emptyStore() throws {
-        let (defaults, name) = try makeDefaults()
-        defer { defaults.removePersistentDomain(forName: name) }
-        #expect(UserDefaultsPreferences(defaults: defaults).load() == nil)
-    }
 }

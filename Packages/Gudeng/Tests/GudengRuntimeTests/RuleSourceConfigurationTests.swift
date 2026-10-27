@@ -34,31 +34,4 @@ struct RuleSourceConfigurationTests {
         #expect(local.baseURL == URL(string: "http://localhost:8080/Rules"))
     }
 
-    @Test("改名前的配置键仍可读取，新键优先")
-    func legacyConfigurationKeys() {
-        let legacyPlist = RuleSourceConfiguration.resolve(
-            infoDictionary: [
-                RuleSourceConfiguration.legacyInfoPlistKey: "https://legacy.example.com/rules"
-            ],
-            environment: [:]
-        )
-        #expect(legacyPlist.baseURL == URL(string: "https://legacy.example.com/rules"))
-
-        let legacyEnvironment = RuleSourceConfiguration.resolve(
-            infoDictionary: [:],
-            environment: [
-                RuleSourceConfiguration.legacyEnvironmentKey: "https://legacy-env.example.com/rules"
-            ]
-        )
-        #expect(legacyEnvironment.baseURL == URL(string: "https://legacy-env.example.com/rules"))
-
-        let prefersCurrent = RuleSourceConfiguration.resolve(
-            infoDictionary: [
-                RuleSourceConfiguration.legacyInfoPlistKey: "https://legacy.example.com/rules",
-                RuleSourceConfiguration.infoPlistKey: "https://current.example.com/rules",
-            ],
-            environment: [:]
-        )
-        #expect(prefersCurrent.baseURL == URL(string: "https://current.example.com/rules"))
-    }
 }

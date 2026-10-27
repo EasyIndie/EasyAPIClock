@@ -7,9 +7,6 @@ import Foundation
 public struct RuleSourceConfiguration: Sendable {
     public static let infoPlistKey = "GudengRuleSourceBaseURL"
     public static let environmentKey = "GUDENG_RULE_SOURCE"
-    /// Read-only fallbacks for builds and configs created before the rename.
-    public static let legacyInfoPlistKey = "LiangWenRuleSourceBaseURL"
-    public static let legacyEnvironmentKey = "LIANGWEN_RULE_SOURCE"
 
     public let baseURL: URL?
     public let rawValue: String?
@@ -23,12 +20,8 @@ public struct RuleSourceConfiguration: Sendable {
         infoDictionary: [String: Any]? = Bundle.main.infoDictionary,
         environment: [String: String] = ProcessInfo.processInfo.environment
     ) -> RuleSourceConfiguration {
-        let raw =
-            (environment[environmentKey]
-            ?? environment[legacyEnvironmentKey]
-            ?? infoDictionary?[infoPlistKey] as? String
-            ?? infoDictionary?[legacyInfoPlistKey] as? String
-            ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let raw = (environment[environmentKey] ?? infoDictionary?[infoPlistKey] as? String ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !raw.isEmpty, !raw.contains("OWNER") else {
             return RuleSourceConfiguration(baseURL: nil, rawValue: raw)
         }

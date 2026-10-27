@@ -159,7 +159,7 @@ Rules/                       唯一规则数据源
 - XcodeGen 2.46.0 从 `project.yml` 生成两个应用工程；`.xcodeproj` 不提交。
 - 版本固定在 `.xcodegen-version`；`Scripts/install-xcodegen.sh` 下载官方 universal release（含 `SettingPresets`）并校验 SHA-256；`make doctor` 检查工具链。
 - `Rules/` 以 folder reference 原样复制到两个 app bundle。
-- 工程标识统一为 `Gudeng`；偏好键、已安装规则目录与规则源配置在升级时迁移，Bundle ID 与 `lw.` 通知协议 ID 不变。见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。
+- 工程标识统一为 `Gudeng`；MVP 未发布，首版直接使用新偏好键与规则目录，不做旧数据兼容；Bundle ID 与 `lw.` 通知协议 ID 保持不变。见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。
 - 详见 [ADR-0002](../adr/0002-xcodegen.md)。
 
 ## 改动放在哪里
