@@ -12,7 +12,7 @@ public struct MenuBarStatusLabel: View {
     }
 
     public var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 3) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             statusImage
                 .accessibilityHidden(true)
             Text(ClockText.menuBarTitle(for: model.snapshot, now: model.now))

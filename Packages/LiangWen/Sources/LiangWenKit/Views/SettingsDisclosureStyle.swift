@@ -7,7 +7,7 @@ struct SettingsDisclosureStyle: DisclosureGroupStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
-                withAnimation(animations && !reduceMotion ? .spring(response: 0.28, dampingFraction: 0.9) : nil) {
+                withAnimation(animations && !reduceMotion ? .easeInOut(duration: 0.16) : nil) {
                     configuration.isExpanded.toggle()
                 }
             } label: {
@@ -32,7 +32,7 @@ struct SettingsDisclosureStyle: DisclosureGroupStyle {
                 configuration.content
                     .padding(.top, 4)
                     .padding(.bottom, 8)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .transition(.opacity)
             }
         }
     }
