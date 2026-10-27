@@ -69,7 +69,7 @@ struct SettingsSegments: View {
 
                 init(selection: Binding<Int>) { self.selection = selection }
 
-                @objc func select(_ sender: NSSegmentedControl) {
+                @MainActor @objc func select(_ sender: NSSegmentedControl) {
                     selection.wrappedValue = sender.selectedSegment
                 }
             }
