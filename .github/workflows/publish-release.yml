@@ -65,7 +65,7 @@ jobs:
       kit_ref: 12da09aa1282f0e14d6d03333e8540778950b73c
       checkout_ref: v${{ needs.prepare.outputs.version }}
       app: EasyAPIClock
-      bundle_id: app.liangwen.mac
+      bundle_id: com.easyindie.easyapiclock
       version: ${{ needs.prepare.outputs.version }}
       build_number: ${{ needs.prepare.outputs.build }}
       artifact: .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app
@@ -99,6 +99,8 @@ jobs:
 
           ### 签名与公证
           此版本使用 Developer ID 签名，通过 Apple 公证并完成 staple。manifest 记录应用版本、build、签名及公证状态；SHA-256 文件可在下载目录直接校验。
+
+          本版 Bundle ID 为 `com.easyindie.easyapiclock`；v0.1.0 使用旧标识。系统偏好、通知授权和沙盒数据不会从旧标识自动迁移。
 
           社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
           EOF

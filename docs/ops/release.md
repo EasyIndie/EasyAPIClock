@@ -16,12 +16,12 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 
 ## 2. Bundle ID 与团队
 
-仓库默认使用占位 Bundle ID：
+当前为 EasyIndie/EasyAPIClock 选择的 Bundle ID：
 
-- macOS：`app.liangwen.mac`
-- iOS：`app.liangwen.ios`
+- macOS：`com.easyindie.easyapiclock`
+- iOS：`com.easyindie.easyapiclock.ios`
 
-品牌显示名为「谷蹬」，副标题为「DeepSeek API 峰谷钟点提醒」。Bundle ID 仍是工程占位值，上架前须按开发者实际控制的域名确认唯一标识。
+品牌显示名为「谷蹬」，副标题为「DeepSeek API 峰谷钟点提醒」。Bundle ID 不需要与显示名或仓库名完全相同；提交 App Store Connect 前，须确认 EasyIndie 的 Apple 开发团队可注册这些唯一标识。
 
 正式发布前改为你拥有控制权的反向域名，并同步：
 
@@ -30,7 +30,7 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 - 截图、README 与 issue 模板中的路径
 - 规则更新源（`project.yml` 的 `LiangWenRuleSourceBaseURL`；fork 必须改）
 
-在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 证书提交到仓库。
+本次 0.1.1 公证发布将 Bundle ID 从 `app.liangwen.*` 切换到 EasyIndie 前缀；偏好、通知授权及沙盒容器不会自动从 v0.1.0 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
 
 ## 3. 图标与资源
 

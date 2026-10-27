@@ -28,7 +28,7 @@ public final class ClockSession {
     private var engine: ClockEngine
     private var planSignature = ""
     private var didPrepare = false
-    private let logger = Logger(subsystem: "app.liangwen", category: "clock")
+    private let logger = Logger(subsystem: "com.easyindie.easyapiclock", category: "clock")
 
     private var observers: [UUID: @MainActor (ClockSessionState) -> Void] = [:]
 

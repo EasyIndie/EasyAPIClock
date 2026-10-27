@@ -8,6 +8,7 @@
 
 - macOS 发布 ZIP 改为 Developer ID 签名、Apple 公证并 staple；通过 EasyRelease 共享工作流发布。
 - 将应用版本与 build 号传入 manifest，记录为 0.1.1 / 3。
+- 将 Bundle ID 从 `app.liangwen.*` 更换为 `com.easyindie.easyapiclock` 系列，移除旧品牌标识。
 
 ## [Unreleased]
 

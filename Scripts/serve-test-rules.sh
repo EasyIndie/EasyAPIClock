@@ -199,7 +199,7 @@ echo "  LIANGWEN_RULE_SOURCE=http://127.0.0.1:$PORT \"$APP/Contents/MacOS/LiangW
 echo "在设置中点击「检查更新」，安装测试包后等待窗口切换。"
 echo
 echo "测试结束后清理本地规则，回退内置规则："
-echo "  rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\\ Support/LiangWen/Rules/active"
+echo "  rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\\ Support/LiangWen/Rules/active"
 
 if [[ "$SERVE" == "0" ]]; then
   exit 0

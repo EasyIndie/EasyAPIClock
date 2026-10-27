@@ -170,7 +170,7 @@ make rules-publish           # 校验 + 推送到 rules 分支
 **本地**：删除 active 目录，应用回退内置规则：
 
 ```bash
-rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
 ```
 
 **紧急**：如果错误包已经发布，尽快准备一个 `publishedAt` 更新的修正包；不要在 `rules` 分支上手工删除文件，下一次发布会覆盖，且无法保证客户端看到一致状态。

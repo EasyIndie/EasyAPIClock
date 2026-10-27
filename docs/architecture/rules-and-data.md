@@ -210,7 +210,7 @@ GET <base>/manifest.json
 
 ```bash
 # 沙盒应用
-rm -rf ~/Library/Containers/app.liangwen.mac/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
 # 非沙盒开发构建
 rm -rf ~/Library/Application\ Support/LiangWen/Rules/active
 ```

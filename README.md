@@ -54,7 +54,7 @@
 
 本地安装位置使用 `/Applications/谷蹬.app`（本次开发机已完成安装）。在Finder的“应用程序”中双击“谷蹬”即可启动；它只在菜单栏显示入口，不打开常驻窗口或Dock窗口。收起面板时点击菜单栏图标重开；主面板右下电源图标用于退出，退出后从“应用程序”重新启动。对外下载入口为[最新 GitHub Release](https://github.com/EasyIndie/EasyAPIClock/releases/latest)。
 
-开发构建放在隐藏的.build目录，不是日常入口。本机安装版采用已有 Developer ID 做本地签名。公开最新 Release 采用 Developer ID 签名并经过 Apple 公证；旧版 v0.1.0 为 ad-hoc 签名，可能被 Gatekeeper 拦截。
+开发构建放在隐藏的.build目录，不是日常入口。本机安装版采用已有 Developer ID 做本地签名。公开最新 Release 采用 Developer ID 签名并经过 Apple 公证；v0.1.1 使用新的 Bundle ID，v0.1.0 则为 ad-hoc 签名，可能被 Gatekeeper 拦截，且旧版偏好和通知授权不会自动迁移。
 
 ## 快速开始
 

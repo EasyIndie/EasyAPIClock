@@ -1,7 +1,7 @@
 name: LiangWenClock
 
 options:
-  bundleIdPrefix: app.liangwen
+  bundleIdPrefix: com.easyindie.easyapiclock
   deploymentTarget:
     macOS: "13.0"
     iOS: "17.0"
@@ -65,7 +65,7 @@ targets:
         LiangWenRuleSourceBaseURL: "https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.liangwen.mac
+        PRODUCT_BUNDLE_IDENTIFIER: com.easyindie.easyapiclock
         PRODUCT_NAME: LiangWenMac
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: YES
@@ -99,7 +99,7 @@ targets:
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.liangwen.ios
+        PRODUCT_BUNDLE_IDENTIFIER: com.easyindie.easyapiclock.ios
         PRODUCT_NAME: LiangWeniOS
         TARGETED_DEVICE_FAMILY: "1,2"
         ENABLE_HARDENED_RUNTIME: YES
