@@ -21,7 +21,7 @@
 
 - [x] **2026-10-24 macOS 27 真机初验**：完成界面、周末状态、设置、规则更新/失败回退、退出、偏好持久化与通知授权拒绝路径；记录见 `docs/ops/platform-validation.md`。
 - [ ] **真实设备通知验证**：在 macOS 14/15 与当前系统上记录权限允许、通知投递、Focus、静音、睡眠唤醒、退出应用、强提醒停止的结果。
-  - 现状：2026-10-28 在 macOS 27.0.1 arm64 完成真实峰切换的中等横幅、强提醒 30 秒重复、「停止提醒」、退出后仍送达与重启不补发；系统声音 enabled 但未取得实际听感确认；Focus/静音、睡眠唤醒、macOS 14/15 与 macOS 13 arm64 仍待验。证据见 `docs/ops/platform-validation.md`。
+  - 现状：2026-10-28 在 macOS 27.0.1 arm64 用本地 DMG 安装的 0.1.1 完成真实峰切换的中等横幅、强提醒 30 秒重复、「停止提醒」、退出后仍送达、重启不重放与偏好持久化；系统声音 enabled 但未取得实际听感确认；Focus/静音、睡眠唤醒、macOS 14/15 与 macOS 13 arm64 仍待验。证据见 `docs/ops/platform-validation.md`。
   - 验收：每个场景有“通过/失败/受限”与证据；失败项有 issue 或产品降级说明。
 - [x] **Developer ID 签名**：`package-mac` 现在先构建未签名产物，再手动 Developer ID 签名并加安全时间戳；生成通用二进制 zip/dmg。
   - 验收：`codesign --verify` 通过；`Authority=Developer ID Application`、`TeamIdentifier=2N62934Y28`、`Timestamp` 存在。
@@ -45,7 +45,7 @@
   - 验收：macOS 13 上构建并实测核心菜单栏、设置、登录启动与通知路径；Release 仍同时包含 `arm64` 与 `x86_64`，通过架构断言并验证两种架构可启动。现有 Release 已配置通用二进制，需确认不回归；Debug 按当前架构构建策略维持单架构。
   - 已实施：ClockModel/登录项改用Combine发布，全部消费视图显式订阅，嵌套登录行单独观察；project.yml与SwiftPM均为13.0，iOS17保持不变。
   - 不在范围：不改 iOS 最低版本、不改当前界面设计；macOS13 arm64、登录启动与通知等矩阵未完成前不关闭本项。
-  - 2026-10-28：本机 macOS 27 arm64 已用 13.0 目标构建并通过真实通知验收；`pro` 仅提供 13.7.8 Intel，无法代替 arm64 旧系统真机证据。
+  - 2026-10-28：本机 macOS 27 arm64 已用 13.0 目标构建并通过真实通知验收；0.1.1 本地包在 `pro`（13.7.8 Intel）解压启动、菜单栏正常，但控制台锁屏未做面板/通知操作；`pro` 无法代替 arm64 旧系统真机证据。
 - [ ] **2027 节假日日历**：官方安排发布后新增 `calendar-2027.json`，更新 coverage 与 manifest；补测试。
 - [ ] **规则包数字签名**：Ed25519（CryptoKit）签名 + 公钥内置，解决 SHA-256 无法防篡改源的问题；写 ADR 并更新 runbook。
 - [ ] **可访问性审计**：已补充设置按钮/强度选择器/检查更新的显式标签；VoiceOver 朗读、对比度、动态字体、键盘操作仍需真机记录。

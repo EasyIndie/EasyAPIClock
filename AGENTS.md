@@ -177,7 +177,7 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 
 ## 本机安装验收入口（2026-10-28 更新）
 
-2026-10-28 已清理旧安装与旧数据：删除 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器 `~/Library/Containers/app.liangwen.mac`、`~/Library/Application Scripts/app.liangwen.mac` 与 `dist/` 中的旧 v0.1.0 产物。当前本机没有安装副本。
+2026-10-28 已清理旧安装与旧数据：删除旧 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器与旧 dist 产物。随后用 `make package-mac` 的 0.1.1 ad-hoc DMG 重新安装到 `/Applications/谷蹬.app`；当前安装版未公证、未对外发布。
 
 后续首个 MVP 安装时使用当前签名构建，安装后从 `/Applications/谷蹬.app` 启动并据此验收；源码变更不会自动更新该副本，更新前退出实例再替换。不要把本机安装等同对外发布授权。
 

@@ -58,7 +58,7 @@ git log -1 --oneline --decorate
 
 - 最低提交门槛是 `make check`；不要为通过检查放宽规则校验，也不要把生成的 `.xcodeproj`、`Build/Generated/`、`.build/`、无依赖时的 `Package.resolved` 提交。
 - 修改提醒前读 `docs/architecture/reminders.md`；系统通知、登录项、Focus、睡眠等行为必须如实记录平台、版本、权限、结果和证据路径。
-- 本机旧安装 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID）与旧容器、Application Scripts、`dist/` 旧产物已于 2026-10-28 删除，当前没有本机安装副本；后续安装使用当前签名构建。源码变更不会自动更新副本，更新前先退出实例。
+- 本机旧安装 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID）与旧容器、Application Scripts、`dist/` 旧产物已于 2026-10-28 删除，当前已用 0.1.1 本地 ad-hoc DMG 安装到 `/Applications/谷蹬.app`。源码变更不会自动更新副本，更新前先退出实例。
 - 之前用户明确允许用 SSH `pro` 做 macOS 13 真机验收，并允许 AppleScript/System Events 自动展开面板；若继续做 UI 自动化，应仅操作谷蹬相关 UI，保留原系统偏好，测试后恢复临时改动。
 - 用户要求先验收并记录问题、集中处理；本次交接只记录已知状态，不把待验收问题伪装为已修复。
 - 公开发布、公证、上传规则包等外部副作用必须遵循 `AGENTS.md` 与 `docs/ops/release.md` 的授权约束。当前 release workflow 已被配置，不代表每次改动都获准发布。
