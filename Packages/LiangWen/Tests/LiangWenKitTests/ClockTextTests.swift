@@ -128,6 +128,16 @@ struct ClockTextTests {
         #expect(ClockText.lastAutomaticAttemptText(date) == "上次尝试：2026-10-27 07:15 · 北京时间")
     }
 
+    @Test("规则检查短结果区分空闲、成功与错误，详细信息留在详情")
+    func ruleUpdateSummary() {
+        #expect(ClockText.ruleUpdateSummary(for: .idle).isEmpty)
+        #expect(ClockText.ruleUpdateSummary(for: .checking).isEmpty)
+        #expect(ClockText.ruleUpdateSummary(for: .upToDate("2026.10.23")) == "已是最新")
+        #expect(ClockText.ruleUpdateSummary(for: .updated("future")) == "已下载规则")
+        #expect(ClockText.ruleUpdateSummary(for: .notConfigured) == "未配置更新源")
+        #expect(ClockText.ruleUpdateSummary(for: .failed("long detailed error")) == "检查失败")
+    }
+
     @Test("时长短语")
     func durationPhrases() {
         #expect(ClockText.durationPhrase(7200) == "2 小时")

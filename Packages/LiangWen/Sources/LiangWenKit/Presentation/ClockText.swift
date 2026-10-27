@@ -13,6 +13,20 @@ public enum ClockText {
     public static let ruleUpdateTitle = "检查规则更新"
     public static let ruleCheckingTitle = "正在检查…"
     public static let ruleUpdateHint = "从规则源检查并安装新版本"
+    public static let ruleResultHint = "查看完整规则检查结果"
+    public static let groupExpanded = "已展开"
+    public static let groupCollapsed = "已折叠"
+    public static let groupToggleHint = "点击整行展开或折叠"
+    public static func ruleUpdateSummary(for state: UpdateState) -> String {
+        switch state {
+        case .idle, .checking: ""
+        case .notConfigured: "未配置更新源"
+        case .upToDate: "已是最新"
+        case .updated: "已下载规则"
+        case .failed: "检查失败"
+        }
+    }
+
     public static let quitTitle = "退出谷蹬"
     public static let quitHint = "退出应用后不再重新排定提醒"
     public static let rulesTitle = "规则信息"

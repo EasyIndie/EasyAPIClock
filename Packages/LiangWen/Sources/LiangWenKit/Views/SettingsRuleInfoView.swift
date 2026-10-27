@@ -22,7 +22,6 @@ struct SettingsRuleInfoView: View {
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 6)
             } label: {
                 HStack {
                     Text(ClockText.rulesTitle)
@@ -31,7 +30,6 @@ struct SettingsRuleInfoView: View {
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                 }
-                .frame(minHeight: 24)
             }
             // Problems remain visible even while the metadata is collapsed.
             if let issue = model.snapshot.issue {

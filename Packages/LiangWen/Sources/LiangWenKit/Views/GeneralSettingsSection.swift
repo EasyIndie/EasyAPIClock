@@ -33,9 +33,7 @@ struct GeneralSettingsSection: View {
                             .fixedSize(horizontal: false, vertical: true)
                     #endif
                 }
-                .padding(.top, 4)
             }
-            .frame(minHeight: 24)
             if !expanded {
                 if let error = loginItem.errorMessage {
                     Text(error).font(.system(size: 11)).foregroundStyle(.orange)

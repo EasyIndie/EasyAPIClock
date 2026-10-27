@@ -22,7 +22,7 @@ make check                                    # 规则 + 测试 + 格式 + 双�
 | 强提醒保留 | 刷新时不取消进行中的重复，窗口外/非强提醒移除 | `StrongRepeatRetentionTests` |
 | 界面文案 | 倒计时、菜单栏、日期摘要、通知文案 | `ClockTextTests` / `ReminderCopyTests` |
 
-当前共 **76** 个测试，全部为 Swift Testing。
+当前共 **77** 个测试，全部为 Swift Testing。
 
 ## 确定性规则
 
@@ -177,3 +177,5 @@ ObservationCompatibilityTests覆盖$state同步发布、多个界面适配器、
 SettingsSegments原生适配器在实际窗口截图中验证默认强度和展开显示模式的bezel右缘均627px、边界差0px，AX三段50pt；外观回调及恢复结果以precision-alignment/README为准。
 
 安装版设置补验：新增notFound状态映射、自动尝试记录跨实例/失败/禁用/手动隔离、北京时间文案三项固定测试。测试不注册真实系统服务、不访问网络；实际登录注册/预览记录见2026-10-27 installed-features证据，重新登录另行验证。
+
+设置交互/间距补验：新增规则检查短结果各状态文案测试；实际整行标题和右侧空白热区、三组32pt高度/中心步长、同排结果详情、主面板power退出与Finder重启见settings-rhythm证据。几何交互不以镜像实现的单元测试代替实点。

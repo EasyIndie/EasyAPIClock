@@ -41,7 +41,7 @@ public struct ClockPanelView: View {
                     .layoutPriority(1)
                     Divider().padding(.horizontal, 20)
                     ScrollView {
-                        SettingsPanelContent(model: model, onQuit: onQuit)
+                        SettingsPanelContent(model: model)
                     }
                     .scrollIndicators(.visible)
                     .frame(height: 275)
@@ -70,6 +70,19 @@ public struct ClockPanelView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        .help(ClockText.settingsTitle)
+                        if let onQuit {
+                            Button(action: onQuit) {
+                                Label(ClockText.quitTitle, systemImage: "power")
+                                    .labelStyle(.iconOnly)
+                                    .font(.system(size: 17))
+                                    .frame(width: 32, height: 36)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .help(ClockText.quitTitle)
+                            .accessibilityHint(ClockText.quitHint)
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)

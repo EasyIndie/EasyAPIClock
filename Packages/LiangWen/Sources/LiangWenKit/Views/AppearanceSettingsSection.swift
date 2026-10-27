@@ -26,9 +26,7 @@ struct AppearanceSettingsSection: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.top, 4)
         }
-        .frame(minHeight: 24)
     }
 
     private var appearanceBinding: Binding<Int> {
