@@ -165,7 +165,7 @@ shasum -a 256 .build/Gudeng-0.1.0.dmg
 
 ## 8. GitHub Release
 
-公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease reusable workflow（固定到 commit `12da09aa1282f0e14d6d03333e8540778950b73c`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后使用应用 entitlements 进行 Developer ID 签名、提交 app ZIP 公证并 staple app，生成包含应用版本/build 的 manifest 与 SHA-256 后上传 GitHub Release。下载 ZIP 后解压，将「谷蹬」拖到「应用程序」文件夹。SHA-256 sidecar 使用产物文件名，可在下载目录直接校验。通过 `secrets: inherit` 传递 EasyIndie 组织共享凭据；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
+公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease reusable workflow（固定到 commit `1b2ccaec5bec0a557e86e11e28c9459a0b7c5633`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后使用应用 entitlements 进行 Developer ID 签名、提交 app ZIP 公证并 staple app，生成包含应用版本/build 的 manifest 与 SHA-256 后上传 GitHub Release。下载 ZIP 后解压，将「谷蹬」拖到「应用程序」文件夹。SHA-256 sidecar 使用产物文件名，可在下载目录直接校验。通过 `secrets: inherit` 传递 EasyIndie 组织共享凭据；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
 
 当前版本发布的是包含已签名、公证并 staple 的 app 的 ZIP。发布前确认 `CHANGELOG.md`、规则来源/覆盖日期、支持系统版本与通知限制准确。Release 文案会说明安装方式、签名、公证和 manifest 校验状态。
 
