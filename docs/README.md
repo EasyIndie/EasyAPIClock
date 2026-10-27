@@ -24,6 +24,7 @@ product/
   glossary.md          术语
 architecture/
   overview.md          分层、模块、数据流、生命周期
+  shared-sdk.md        共享业务SDK边界、接入与设备适配
   rules-and-data.md    规则 JSON、manifest、完整性、安装与更新
   time-and-calendar.md 北京时间、窗口、覆盖、切换算法
   reminders.md         提醒策略、计划、去重、平台限制
@@ -38,10 +39,12 @@ adr/
   0007-github-rules-branch.md
   0008-product-name-gudeng.md
   0009-settings-services.md
-  0010-macos-13-observation-compatibility.md  提议，待实施
+  0010-macos-13-observation-compatibility.md  已实施，旧系统待验
+  0011-shared-application-runtime.md  共享会话与界面适配
 ops/
   release.md           签名、公证、发布检查
   macos-13-compatibility.md macOS13编译审计、迁移方案与验收门槛
+  mac-app-store-readiness.md Mac App Store要求初查与项目差距
   rule-update-runbook.md 规则更新操作手册
   platform-validation.md 真实设备验证矩阵（待执行）
 design/
@@ -80,3 +83,8 @@ roadmap.md             里程碑、开放问题、明确不做
 | 时间语义 | `architecture/time-and-calendar.md`、测试 |
 | 通知行为 | `architecture/reminders.md`、`ops/platform-validation.md` |
 | 构建 / 发布 | `architecture/overview.md`、`ops/release.md`、`README.md` |
+
+- [官方价格自动化](ops/official-pricing-automation.md)
+- [ADR-0012 官方来源观察](adr/0012-official-pricing-observation.md)
+- [ADR-0013 品牌与动效](adr/0013-brand-and-controlled-motion.md)
+- [本轮视觉规范](design/brand-refresh-2026-10-27/README.md)

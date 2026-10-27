@@ -1,3 +1,4 @@
+import LiangWenRuntime
 import Foundation
 import LiangWenCore
 
@@ -6,12 +7,34 @@ import LiangWenCore
 /// These functions are deliberately free of SwiftUI so they can be unit tested.
 /// All times are rendered in Beijing time, matching the pricing rules.
 public enum ClockText {
+    public static let brandTitle = "DeepSeek API"
+    public static let brandCaption = "峰谷价格提醒 · 北京时间"
+    public static let communityNotice = "社区工具，与 DeepSeek 官方无隶属关系"
+    public static let versionsLabel = "价格 / 日历"
+    public static let coverageLabel = "覆盖日期"
+    public static let originLabel = "规则来源"
+    public static let priceCheckLabel = "价格核对"
+    public static let calendarCheckLabel = "日期核对"
     public static let reminderIntensityTitle = "提醒强度"
     public static let notificationDisabledTitle = "系统通知未开启"
     public static let notificationSettingsTitle = "打开系统设置"
     public static let ruleUpdateTitle = "检查规则更新"
     public static let ruleCheckingTitle = "正在检查…"
     public static let ruleUpdateHint = "从规则源检查并安装新版本"
+    public static let ruleResultHint = "查看完整规则检查结果"
+    public static let groupExpanded = "已展开"
+    public static let groupCollapsed = "已折叠"
+    public static let groupToggleHint = "点击整行展开或折叠"
+    public static func ruleUpdateSummary(for state: UpdateState) -> String {
+        switch state {
+        case .idle, .checking: ""
+        case .notConfigured: "未配置更新源"
+        case .upToDate: "已是最新"
+        case .updated: "已下载规则"
+        case .failed: "检查失败"
+        }
+    }
+
     public static let quitTitle = "退出谷蹬"
     public static let quitHint = "退出应用后不再重新排定提醒"
     public static let rulesTitle = "规则信息"
@@ -41,9 +64,16 @@ public enum ClockText {
 
     public static let previewTitle = "预览提醒"
     public static let previewStop = "立即停止预览"
-    public static var previewExplanation: String {
-        let plan = ReminderPreviewPlan(intensity: .strong)
-        return "测试最多 \(plan.offsets.count) 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+    public static func previewExplanation(for intensity: ReminderIntensity) -> String {
+        let plan = ReminderPreviewPlan(intensity: intensity)
+        switch intensity {
+        case .off:
+            return "请先开启提醒，再预览通知。"
+        case .medium:
+            return "测试 1 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+        case .strong:
+            return "测试最多 \(plan.offsets.count) 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+        }
     }
     public static let previewNotificationTitle = "谷蹬 · 测试提醒"
     public static let previewNotificationBody = "这是提醒预览，不表示价格已切换。"
@@ -60,6 +90,11 @@ public enum ClockText {
         "开启后自动检查规则，每 \(Int(AutomaticUpdateSchedule.interval / 3600)) 小时最多一次；失败保留本地有效规则。"
     }
 
+    public static func lastAutomaticAttemptText(_ date: Date?) -> String {
+        guard let date else { return "尚无自动检查记录" }
+        return "上次尝试：\(checkedAtText(date)) \(clockText(date)) · 北京时间"
+    }
+
     public static let settingsTitle = "设置"
     public static let backTitle = "返回主面板"
     public static let remindersTitle = "提醒"
@@ -69,7 +104,8 @@ public enum ClockText {
     public static let systemAppearance = "系统"
     public static let lightAppearance = "浅色"
     public static let darkAppearance = "深色"
-    public static let animationsTitle = "动效"
+    public static let animationsTitle = "界面动效"
+    public static let animationsExplanation = "控制入场、数字变化、页面切换与折叠反馈；系统减少动态效果优先。"
     public static let reminderExplanation = "中等：通知与短音一次；强：有界重复，可停止。"
 
     public static func panelStateName(_ state: PriceState?) -> String {
@@ -82,7 +118,7 @@ public enum ClockText {
 
     public static func panelCountdownLabel(for snapshot: PriceSnapshot) -> String {
         guard snapshot.nextChangeAt != nil else { return "下次切换待确认" }
-        let label = snapshot.nextChangeState == .peak ? "距峰期" : "距谷期"
+        let label = snapshot.nextChangeState == .peak ? "后进入峰期" : "后进入谷期"
         return label
     }
 
@@ -166,8 +202,8 @@ public enum ClockText {
             let hours = totalMinutes / 60
             let minutes = totalMinutes % 60
             return CountdownDisplay(
-                value: String(format: "%02d:%02d", hours, minutes),
-                unitCaption: "小时 : 分钟",
+                value: hours == 0 ? "\(minutes)分" : (minutes == 0 ? "\(hours)小时" : "\(hours)小时\(minutes)分"),
+                unitCaption: "剩余时长",
                 isExtended: false
             )
         }

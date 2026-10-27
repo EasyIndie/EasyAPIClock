@@ -1,0 +1,19 @@
+{
+  "installedPath": "/Applications/谷蹬.app",
+  "pid": 8058,
+  "notificationAuthorization": "authorized",
+  "observedDeliveredPreviewIDs": [
+    "gudeng.preview.E121D48D-2E38-4504-B489-D4C00D19FDB2.0",
+    "gudeng.preview.E121D48D-2E38-4504-B489-D4C00D19FDB2.2"
+  ],
+  "formalPendingCountsDuringPreview": [
+    7
+  ],
+  "lastPreviewPendingCount": 0,
+  "lastPreviewDeliveredCount": 0,
+  "uiResponded": true,
+  "bannerVisible": "not verified",
+  "soundAudible": "not verified",
+  "systemPermissionChanged": false,
+  "userPreferencesChanged": false
+}

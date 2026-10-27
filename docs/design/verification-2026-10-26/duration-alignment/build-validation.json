@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-26",
+  "command": "make check",
+  "result": "passed",
+  "swiftTestingTests": 73,
+  "checks": [
+    "module boundaries",
+    "bundled rules",
+    "Swift format lint",
+    "macOS Debug deployment target 13.0",
+    "iOS Debug deployment target 17.0"
+  ],
+  "runtimeHost": "macOS 27.0.1 arm64",
+  "venturaRetestForThisUIChange": false
+}

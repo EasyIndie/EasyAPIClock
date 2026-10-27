@@ -1,0 +1,29 @@
+{
+  "scope": "Opaque reference pairs only, not a claim about actual material composition",
+  "backgrounds": {
+    "light": [
+      0.96,
+      0.97,
+      1
+    ],
+    "dark": [
+      0.08,
+      0.1,
+      0.17
+    ]
+  },
+  "ratios": {
+    "brand": {
+      "light": 7.11,
+      "dark": 8.65
+    },
+    "valley": {
+      "light": 6.67,
+      "dark": 11.58
+    },
+    "peak": {
+      "light": 6.48,
+      "dark": 9.42
+    }
+  }
+}

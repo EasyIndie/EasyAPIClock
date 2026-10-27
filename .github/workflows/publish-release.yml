@@ -1,0 +1,95 @@
+name: Publish macOS Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_publish:
+        description: "Create a public GitHub Release from the main branch"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main' && inputs.confirm_publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate version and create immutable tag
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VERSION="$(awk -F '"' '/MARKETING_VERSION:/ { print $2; exit }' project.yml)"
+          BUILD="$(awk -F '"' '/CURRENT_PROJECT_VERSION:/ { print $2; exit }' project.yml)"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          TAG="v$VERSION"
+          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; increment MARKETING_VERSION before publishing again." >&2
+            exit 1
+          fi
+
+          EXISTING_SHA="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' 2>/dev/null || true)"
+          if [[ -n "$EXISTING_SHA" ]]; then
+            if [[ "$EXISTING_SHA" != "$GITHUB_SHA" ]]; then
+              echo "Tag $TAG already points to a different commit; refusing to move it." >&2
+              exit 1
+            fi
+          else
+            gh api "repos/$GITHUB_REPOSITORY/git/refs" \
+              -f ref="refs/tags/$TAG" \
+              -f sha="$GITHUB_SHA"
+          fi
+          echo "Prepared EasyAPIClock $VERSION ($BUILD) at $GITHUB_SHA"
+
+  publish:
+    needs: prepare
+    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d
+    with:
+      runs_on: macos-15
+      kit_ref: bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d
+      checkout_ref: v${{ needs.prepare.outputs.version }}
+      app: EasyAPIClock
+      bundle_id: app.liangwen.mac
+      artifact: dist/Gudeng-${{ needs.prepare.outputs.version }}.dmg
+      build_command: Scripts/install-xcodegen.sh && make check && Scripts/package-mac.sh
+      mode: adhoc
+      notarize: false
+      release: true
+      release_tag: v${{ needs.prepare.outputs.version }}
+
+  release-notes:
+    needs: [prepare, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Add Gudeng install and signing notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.prepare.outputs.version }}
+        run: |
+          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
+          ## 谷蹬 ${{ needs.prepare.outputs.version }}
+
+          DeepSeek API 峰谷钟点提醒。最低支持 macOS 13.0，提供 Apple silicon 与 Intel 通用版本。
+
+          ### 安装
+          下载 DMG，打开后将「谷蹬」拖入「应用程序」文件夹。
+
+          ### 首次打开
+          此版本使用 ad-hoc 签名，未使用 Developer ID 签名，也未经过 Apple 公证。macOS 可能会拦截首次启动。请在 Finder 中按住 Control 点击应用并选择 打开；如果系统仍阻止启动，请按系统提供的说明在系统设置 / 隐私与安全性中确认。请仅在信任此项目与下载来源时继续。
+
+          EasyRelease 同时发布产物 manifest 和 SHA-256 校验文件。社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
+          EOF
+          gh release edit "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"

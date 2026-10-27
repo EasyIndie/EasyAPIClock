@@ -20,9 +20,9 @@ printf '系统\n'
 OS_VERSION="$(sw_vers -productVersion 2>/dev/null || echo 0)"
 info "macOS $OS_VERSION ($(uname -m))"
 if [[ "${OS_VERSION%%.*}" -ge 14 ]]; then
-  ok "macOS 14+"
+  ok "开发主机 macOS 14+（应用部署目标为13.0）"
 else
-  bad "需要 macOS 14+"
+  bad "开发主机需要 macOS 14+ 和 Xcode 16+；应用部署目标为13.0"
 fi
 
 printf '\nXcode / Swift\n'

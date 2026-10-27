@@ -1,21 +1,23 @@
 import SwiftUI
 
 struct SettingsPanelContent: View {
-    let model: ClockModel
-    let onQuit: (() -> Void)?
+    @ObservedObject var model: ClockModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             ReminderSettingsSection(model: model)
-            Divider()
+            Divider().padding(.vertical, 5)
             AppearanceSettingsSection()
-            Divider()
-            GeneralSettingsSection(model: model, onQuit: onQuit)
+            GeneralSettingsSection(model: model)
+            SettingsRuleInfoView(model: model)
+            Divider().padding(.vertical, 5)
+            RuleUpdateRow(model: model)
         }
+        .disclosureGroupStyle(SettingsDisclosureStyle())
         .font(.system(size: 12))
         .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 10)
         .onAppear { model.loginItem.refresh() }
         .onDisappear { model.stopPreview() }
     }

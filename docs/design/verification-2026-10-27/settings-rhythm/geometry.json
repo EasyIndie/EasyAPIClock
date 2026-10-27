@@ -1,0 +1,137 @@
+{
+  "unit": "AX points",
+  "headerFrames": [
+    {
+      "index": 14,
+      "role": "AXDisclosureTriangle",
+      "name": null,
+      "description": "显示三角形",
+      "value": false,
+      "position": [
+        722,
+        196
+      ],
+      "size": [
+        294,
+        32
+      ],
+      "enabled": true
+    },
+    {
+      "index": 15,
+      "role": "AXDisclosureTriangle",
+      "name": null,
+      "description": "显示三角形",
+      "value": false,
+      "position": [
+        722,
+        228
+      ],
+      "size": [
+        294,
+        32
+      ],
+      "enabled": true
+    },
+    {
+      "index": 16,
+      "role": "AXDisclosureTriangle",
+      "name": null,
+      "description": "显示三角形",
+      "value": false,
+      "position": [
+        722,
+        260
+      ],
+      "size": [
+        294,
+        32
+      ],
+      "enabled": true
+    }
+  ],
+  "headerCenterGaps": [
+    32,
+    32
+  ],
+  "hotzones": [
+    {
+      "index": 0,
+      "titleHit": {
+        "x": 680,
+        "y": 212
+      },
+      "rightHit": {
+        "x": 938,
+        "y": 212
+      },
+      "expanded": true,
+      "collapsed": false
+    },
+    {
+      "index": 1,
+      "titleHit": {
+        "x": 680,
+        "y": 244
+      },
+      "rightHit": {
+        "x": 938,
+        "y": 244
+      },
+      "expanded": true,
+      "collapsed": false
+    },
+    {
+      "index": 2,
+      "titleHit": {
+        "x": 680,
+        "y": 276
+      },
+      "rightHit": {
+        "x": 938,
+        "y": 276
+      },
+      "expanded": true,
+      "collapsed": false
+    }
+  ],
+  "updateButton": {
+    "index": 17,
+    "role": "AXButton",
+    "name": null,
+    "description": "按钮",
+    "value": null,
+    "position": [
+      650,
+      313
+    ],
+    "size": [
+      86,
+      20
+    ],
+    "enabled": true
+  },
+  "resultButton": {
+    "index": 18,
+    "role": "AXButton",
+    "name": null,
+    "description": "按钮",
+    "value": null,
+    "position": [
+      752,
+      309
+    ],
+    "size": [
+      192,
+      28
+    ],
+    "enabled": true
+  },
+  "updateCenterY": 323,
+  "resultCenterY": 323,
+  "rowBottom": 337,
+  "viewportBottom": 354,
+  "powerExit": true,
+  "reopenedPID": 21238,
+  "reopenedExecutable": "/Applications/谷蹬.app/Contents/MacOS/LiangWenMac"
+}

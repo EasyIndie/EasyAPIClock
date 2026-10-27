@@ -15,9 +15,6 @@ public struct RuleStatus: Sendable, Equatable {
     public let pendingVersion: String?
     public let installedError: String?
 
-    public var originText: String {
-        origin == .bundled ? "内置规则" : "已下载规则"
-    }
 }
 
 public enum UpdateState: Sendable, Equatable {

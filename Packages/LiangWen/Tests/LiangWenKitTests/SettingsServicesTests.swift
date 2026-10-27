@@ -1,6 +1,11 @@
+@testable import LiangWenRuntime
 import Foundation
 import Testing
 @testable import LiangWenKit
+
+#if os(macOS)
+    import ServiceManagement
+#endif
 
 @Suite("设置服务")
 struct SettingsServicesTests {
@@ -32,6 +37,17 @@ struct SettingsServicesTests {
         #expect(!restored.isDue(at: now, enabled: true))
         #expect(restored.isDue(at: now.addingTimeInterval(-60), enabled: true))
     }
+
+    #if os(macOS)
+        @Test("从未注册的主应用服务notFound不能禁用用户注册入口")
+        @MainActor
+        func unseenMainAppCanRegister() {
+            #expect(SystemLoginItemService.loginState(for: .notFound) == .disabled)
+            #expect(SystemLoginItemService.loginState(for: .notRegistered) == .disabled)
+            #expect(SystemLoginItemService.loginState(for: .enabled) == .enabled)
+            #expect(SystemLoginItemService.loginState(for: .requiresApproval) == .requiresApproval)
+        }
+    #endif
 
     @Test("登录开关以真实状态为准，注册失败不伪造成功")
     @MainActor

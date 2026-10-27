@@ -1,0 +1,285 @@
+{
+  "scale": 2,
+  "coordinate_convention": "inclusive pixel bounds, y down",
+  "menu_before": {
+    "icon_bbox_px": [
+      25,
+      8,
+      57,
+      40
+    ],
+    "han_bbox_px": [
+      66,
+      11,
+      88,
+      33
+    ],
+    "icon_center_y_px": 24.0,
+    "han_center_y_px": 22.0,
+    "icon_below_han_px": 2.0,
+    "icon_below_han_pt": 1.0
+  },
+  "menu_after": {
+    "icon_bbox_px": [
+      25,
+      6,
+      57,
+      38
+    ],
+    "han_bbox_px": [
+      66,
+      11,
+      88,
+      33
+    ],
+    "icon_center_y_px": 22.0,
+    "han_center_y_px": 22.0,
+    "icon_below_han_px": 0.0,
+    "icon_below_han_pt": 0.0
+  },
+  "settings_natural_failed": {
+    "window_size_pt": [
+      334,
+      322
+    ],
+    "content_right_inclusive_px": 627,
+    "reminder_selected_bbox_px": [
+      562,
+      118,
+      635,
+      165
+    ],
+    "reminder_right_error_px": 8,
+    "reminder_right_error_pt": 4.0,
+    "ax_groups": [
+      {
+        "role": "AXRadioGroup",
+        "label": "提醒强度",
+        "position": [
+          790,
+          91
+        ],
+        "size": [
+          129,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "关闭",
+        "position": [
+          786,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "中等",
+        "position": [
+          836,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "强",
+        "position": [
+          886,
+          91
+        ],
+        "size": [
+          37,
+          24
+        ]
+      }
+    ]
+  },
+  "settings_final": {
+    "window_size_pt": [
+      334,
+      322
+    ],
+    "content_right_inclusive_px": 627,
+    "reminder_selected_bbox_px": [
+      528,
+      118,
+      627,
+      165
+    ],
+    "reminder_right_error_px": 0,
+    "reminder_right_error_pt": 0.0,
+    "ax_groups": [
+      {
+        "role": "AXRadioGroup",
+        "label": "提醒强度",
+        "position": [
+          759,
+          91
+        ],
+        "size": [
+          150,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "关闭",
+        "position": [
+          759,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "中等",
+        "position": [
+          809,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "强",
+        "position": [
+          859,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      }
+    ]
+  },
+  "settings_expanded": {
+    "appearance_right_inclusive_px": 627,
+    "appearance_right_error_px": 0,
+    "window_size_pt": [
+      334,
+      322
+    ],
+    "content_right_inclusive_px": 627,
+    "reminder_selected_bbox_px": [
+      528,
+      118,
+      627,
+      165
+    ],
+    "reminder_right_error_px": 0,
+    "reminder_right_error_pt": 0.0,
+    "ax_groups": [
+      {
+        "role": "AXRadioGroup",
+        "label": "提醒强度",
+        "position": [
+          759,
+          91
+        ],
+        "size": [
+          150,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "关闭",
+        "position": [
+          759,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "中等",
+        "position": [
+          809,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "强",
+        "position": [
+          859,
+          91
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioGroup",
+        "label": "显示模式",
+        "position": [
+          759,
+          227
+        ],
+        "size": [
+          150,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "系统",
+        "position": [
+          759,
+          227
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "浅色",
+        "position": [
+          809,
+          227
+        ],
+        "size": [
+          50,
+          24
+        ]
+      },
+      {
+        "role": "AXRadioButton",
+        "label": "深色",
+        "position": [
+          859,
+          227
+        ],
+        "size": [
+          50,
+          24
+        ]
+      }
+    ]
+  }
+}

@@ -2,7 +2,7 @@ import SwiftUI
 import LiangWenCore
 
 public struct ClockPanelView: View {
-    private let model: ClockModel
+    @ObservedObject private var model: ClockModel
     private let onQuit: (() -> Void)?
     @State private var showingSettings = false
     @AppStorage("gudeng.appearance") private var appearance = "system"
@@ -18,6 +18,7 @@ public struct ClockPanelView: View {
 
     public var body: some View {
         ZStack {
+            PanelAmbientBackground(state: model.snapshot.state)
             if showingSettings {
                 VStack(spacing: 0) {
                     HStack {
@@ -29,7 +30,7 @@ public struct ClockPanelView: View {
                                 .frame(width: 28, height: 32)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PanelIconButtonStyle())
                         Spacer()
                         Text(ClockText.settingsTitle).font(.headline)
                         Spacer()
@@ -41,7 +42,7 @@ public struct ClockPanelView: View {
                     .layoutPriority(1)
                     Divider().padding(.horizontal, 20)
                     ScrollView {
-                        SettingsPanelContent(model: model, onQuit: onQuit)
+                        SettingsPanelContent(model: model)
                     }
                     .scrollIndicators(.visible)
                     .frame(height: 275)
@@ -49,6 +50,7 @@ public struct ClockPanelView: View {
                 }
                 .frame(width: 334, height: 322, alignment: .top)
                 .clipped()
+                .transition(.opacity)
             } else {
                 VStack(spacing: 0) {
                     MainPanelContent(model: model)
@@ -68,11 +70,25 @@ public struct ClockPanelView: View {
                                 .frame(width: 32, height: 36)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PanelIconButtonStyle())
+                        .help(ClockText.settingsTitle)
+                        if let onQuit {
+                            Button(action: onQuit) {
+                                Label(ClockText.quitTitle, systemImage: "power")
+                                    .labelStyle(.iconOnly)
+                                    .font(.system(size: 17))
+                                    .frame(width: 32, height: 36)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(PanelIconButtonStyle(destructive: true))
+                            .help(ClockText.quitTitle)
+                            .accessibilityHint(ClockText.quitHint)
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
                 }
+                .transition(.opacity)
             }
         }
         .frame(width: 334, height: 322)

@@ -1,0 +1,14 @@
+ProductName:		macOS
+ProductVersion:		13.7.8
+BuildVersion:		22H730
+x86_64
+Executable=/private/tmp/gudeng-ventura-validation/LiangWenMac.app/Contents/MacOS/LiangWenMac
+Identifier=app.liangwen.mac
+Format=app bundle with Mach-O universal (x86_64 arm64)
+CodeDirectory v=20400 size=13417 flags=0x2(adhoc) hashes=413+3 location=embedded
+Signature=adhoc
+Info.plist entries=28
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=6
+Internal requirements count=0 size=12
+95192 /tmp/gudeng-ventura-validation/LiangWenMac.app/Contents/MacOS/LiangWenMac

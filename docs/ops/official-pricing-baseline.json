@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "sourceURL": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "verifiedOn": "2026-10-27",
+  "policySHA256": "6fc45cbb139ad9ba0aa882f2ca114e099f7e4155ddcf2260b31d674d40809a08",
+  "knownPeakToValleyRatio": "2",
+  "note": "Only the verified policy paragraph is fingerprinted. Changed semantics never auto-import.",
+  "ruleSemanticsSHA256": "188f584cecd23e01ab512538e01da88124737f2b5e2d0f5064055d328af77af3"
+}

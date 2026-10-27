@@ -31,7 +31,7 @@
 9. **完整性。** 规则包必须成套校验（manifest + 三个文件 + SHA-256 + 语义校验）后才能替换；失败保留旧版本。
 10. **不扩大范围。** 不做番茄钟、账号、API Key、Token 统计、消费分析、任务管理、自动切换模型、Agent 集成、硬件配网。iOS 页面未设计，不得声称已设计完成。
 11. **不虚假承诺。** 不承诺跨时段请求锁价；不说“全部 API 费用减半”（Search/Fetch 单独计费）；不承诺覆盖专注模式、静音或系统限制。
-12. **视觉克制。** 不增加图表、完整价格表、装饰动效或常驻主窗口；正式 UI 不包含设计稿底部的演示控件。
+12. **视觉与动效。** 不增加图表、完整价格表或常驻主窗口；正式UI不包含设计稿演示控件。2026-10-27用户明确授权更生动的视觉与反馈动效（ADR-0013），但不跳秒、不闪烁菜单栏；自定义运动必须受本地开关与系统减少动态效果控制。
 
 ## 4. 命令
 
@@ -46,6 +46,7 @@ make rules-publish-dry-run  # 校验 + 检查 publishedAt，不推送
 make rules-publish    # 校验 + 发布到 rules 分支（通常由 Rules workflow 执行）
 make build-mac
 make build-mac-adhoc  # ad-hoc 签名构建，不启动
+make build-mac-universal # Release双架构及13.0部署元数据检查
 make build-ios
 make run-mac          # ad-hoc 签名并启动 macOS 应用
 make package-mac      # Release 通用二进制 + zip/dmg（ad-hoc）
@@ -55,7 +56,9 @@ make test-rules       # 只生成测试规则包
 make icon             # 重新生成 macOS AppIcon 全套尺寸
 make format           # swift format 全量格式化
 make lint             # swift format lint
-make check            # 规则校验 + 测试 + lint + 双端构建
+make check-layers     # 检查业务模块不依赖UI框架
+make test-source-monitor # 官方来源解析/候选生成的离线测试
+make check            # 分层 + 规则校验 + 测试 + lint + 双端构建
 ```
 
 `make check` 是提交前的最低门槛。CI 会重复执行这些检查。
@@ -68,12 +71,13 @@ XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh`
 
 ```
 Apps/Mac  ──┐
-Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
-                  SwiftUI/通知/偏好/安装      纯逻辑，无 SwiftUI/AppKit
+Apps/iOS  ──┴──> LiangWenKit ──> LiangWenRuntime ──> LiangWenCore
+                  UI/系统服务       共享会话/协议         纯规则逻辑
 ```
 
 - `LiangWenCore`：规则解码与校验、`ClockEngine`、`PriceComparison`、`ReminderPlanner`、`RuleBundleLoader`、`RemoteRuleUpdater`。必须保持可测试、确定性、无 UI 依赖。
-- `LiangWenKit`：`ClockModel`（@MainActor @Observable）、`AppEnvironment`、通知调度、UserDefaults 偏好、规则安装、所有 SwiftUI 视图与中文文案。
+- `LiangWenRuntime`：无UI框架的`ClockSession`、值状态、偏好/排程协议、规则仓库、预览/自动更新策略及Foundation网络适配；Core更新器必须显式注入fetcher。
+- `LiangWenKit`：基于ObservableObject/@Published的薄`ClockModel`观察适配器、`AppEnvironment`、系统通知/UserDefaults/登录项实现、SwiftUI视图与中文文案。不得把业务流程放回视图适配器。
 - `Apps/Mac`：只做应用入口、`MenuBarExtra` 场景、唤醒/改时观察。
 - `Apps/iOS`：只做最小只读外壳。不要在这里发明 iOS 交互；先补设计文档与 ADR。
 - `Rules/`：唯一规则数据源；应用通过 folder reference 打包。不要在其他地方复制规则 JSON。
@@ -165,8 +169,14 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenCore
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
 - 2026-10-24 macOS 27 已初验界面、规则更新/离线回退、退出、偏好持久化与通知授权拒绝；通知投递、强提醒、睡眠唤醒、权限允许路径与 macOS 14/15 尚待验证，见 `docs/ops/platform-validation.md`。
 - Developer ID 签名已完成；`make package-mac` 必须在 GUI 会话运行，SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。公证 profile 尚未配置。
-- Developer ID 签名后通知授权仍为 denied；权限允许路径待公证/重启或清理系统通知状态后复测。
+- 旧Developer ID构建曾返回denied；2026-10-27稳定安装版已为authorized，预览系统送达/清理已验，横幅可见、声音与完整正式矩阵仍未完成。不要据旧记录擅自清理系统通知或BTM。
 - 公证、英文界面尚未完成；应用图标、README 截图与 Developer ID 签名已完成，`make package-mac` 的默认产物是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。
+
+## 本机安装验收入口（2026-10-27）
+
+用户已要求安装，日常版本为`/Applications/谷蹬.app`，Developer ID本地签名、未公证。后续验收优先更新并从此路径启动；源码变更不会自动更新该副本。更新前退出该路径实例并备份旧版，再复制已构建/验证/同身份签名的包，避免同时启动旧开发副本。不要把本机安装等同对外发布授权。
+
+官方价格维护使用ADR-0012与docs/ops/official-pricing-automation.md。计划任务只观察；候选必须有维护者确认的摘要、生效时刻和官方依据，未知时段/模型/倍率/页面结构不能自动覆盖Rules。不得为消除告警直接改语义指纹，不从抓取时间推测生效时间，不自动合并或提升GitHub权限。

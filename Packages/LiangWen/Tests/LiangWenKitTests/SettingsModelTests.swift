@@ -1,3 +1,4 @@
+@testable import LiangWenRuntime
 import Foundation
 import Testing
 @testable import LiangWenCore
@@ -19,6 +20,60 @@ struct SettingsModelTests {
             preferences: UserPreferences(intensity: .strong, earlyReminderEnabled: true),
             repository: repository, preferencesStore: UserDefaultsPreferences(defaults: defaults),
             scheduler: scheduler, updater: updater, settingsDefaults: defaults, initialNow: now)
+    }
+
+    @Test("自动检查记录失败尝试并跨实例保留，禁用和手动检查不伪造记录")
+    func automaticAttemptReceipt() async throws {
+        let suite = "gudeng-test-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(suite)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let fetcher = FailingSettingsFetcher()
+        let updater = RemoteRuleUpdater(
+            baseURL: try #require(URL(string: "https://example.invalid/rules")), fetcher: fetcher)
+        let clock = model(root: root, defaults: defaults, scheduler: TestSettingsScheduler(), updater: updater)
+        let now = KitFixture.date("2026-10-26T08:00:00+08:00")
+        #expect(clock.lastAutomaticAttemptAt == nil)
+        clock.setAutomaticUpdatesEnabled(false)
+        await clock.checkForAutomaticUpdates(now: now)
+        #expect(clock.lastAutomaticAttemptAt == nil)
+        #expect(await fetcher.requestCount == 0)
+        clock.setAutomaticUpdatesEnabled(true)
+        await clock.checkForAutomaticUpdates(now: now)
+        #expect(clock.lastAutomaticAttemptAt == now)
+        #expect(clock.updateMessage.hasPrefix("检查失败："))
+        let restored = model(root: root, defaults: defaults, scheduler: TestSettingsScheduler(), updater: updater)
+        #expect(restored.lastAutomaticAttemptAt == now)
+        await restored.checkForAutomaticUpdates(now: now.addingTimeInterval(60))
+        #expect(await fetcher.requestCount == 1)
+        await restored.checkForUpdates(now: now.addingTimeInterval(120))
+        #expect(await fetcher.requestCount == 2)
+        #expect(restored.lastAutomaticAttemptAt == now)
+    }
+
+    @Test("两个界面适配器共享会话状态，不重复业务排程且可独立释放")
+    func sharedPresentationAdapters() async throws {
+        let suite = "gudeng-test-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(suite)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let scheduler = TestSettingsScheduler()
+        let primary = model(root: root, defaults: defaults, scheduler: scheduler)
+        var secondary: ClockModel? = ClockModel(session: primary.session)
+        weak var released = secondary
+        primary.setAutomaticUpdatesEnabled(false)
+        #expect(secondary?.state.automaticUpdatesEnabled == false)
+        let now = KitFixture.date("2026-10-26T08:00:00+08:00")
+        await secondary?.checkForUpdates(now: now)
+        #expect(primary.state.updateState == .notConfigured)
+        #expect(secondary?.state == primary.state)
+        #expect(scheduler.formalReplacements == 0)
+        secondary = nil
+        #expect(released == nil)
+        primary.setAutomaticUpdatesEnabled(true)
+        #expect(primary.state.automaticUpdatesEnabled)
     }
 
     @Test("权限拒绝和投递失败不伪造预览成功，停止不碰正式排程")
@@ -171,7 +226,9 @@ struct SettingsModelTests {
                 with: Data(contentsOf: KitTestPaths.rulesDirectory.appendingPathComponent("manifest.json")))
                 as? [String: Any])
         manifest["bundleVersion"] = "test-disabled"
-        manifest["publishedAt"] = "2026-10-25T12:00:00+08:00"
+        let baseline = try RuleBundleLoader.load(from: KitTestPaths.rulesDirectory)
+        manifest["publishedAt"] = ISO8601DateFormatter().string(
+            from: baseline.manifest.publishedAt.addingTimeInterval(3600))
         manifest["effectiveFrom"] = "2026-10-25T12:00:00+08:00"
         var files: [String: Data] = ["manifest.json": try JSONSerialization.data(withJSONObject: manifest)]
         for name in ["pricing.json", "calendar-2026.json", "reminder-policy.json"] {

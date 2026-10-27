@@ -1,3 +1,4 @@
+import LiangWenRuntime
 import Foundation
 import OSLog
 // The Xcode 16 SDK does not mark UNUserNotificationCenter/UNNotificationSettings
@@ -240,17 +241,47 @@ public final class UserNotificationScheduler: ReminderScheduling {
             }
         }
 
+        private func notificationPresentationDiagnostics() async -> [String: String] {
+            await withCheckedContinuation { continuation in
+                center.getNotificationSettings { settings in
+                    func name(_ value: UNNotificationSetting) -> String {
+                        switch value {
+                        case .enabled: "enabled"
+                        case .disabled: "disabled"
+                        case .notSupported: "not-supported"
+                        @unknown default: "unknown"
+                        }
+                    }
+                    let style: String
+                    switch settings.alertStyle {
+                    case .none: style = "none"
+                    case .banner: style = "banner"
+                    case .alert: style = "alert"
+                    @unknown default: style = "unknown"
+                    }
+                    continuation.resume(returning: [
+                        "alerts": name(settings.alertSetting),
+                        "sound": name(settings.soundSetting),
+                        "notificationCenter": name(settings.notificationCenterSetting),
+                        "style": style,
+                    ])
+                }
+            }
+        }
+
         private func diagnosePreview(id: String?, phase: String) async {
             guard previewDiagnosticsEnabled else { return }
             let prefix = id.map { "gudeng.preview.\($0)." } ?? "gudeng.preview."
             let pending = await pendingNotificationInfos()
             let delivered = await deliveredNotificationInfos()
             let status = await authorizationStatus()
+            let presentation = await notificationPresentationDiagnostics()
             let record: [String: Any] = [
                 "event": "gudeng.preview.diagnostic",
                 "phase": phase,
                 "previewID": id ?? "all",
                 "authorization": status.rawValue,
+                "presentation": presentation,
                 "pendingPreviewIDs": pending.map(\.identifier).filter { $0.hasPrefix(prefix) },
                 "deliveredPreviewIDs": delivered.map(\.identifier).filter { $0.hasPrefix(prefix) },
                 "formalPendingCount": pending.filter { $0.identifier.hasPrefix(NotificationID.prefix) }.count,

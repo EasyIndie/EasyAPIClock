@@ -5,6 +5,19 @@ import Testing
 
 @Suite("界面文案与倒计时")
 struct ClockTextTests {
+    @Test("预览说明与所选提醒强度及次数一致")
+    func previewExplanationMatchesIntensity() {
+        #expect(
+            ClockText.previewExplanation(for: .off)
+                == "请先开启提醒，再预览通知。")
+        #expect(
+            ClockText.previewExplanation(for: .medium)
+                == "测试 1 次，10 秒结束；关闭面板即停止。")
+        #expect(
+            ClockText.previewExplanation(for: .strong)
+                == "测试最多 3 次，10 秒结束；关闭面板即停止。")
+    }
+
     @Test("谷期主面板文案")
     func valleyCopy() {
         let now = KitFixture.date("2026-10-21T12:30:00+08:00")
@@ -12,7 +25,7 @@ struct ClockTextTests {
         #expect(ClockText.stateName(snapshot.state) == "低价")
         #expect(ClockText.priceLine(for: snapshot) == "模型单价较峰期低 50%")
         #expect(ClockText.countdownLabel(for: snapshot) == "距离高峰")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "01:30")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "1小时30分")
         #expect(ClockText.nextTransitionLine(for: snapshot, now: now) == "14:00 切换")
         #expect(ClockText.daySummary(for: snapshot) == "工作日 · 午间")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "谷 · 1小时30分")
@@ -25,7 +38,7 @@ struct ClockTextTests {
         #expect(ClockText.stateName(snapshot.state) == "高峰")
         #expect(ClockText.priceLine(for: snapshot) == "模型单价为谷期的 2 倍")
         #expect(ClockText.countdownLabel(for: snapshot) == "距离低价")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "02:00")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "2小时")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "峰 · 2小时")
         #expect(ClockText.daySummary(for: snapshot) == "工作日 · 上午高峰")
     }
@@ -78,6 +91,7 @@ struct ClockTextTests {
         let now = KitFixture.date("2026-10-23T19:00:00+08:00")
         let snapshot = KitFixture.snapshot(at: "2026-10-23T19:00:00+08:00")
         #expect(ClockText.panelStateName(snapshot.state) == "谷期")
+        #expect(ClockText.panelCountdownLabel(for: snapshot) == "后进入峰期")
         #expect(ClockText.panelTransitionLine(for: snapshot, now: now) == "2026-10-26 09:00 进入峰期")
         let unknown = KitFixture.snapshot(at: "2027-01-05T10:00:00+08:00")
         #expect(ClockText.panelStateName(unknown.state) == "待确认")
@@ -88,8 +102,13 @@ struct ClockTextTests {
     func consistentCountdownRounding() {
         let now = KitFixture.date("2026-10-21T06:52:06+08:00")
         let snapshot = KitFixture.snapshot(at: "2026-10-21T06:52:06+08:00")
-        #expect(ClockText.countdown(for: snapshot, now: now).value == "02:08")
+        #expect(ClockText.countdown(for: snapshot, now: now).value == "2小时8分")
         #expect(ClockText.menuBarTitle(for: snapshot, now: now) == "谷 · 2小时8分")
+        let minutesOnly = KitFixture.date("2026-10-21T08:44:01+08:00")
+        #expect(
+            ClockText.countdown(
+                for: KitFixture.snapshot(at: "2026-10-21T08:44:01+08:00"), now: minutesOnly
+            ).value == "16分")
         let imminent = KitFixture.date("2026-10-21T08:59:01+08:00")
         let imminentSnapshot = KitFixture.snapshot(at: "2026-10-21T08:59:01+08:00")
         #expect(ClockText.countdown(for: imminentSnapshot, now: imminent).value == "即将切换")
@@ -113,6 +132,23 @@ struct ClockTextTests {
         let label = ClockText.panelAccessibilityLabel(for: unknown, now: expired)
         #expect(label.hasPrefix("价格状态待确认。"))
         #expect(!label.contains("距离下次切换"))
+    }
+
+    @Test("自动检查时间明确为北京时间，不把无记录伪装成已检查")
+    func automaticAttemptCopy() {
+        #expect(ClockText.lastAutomaticAttemptText(nil) == "尚无自动检查记录")
+        let date = KitFixture.date("2026-10-26T23:15:00+00:00")
+        #expect(ClockText.lastAutomaticAttemptText(date) == "上次尝试：2026-10-27 07:15 · 北京时间")
+    }
+
+    @Test("规则检查短结果区分空闲、成功与错误，详细信息留在详情")
+    func ruleUpdateSummary() {
+        #expect(ClockText.ruleUpdateSummary(for: .idle).isEmpty)
+        #expect(ClockText.ruleUpdateSummary(for: .checking).isEmpty)
+        #expect(ClockText.ruleUpdateSummary(for: .upToDate("2026.10.23")) == "已是最新")
+        #expect(ClockText.ruleUpdateSummary(for: .updated("future")) == "已下载规则")
+        #expect(ClockText.ruleUpdateSummary(for: .notConfigured) == "未配置更新源")
+        #expect(ClockText.ruleUpdateSummary(for: .failed("long detailed error")) == "检查失败")
     }
 
     @Test("时长短语")

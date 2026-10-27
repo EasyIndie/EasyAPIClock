@@ -1,8 +1,7 @@
-name: Release
+name: Release Candidate Artifact
 
-# Manual only. Builds a release candidate and uploads a workflow artifact.
-# It does NOT create a GitHub Release, upload to a public server, or notarize
-# unless explicitly requested and the required secrets are configured.
+# Manual packaging diagnostics. Public GitHub Releases use EasyIndie/EasyRelease
+# via publish-release.yml; this workflow only retains a short-lived artifact.
 on:
   workflow_dispatch:
     inputs:

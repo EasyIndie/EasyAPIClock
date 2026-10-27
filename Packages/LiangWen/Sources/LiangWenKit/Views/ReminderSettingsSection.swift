@@ -2,19 +2,18 @@ import SwiftUI
 import LiangWenCore
 
 struct ReminderSettingsSection: View {
-    let model: ClockModel
+    @ObservedObject var model: ClockModel
+    @AppStorage("gudeng.animations") private var animations = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        SettingsSection(ClockText.remindersTitle) {
+        VStack(alignment: .leading, spacing: 4) {
             SettingsRow(ClockText.reminderIntensityTitle) {
-                Picker(ClockText.reminderIntensityTitle, selection: intensityBinding) {
-                    ForEach(ReminderIntensity.allCases, id: \.self) { intensity in
-                        Text(ClockText.intensityName(intensity)).tag(intensity)
-                    }
-                }
-                .labelsHidden()
-                .pickerStyle(.segmented)
-                .frame(width: 174)
+                SettingsSegments(
+                    title: ClockText.reminderIntensityTitle,
+                    titles: ReminderIntensity.allCases.map(ClockText.intensityName),
+                    selection: intensityBinding
+                )
                 .help(ClockText.reminderExplanation)
             }
             SettingsRow(model.advanceLeadText) {
@@ -34,14 +33,22 @@ struct ReminderSettingsSection: View {
                     .frame(width: 28, height: 28)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PanelIconButtonStyle())
+                .scaleEffect(model.isPreviewing && animations && !reduceMotion ? 1.06 : 1)
+                .animation(
+                    model.isPreviewing && animations && !reduceMotion
+                        ? .easeInOut(duration: 0.7).repeatForever(autoreverses: true) : nil,
+                    value: model.isPreviewing && animations && !reduceMotion
+                )
                 .disabled(model.preferences.intensity == .off)
-                .help(ClockText.previewExplanation)
+                .help(ClockText.previewExplanation(for: model.preferences.intensity))
             }
-            Text(model.isPreviewing ? ClockText.previewExplanation : ClockText.previewSummary)
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            if model.isPreviewing {
+                Text(ClockText.previewExplanation(for: model.preferences.intensity))
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if !model.previewMessage.isEmpty {
                 Text(model.previewMessage)
                     .font(.system(size: 11))
@@ -63,11 +70,12 @@ struct ReminderSettingsSection: View {
         if model.isPreviewing { model.stopPreview() } else { model.startPreview() }
     }
 
-    private var intensityBinding: Binding<ReminderIntensity> {
+    private var intensityBinding: Binding<Int> {
         Binding(
-            get: { model.preferences.intensity },
-            set: { value in
-                Task { await model.setIntensity(value) }
+            get: { ReminderIntensity.allCases.firstIndex(of: model.preferences.intensity) ?? 0 },
+            set: { index in
+                guard ReminderIntensity.allCases.indices.contains(index) else { return }
+                Task { await model.setIntensity(ReminderIntensity.allCases[index]) }
             })
     }
 

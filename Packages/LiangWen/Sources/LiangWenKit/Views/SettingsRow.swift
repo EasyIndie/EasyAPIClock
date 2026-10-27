@@ -15,6 +15,6 @@ struct SettingsRow<Control: View>: View {
             Spacer(minLength: 8)
             control
         }
-        .frame(minHeight: 28)
+        .frame(maxWidth: .infinity, minHeight: 28, alignment: .leading)
     }
 }

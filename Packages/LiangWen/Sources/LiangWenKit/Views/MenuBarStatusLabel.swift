@@ -5,14 +5,14 @@ import LiangWenCore
 #endif
 
 public struct MenuBarStatusLabel: View {
-    private let model: ClockModel
+    @ObservedObject private var model: ClockModel
 
     public init(model: ClockModel) {
         self.model = model
     }
 
     public var body: some View {
-        HStack(spacing: 3) {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
             statusImage
                 .accessibilityHidden(true)
             Text(ClockText.menuBarTitle(for: model.snapshot, now: model.now))

@@ -1,0 +1,20 @@
+{
+  "recordedOn": "2026-10-26",
+  "hostOS": "27.0.1",
+  "hostArchitecture": "arm64",
+  "tests": 73,
+  "macOSDeploymentTarget": "13.0",
+  "releaseArchitectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "machOMinimumOS": {
+    "x86_64": "13.0",
+    "arm64": "13.0"
+  },
+  "iOSMinimumOS": "17.0",
+  "macOS13Runtime": "not tested: no configured Ventura test host",
+  "x86_64Runtime": "not tested: independent x86_64 smoke executable fails Bad CPU type; Rosetta receipt absent",
+  "releaseBuild": "passed",
+  "makeCheck": "passed"
+}

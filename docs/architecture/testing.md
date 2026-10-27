@@ -22,7 +22,7 @@ make check                                    # 规则 + 测试 + 格式 + 双�
 | 强提醒保留 | 刷新时不取消进行中的重复，窗口外/非强提醒移除 | `StrongRepeatRetentionTests` |
 | 界面文案 | 倒计时、菜单栏、日期摘要、通知文案 | `ClockTextTests` / `ReminderCopyTests` |
 
-当前共 **67** 个测试，全部为 Swift Testing。
+当前共 **77** 个测试，全部为 Swift Testing。
 
 ## 确定性规则
 
@@ -159,3 +159,25 @@ SettingsServicesTests覆盖预览次数/ID隔离/结束上限、自动更新节�
 `malformedManifestKeepsRules` 用内存坏JSON验证失败提示、不伪造最新状态、保留旧规则及一分钟内不重复下载。本组无真实网络、真实时钟断言或等待；它证明逻辑时序，不能替代真机长期运行和唤醒验收。
 
 设置更新隔离补充：SettingsModelTests.staleAutomaticFailure 使用挂起的内存请求，在关闭再开启后返回离线失败，验证旧请求不展示过时错误、忙碌状态退出、旧规则与正式提醒不变，且一分钟后仍受节流。
+
+### 共享业务会话与模块边界
+
+LiangWenRuntimeTests仅依赖Core/Runtime，覆盖规则源配置、多观察者与独立解绑、固定时间状态、提醒去重、类型化预览拒绝。SettingsModelTests.sharedPresentationAdapters验证两个ClockModel共享会话并可独立释放。make check-layers及CI检查Core/Runtime不导入UI观察／平台通知框架。
+
+### macOS13观察桥接
+
+ObservationCompatibilityTests覆盖$state同步发布、多个界面适配器、固定时间刷新、异步预览及更新结果、登录子对象的审批与错误独立发布。CI的Release通用构建调用Scripts/verify-mac-build.py，同时断言arm64/x86_64与Info.plist/Mach-O最低系统13.0。
+
+时长语义回归：ClockTextTests中的面板期望改为带单位的时长，验证整小时、小时分钟、天小时、即将切换与未知状态；菜单栏/辅助功能取整语义不变。图标与文字视觉对齐仍需原生截图验证。
+
+紧凑设置原生回归：默认提醒三行、外观/通用/规则折叠及底部更新/退出在275pt滚动区内完整可见；最终菜单栏截图验证原生符号箭头与图文对齐，详见 `../design/verification-2026-10-26/duration-alignment/`。展开可达性结果以目录README为准。
+
+2026-10-27精确对齐：以真实2×像素量测替代目测，菜单圆心/谷字中心目标差0px、提醒强度可见右缘对齐内容分隔线。Core和排程不变，完整make check仍73项通过；脚本与截图限制见precision-alignment记录。
+
+SettingsSegments原生适配器在实际窗口截图中验证默认强度和展开显示模式的bezel右缘均627px、边界差0px，AX三段50pt；外观回调及恢复结果以precision-alignment/README为准。
+
+安装版设置补验：新增notFound状态映射、自动尝试记录跨实例/失败/禁用/手动隔离、北京时间文案三项固定测试。测试不注册真实系统服务、不访问网络；实际登录注册/预览记录见2026-10-27 installed-features证据，重新登录另行验证。
+
+设置交互/间距补验：新增规则检查短结果各状态文案测试；实际整行标题和右侧空白热区、三组32pt高度/中心步长、同排结果详情、主面板power退出与Finder重启见settings-rhythm证据。几何交互不以镜像实现的单元测试代替实点。
+
+官方来源监测新增10项Python标准库离线测试，纳入make test-source-monitor/make check及CI。真实HTTPS观察与合成候选演练分开；合成候选在独立临时仓库完整validate和77项Swift测试通过，真实Rules未改。存储测试改为比对明确加载的基包身份，损坏回退测试时间取固定夹具与基包生效时刻的较晚者；挂起更新夹具的发布时间来自确定的基包+固定偏移，不读真实当前时钟，避免合法规则换版导致测试失去其原本前提。Core金额/版本独立快照仍严格校验并由候选更新，不放宽校验。

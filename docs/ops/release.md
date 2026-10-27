@@ -1,6 +1,6 @@
 # 发布手册（macOS）
 
-当前仓库 **没有** 生成签名发布物的自动化流程。以下步骤需要 Apple Developer 账号、证书与明确的发布授权。不要在未授权的情况下上传、公证或创建 Release。
+GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndie/EasyRelease) reusable workflow 处理 ad-hoc 签名、校验、manifest 与资产发布。应用构建仍由本仓库完成。Developer ID 签名和 Apple 公证是另一条需要凭据的分发路径。
 
 ## 1. 发布前检查
 
@@ -10,7 +10,7 @@
 - [ ] 2026/当前年份规则包已按官方来源复核；覆盖范围足够。
 - [ ] 通知真实设备验证（A15）已有记录。
 - [ ] 隐私说明：不收集数据；唯一网络请求是用户主动检查规则更新。
-- [ ] 确定分发渠道与 Bundle ID。
+- [ ] 确认目标仓库为 `EasyIndie/EasyAPIClock`，页面和规则源均使用该归属。
 - [ ] `project.yml` 的 `LiangWenRuleSourceBaseURL` 指向仓库 `rules` 分支（fork 需改成自己的地址）；`Rules` workflow 最近一次发布成功。
 - [ ] 用 raw URL 验证 manifest 与三个文件的 SHA-256；注意 CDN 可能有数分钟缓存。
 
@@ -56,7 +56,7 @@ CURRENT_PROJECT_VERSION: "1" # 构建号，每次上传递增
 ### 5.1 快速打包（推荐先跑）
 
 ```bash
-# ad-hoc：仅本地验证，产物在 dist/
+# ad-hoc：可用于公开测试分发，但首次打开可能被 Gatekeeper 拦截，产物在 dist/
 make package-mac
 
 # Developer ID 签名（不公证）
@@ -73,7 +73,7 @@ APPLE_APP_PASSWORD="xxxx-xxxx-xxxx-xxxx" \
 make package-mac-notarized
 ```
 
-脚本会构建未签名的 `arm64 + x86_64` 产物，再手动签名（Developer ID + `--timestamp`；ad-hoc 不带时间戳），校验签名、检查包内规则与 Info.plist，生成 `dist/Gudeng-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。**ad-hoc 产物不可分发。** 公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
+脚本会构建未签名的 `arm64 + x86_64` 产物，再手动签名（Developer ID + `--timestamp`；ad-hoc 不带时间戳），校验签名、检查包内规则与 Info.plist，生成 `dist/Gudeng-<版本>.dmg`、`.zip` 与 `SHA256SUMS`。校验：`cd dist && shasum -a 256 -c SHA256SUMS`。ad-hoc 包可以通过 GitHub Release 分发，但不包含 Developer ID 身份，也未经过 Apple 公证；macOS 可能拦截首次启动，Release 说明必须明确提示用户仅在信任来源时手动确认打开。公证会提交到 Apple 服务；没有明确授权不要执行 `make package-mac-notarized`。
 
 签名失败排查：
 
@@ -165,25 +165,19 @@ shasum -a 256 .build/Gudeng-0.1.0.dmg
 
 ## 8. GitHub Release
 
-`.github/workflows/release.yml` 只能手动触发，产出 **workflow artifact**（zip/dmg/SHA256SUMS），不会创建 GitHub Release，也不会上传到公开服务器。正式发布仍需下面的命令与明确授权。
+公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease `apple-v0.6.4` reusable workflow（固定到 commit `bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后处理 ad-hoc DMG、manifest、SHA-256 并上传 GitHub Release。EasyRelease 的共享权限与密钥在 EasyIndie 组织管理；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
 
-```bash
-git tag -a v0.1.0 -m "谷蹬 0.1.0"
-git push origin v0.1.0
-gh release create v0.1.0 .build/Gudeng-0.1.0.dmg \
-  --notes-file RELEASE_NOTES.md
-```
+当前版本发布的是 DMG。发布前确认 `CHANGELOG.md`、规则来源/覆盖日期、支持系统版本与通知限制准确。Release 文案会说明安装方式、ad-hoc 未公证状态和 Gatekeeper 首次打开处理步骤。
 
-Release notes 必须包含：
+`.github/workflows/release.yml` 保留为短期的本地构建候选 artifact，不创建公开 Release。
 
-- 应用版本与规则包版本；
-- 支持的系统版本；
-- 已验证的平台与通知限制；
-- 价格/节假日数据核对日期；
-- 未完成项（iOS、强提醒浮层等）；
-- 安全/隐私说明。
+## 9. GitHub Pages 产品页
 
-## 9. 发布后
+产品页源文件位于 `site/`，由 `.github/workflows/pages.yml` 在 `main` 更新时部署到 GitHub Pages。仓库迁入 `EasyIndie/EasyAPIClock` 后，需在仓库 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**；首页链接使用 `https://easyindie.github.io/EasyAPIClock/`。上线以首次 Pages workflow 成功为准。
+
+页面只使用仓库内图片和静态 HTML/CSS，不依赖第三方字体、分析脚本或外部构建服务。下载按钮指向 GitHub 最新 Release。
+
+## 10. 发布后
 
 - [ ] 在干净的用户账户或另一台 Mac 上安装并启动。
 - [ ] 验证 Gatekeeper、公证、菜单栏、通知权限。
@@ -191,11 +185,15 @@ Release notes 必须包含：
 - [ ] 更新 README 状态表与 `CHANGELOG.md`。
 - [ ] 监控 issue 中的安装/通知问题。
 
-## 10. 回滚
+## 11. 回滚
 
 - **应用**：撤回 Release / 标记为 pre-release；发布修复版本，不覆盖同一 tag。
 - **规则**：发布 `publishedAt` 更新、内容修正的新规则包；不要指望客户端降级旧包。
 - **紧急**：删除远端规则目录会让客户端保留本地有效版本；不要让目录处于半更新状态。
+
+## macOS13兼容构建检查
+
+`make build-mac-universal`生成未签名Release通用产物，并由`Scripts/verify-mac-build.py`核验arm64/x86_64与Info.plist及两种Mach-O最低系统均为13.0；CI同样执行。该检查不启动应用，不代替macOS13运行验证。开发主机仍须满足Xcode要求。
 
 ## App Store 备注
 
@@ -214,3 +212,11 @@ Release notes 必须包含：
 - 公证、签名分发；
 - 购买开发者账号、域名或托管服务；
 - 将规则源指向非项目控制的地址。
+
+## 本机应用程序入口（2026-10-27）
+
+用户要求的本地安装为`/Applications/谷蹬.app`；使用已存在Developer ID对本地Debug包签名并验证后复制，未公证、未上传、未创建Release。Finder→应用程序→双击谷蹬是日常图形启动入口，LSUIElement应用不创建常驻主窗口。源码修改不会自动更新安装副本。
+
+本地更新应先完整构建与检查，在临时位置对副本签名并codesign验证，再退出安装路径对应的旧进程、保留旧包备份，替换应用程序包并从同一路径启动。不要直接覆盖运行中的包，也不要用不同签名身份覆盖而不说明权限影响；make run-mac仍只是独立开发构建启动命令。签名和本机安装不等于公证或对外分发。
+
+官方单价CI观察及候选流程见official-pricing-automation.md：仅维护者明确确认后生成草稿，不能自动合并、发布Release或绕过Rules校验。Build2更新图标/视觉，安装签名仍按本地既有流程，不等同公证分发。

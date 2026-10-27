@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+import Combine
 #if os(macOS)
     import ServiceManagement
 #endif
@@ -16,11 +16,10 @@ public enum LoginItemState: Sendable {
 }
 
 @MainActor
-@Observable
-public final class LoginItemController {
-    public private(set) var state: LoginItemState = .unavailable
-    public private(set) var errorMessage: String?
-    @ObservationIgnored private let service: any LoginItemManaging
+public final class LoginItemController: ObservableObject {
+    @Published public private(set) var state: LoginItemState = .unavailable
+    @Published public private(set) var errorMessage: String?
+    private let service: any LoginItemManaging
 
     public init(service: any LoginItemManaging = SystemLoginItemService()) {
         self.service = service
@@ -46,17 +45,25 @@ public struct SystemLoginItemService: LoginItemManaging {
 
     public var state: LoginItemState {
         #if os(macOS)
-            switch SMAppService.mainApp.status {
-            case .enabled: .enabled
-            case .notRegistered: .disabled
-            case .requiresApproval: .requiresApproval
-            case .notFound: .unavailable
-            @unknown default: .unavailable
-            }
+            Self.loginState(for: SMAppService.mainApp.status)
         #else
             .unavailable
         #endif
     }
+
+    #if os(macOS)
+        static func loginState(for status: SMAppService.Status) -> LoginItemState {
+            switch status {
+            case .enabled: .enabled
+            case .notRegistered, .notFound:
+                // An unseen main-app service can report notFound before its first registration.
+                // Let an explicit user action register it; genuine failures remain visible.
+                .disabled
+            case .requiresApproval: .requiresApproval
+            @unknown default: .unavailable
+            }
+        }
+    #endif
 
     public func setEnabled(_ enabled: Bool) throws {
         #if os(macOS)
