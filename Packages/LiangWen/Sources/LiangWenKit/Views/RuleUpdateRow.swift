@@ -39,6 +39,7 @@ struct RuleUpdateRow: View {
                     }
                 }
             }
+            .frame(minHeight: 28)
             Text(ClockText.lastAutomaticAttemptText(model.lastAutomaticAttemptAt))
                 .font(.system(size: 9))
                 .foregroundStyle(.secondary)
