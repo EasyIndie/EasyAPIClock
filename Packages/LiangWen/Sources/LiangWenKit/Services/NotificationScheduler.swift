@@ -54,7 +54,7 @@ public final class UserNotificationScheduler: ReminderScheduling {
         private var previewProbes: [String: Task<Void, Never>] = [:]
     #endif
     private let center: UNUserNotificationCenter
-    private let logger = Logger(subsystem: "app.liangwen", category: "notifications")
+    private let logger = Logger(subsystem: "com.easyindie.easyapiclock", category: "notifications")
     private lazy var delegate = NotificationDelegate { [weak self] eventID in
         Task { @MainActor in
             await self?.stop(eventID: eventID)

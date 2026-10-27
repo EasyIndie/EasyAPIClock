@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       version: ${{ steps.version.outputs.version }}
+      build: ${{ steps.version.outputs.build }}
     steps:
       - uses: actions/checkout@v7
 
@@ -33,6 +34,7 @@ jobs:
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
           TAG="v$VERSION"
           printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
+          printf 'build=%s\n' "$BUILD" >> "$GITHUB_OUTPUT"
 
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists; increment MARKETING_VERSION before publishing again." >&2
@@ -57,19 +59,24 @@ jobs:
 
   publish:
     needs: prepare
-    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@50cdb7b9dbdce7898e973ff126fa29c5f77b5266
+    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@12da09aa1282f0e14d6d03333e8540778950b73c
     with:
       runs_on: macos-15
-      kit_ref: 50cdb7b9dbdce7898e973ff126fa29c5f77b5266
+      kit_ref: 12da09aa1282f0e14d6d03333e8540778950b73c
       checkout_ref: v${{ needs.prepare.outputs.version }}
       app: EasyAPIClock
-      bundle_id: app.liangwen.mac
-      artifact: dist/Gudeng-${{ needs.prepare.outputs.version }}.dmg
-      build_command: Scripts/install-xcodegen.sh && make check && Scripts/package-mac.sh
-      mode: adhoc
-      notarize: false
+      bundle_id: com.easyindie.easyapiclock
+      version: ${{ needs.prepare.outputs.version }}
+      build_number: ${{ needs.prepare.outputs.build }}
+      artifact: .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app
+      build_command: Scripts/install-xcodegen.sh && make check && make build-mac-universal
+      entitlements: Apps/Mac/LiangWenMac.entitlements
+      mode: developer-id
+      notarize: true
+      staple: true
       release: true
       release_tag: v${{ needs.prepare.outputs.version }}
+    secrets: inherit
 
   release-notes:
     needs: [prepare, publish]
@@ -88,12 +95,14 @@ jobs:
           DeepSeek API 峰谷钟点提醒。最低支持 macOS 13.0，提供 Apple silicon 与 Intel 通用版本。
 
           ### 安装
-          下载 DMG，打开后将「谷蹬」拖入「应用程序」文件夹。
+          下载 ZIP 并解压，将「谷蹬」拖入「应用程序」文件夹。
 
-          ### 首次打开
-          此版本使用 ad-hoc 签名，未使用 Developer ID 签名，也未经过 Apple 公证。macOS 可能会拦截首次启动。请在 Finder 中按住 Control 点击应用并选择 打开；如果系统仍阻止启动，请按系统提供的说明在系统设置 / 隐私与安全性中确认。请仅在信任此项目与下载来源时继续。
+          ### 签名与公证
+          此版本使用 Developer ID 签名，通过 Apple 公证并完成 staple。manifest 记录应用版本、build、签名及公证状态；SHA-256 文件可在下载目录直接校验。
 
-          EasyRelease 同时发布产物 manifest 和 SHA-256 校验文件。社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
+          本版 Bundle ID 为 `com.easyindie.easyapiclock`；v0.1.0 使用旧标识。系统偏好、通知授权和沙盒数据不会从旧标识自动迁移。
+
+          社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
           EOF
           gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
             -f body="$(cat "$RUNNER_TEMP/release-notes.md")"

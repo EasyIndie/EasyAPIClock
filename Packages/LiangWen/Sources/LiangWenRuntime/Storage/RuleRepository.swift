@@ -29,7 +29,7 @@ public final class RuleRepository: Sendable {
 
     private let bundledDirectory: URL
     private let supportDirectory: URL
-    private let logger = Logger(subsystem: "app.liangwen", category: "rules")
+    private let logger = Logger(subsystem: "com.easyindie.easyapiclock", category: "rules")
 
     public init(bundledDirectory: URL, supportDirectory: URL) {
         self.bundledDirectory = bundledDirectory
