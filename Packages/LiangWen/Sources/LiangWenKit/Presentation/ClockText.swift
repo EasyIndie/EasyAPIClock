@@ -64,9 +64,16 @@ public enum ClockText {
 
     public static let previewTitle = "预览提醒"
     public static let previewStop = "立即停止预览"
-    public static var previewExplanation: String {
-        let plan = ReminderPreviewPlan(intensity: .strong)
-        return "测试最多 \(plan.offsets.count) 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+    public static func previewExplanation(for intensity: ReminderIntensity) -> String {
+        let plan = ReminderPreviewPlan(intensity: intensity)
+        switch intensity {
+        case .off:
+            return "请先开启提醒，再预览通知。"
+        case .medium:
+            return "测试 1 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+        case .strong:
+            return "测试最多 \(plan.offsets.count) 次，\(Int(plan.duration)) 秒结束；关闭面板即停止。"
+        }
     }
     public static let previewNotificationTitle = "谷蹬 · 测试提醒"
     public static let previewNotificationBody = "这是提醒预览，不表示价格已切换。"

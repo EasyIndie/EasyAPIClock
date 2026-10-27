@@ -5,6 +5,19 @@ import Testing
 
 @Suite("界面文案与倒计时")
 struct ClockTextTests {
+    @Test("预览说明与所选提醒强度及次数一致")
+    func previewExplanationMatchesIntensity() {
+        #expect(
+            ClockText.previewExplanation(for: .off)
+                == "请先开启提醒，再预览通知。")
+        #expect(
+            ClockText.previewExplanation(for: .medium)
+                == "测试 1 次，10 秒结束；关闭面板即停止。")
+        #expect(
+            ClockText.previewExplanation(for: .strong)
+                == "测试最多 3 次，10 秒结束；关闭面板即停止。")
+    }
+
     @Test("谷期主面板文案")
     func valleyCopy() {
         let now = KitFixture.date("2026-10-21T12:30:00+08:00")

@@ -41,10 +41,10 @@ struct ReminderSettingsSection: View {
                     value: model.isPreviewing && animations && !reduceMotion
                 )
                 .disabled(model.preferences.intensity == .off)
-                .help(ClockText.previewExplanation)
+                .help(ClockText.previewExplanation(for: model.preferences.intensity))
             }
             if model.isPreviewing {
-                Text(ClockText.previewExplanation)
+                Text(ClockText.previewExplanation(for: model.preferences.intensity))
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
