@@ -165,30 +165,45 @@ struct ReminderCopyTests {
     @Test("进入谷期文案")
     func valleyReminder() throws {
         let reminder = try #require(KitFixture.reminder(at: "2026-10-21T11:59:00+08:00"))
-        #expect(ReminderCopy.title(for: reminder) == "低价时段开始")
-        #expect(ReminderCopy.body(for: reminder) == "模型单价较峰期低 50%。本次低价持续 2 小时。")
-        #expect(ReminderCopy.subtitle(for: reminder) == "谷蹬 · 中等提醒 · 短音一次")
+        #expect(ReminderCopy.title(for: reminder) == "进入低价")
+        #expect(ReminderCopy.body(for: reminder) == "单价比峰期低 50% · 持续 2 小时")
+        // The app name is supplied by the system; medium reminders add no subtitle.
+        #expect(ReminderCopy.subtitle(for: reminder) == nil)
     }
 
     @Test("进入峰期文案")
     func peakReminder() throws {
         let reminder = try #require(KitFixture.reminder(at: "2026-10-21T08:59:00+08:00"))
-        #expect(ReminderCopy.title(for: reminder) == "高峰时段开始")
-        #expect(ReminderCopy.body(for: reminder) == "模型单价为谷期的 2 倍。距离下次低价还有 3 小时。")
+        #expect(ReminderCopy.title(for: reminder) == "进入高峰")
+        #expect(ReminderCopy.body(for: reminder) == "单价为谷期 2 倍 · 持续 3 小时")
     }
 
     @Test("提前提醒文案")
     func advanceReminder() throws {
         let reminder = try #require(KitFixture.reminder(at: "2026-10-21T08:54:00+08:00", early: true))
         #expect(reminder.kind == .advance(leadSeconds: 300))
-        #expect(ReminderCopy.title(for: reminder) == "还有 5 分钟进入高峰")
-        #expect(ReminderCopy.body(for: reminder) == "模型单价即将上升。本次高峰持续 3 小时。")
+        #expect(ReminderCopy.title(for: reminder) == "5 分钟后进入高峰")
+        #expect(ReminderCopy.body(for: reminder) == "单价将升为谷期 2 倍 · 持续 3 小时")
     }
 
     @Test("强提醒副标题与重复次数")
     func strongReminder() throws {
         let reminder = try #require(KitFixture.reminder(at: "2026-10-21T08:59:00+08:00", intensity: .strong))
-        #expect(ReminderCopy.subtitle(for: reminder) == "谷蹬 · 强提醒 · 持续至关闭")
+        #expect(ReminderCopy.subtitle(for: reminder) == "持续提醒 · 可停止")
         #expect(reminder.repeatDates.count == 10)
+    }
+
+    @Test("通知文案短到可一眼读完")
+    func reminderCopyStaysShort() throws {
+        for time in ["2026-10-21T08:59:00+08:00", "2026-10-21T11:59:00+08:00"] {
+            for intensity in [ReminderIntensity.medium, .strong] {
+                let reminder = try #require(KitFixture.reminder(at: time, intensity: intensity))
+                #expect(ReminderCopy.title(for: reminder).count <= 8)
+                #expect(ReminderCopy.body(for: reminder).count <= 20)
+            }
+            let advance = try #require(KitFixture.reminder(at: time, early: true))
+            #expect(ReminderCopy.title(for: advance).count <= 12)
+            #expect(ReminderCopy.body(for: advance).count <= 22)
+        }
     }
 }

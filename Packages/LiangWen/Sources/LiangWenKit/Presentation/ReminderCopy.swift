@@ -6,59 +6,61 @@ public enum ReminderCopy {
     public static func title(for reminder: PlannedReminder) -> String {
         switch reminder.kind {
         case .transition:
-            return reminder.targetState == .peak ? "高峰时段开始" : "低价时段开始"
+            return reminder.targetState == .peak ? "进入高峰" : "进入低价"
         case .advance(let lead):
-            let target = reminder.targetState == .peak ? "高峰" : "低价时段"
-            return "还有 \(ClockText.leadPhrase(lead))进入\(target)"
+            let target = reminder.targetState == .peak ? "高峰" : "低价"
+            return "\(ClockText.leadPhrase(lead))后进入\(target)"
         }
     }
 
+    /// One short line: price basis plus how long the new window lasts.
+    /// Kept inside a single notification line so it is readable at a glance.
     public static func body(for reminder: PlannedReminder) -> String {
-        let duration = reminder.facts.upcomingWindowDuration
-        switch reminder.kind {
-        case .advance:
-            let window = reminder.targetState == .peak ? "高峰" : "低价"
-            var text = "模型单价即将\(reminder.targetState == .peak ? "上升" : "下降")。"
-            if let duration {
-                text += "本次\(window)持续 \(ClockText.durationPhrase(duration))。"
-            }
-            return text
-        case .transition:
-            var text = comparisonSentence(reminder.facts) + "。"
-            if let duration {
-                if reminder.targetState == .peak {
-                    text += "距离下次低价还有 \(ClockText.durationPhrase(duration))。"
-                } else {
-                    text += "本次低价持续 \(ClockText.durationPhrase(duration))。"
-                }
-            }
-            return text
+        var text: String
+        if case .advance = reminder.kind {
+            text = previewComparisonPhrase(reminder.facts)
+        } else {
+            text = comparisonPhrase(reminder.facts)
         }
+        if let duration = reminder.facts.upcomingWindowDuration {
+            text += " · 持续 \(ClockText.durationPhrase(duration))"
+        }
+        return text
     }
 
     public static func subtitle(for reminder: PlannedReminder) -> String? {
-        switch reminder.intensity {
-        case .off:
-            return nil
-        case .medium:
-            return "谷蹬 · 中等提醒 · 短音一次"
-        case .strong:
-            return "谷蹬 · 强提醒 · 持续至关闭"
-        }
+        // The app name is already shown by the system; only strong reminders
+        // carry extra text because the stop action is not self-evident.
+        reminder.intensity == .strong ? "持续提醒 · 可停止" : nil
     }
 
-    private static func comparisonSentence(_ facts: ReminderFacts) -> String {
+    private static func comparisonPhrase(_ facts: ReminderFacts) -> String {
         switch facts.targetState {
         case .peak:
             if let multiple = facts.comparison.multiple {
-                return "模型单价为谷期的 \(NSDecimalNumber(decimal: multiple).stringValue) 倍"
+                return "单价为谷期 \(NSDecimalNumber(decimal: multiple).stringValue) 倍"
             }
-            return "模型单价进入高峰价格时段"
+            return "单价进入高峰价格时段"
         case .valley:
             if let percent = facts.comparison.valleyPercentLower {
-                return "模型单价较峰期低 \(NSDecimalNumber(decimal: percent).stringValue)%"
+                return "单价比峰期低 \(NSDecimalNumber(decimal: percent).stringValue)%"
             }
-            return "模型单价进入空闲价格时段"
+            return "单价进入低价价格时段"
+        }
+    }
+
+    private static func previewComparisonPhrase(_ facts: ReminderFacts) -> String {
+        switch facts.targetState {
+        case .peak:
+            if let multiple = facts.comparison.multiple {
+                return "单价将升为谷期 \(NSDecimalNumber(decimal: multiple).stringValue) 倍"
+            }
+            return "单价将进入高峰价格时段"
+        case .valley:
+            if let percent = facts.comparison.valleyPercentLower {
+                return "单价将比峰期低 \(NSDecimalNumber(decimal: percent).stringValue)%"
+            }
+            return "单价将进入低价价格时段"
         }
     }
 }
