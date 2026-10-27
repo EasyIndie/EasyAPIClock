@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
-PACKAGE := Packages/LiangWen
-PROJECT := LiangWenClock.xcodeproj
+PACKAGE := Packages/Gudeng
+PROJECT := GudengClock.xcodeproj
 DERIVED := .build/DerivedData
 DERIVED_ADHOC := .build/DerivedDataAdhoc
 DERIVED_IOS := .build/DerivedData-iOS
@@ -58,10 +58,10 @@ test:
 	swift test --package-path $(PACKAGE)
 
 validate-rules:
-	swift run --package-path $(PACKAGE) liangwen-rules validate Rules
+	swift run --package-path $(PACKAGE) gudeng-rules validate Rules
 
 rules-manifest:
-	swift run --package-path $(PACKAGE) liangwen-rules manifest Rules
+	swift run --package-path $(PACKAGE) gudeng-rules manifest Rules
 
 rules-publish:
 	@Scripts/publish-rules.sh
@@ -70,28 +70,28 @@ rules-publish-dry-run:
 	@Scripts/publish-rules.sh --dry-run
 
 build-mac: generate
-	$(XCODEBUILD) -scheme LiangWenMac -configuration Debug \
+	$(XCODEBUILD) -scheme GudengMac -configuration Debug \
 		-derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO build
 
 build-mac-adhoc: generate
-	$(XCODEBUILD) -scheme LiangWenMac -configuration Debug \
+	$(XCODEBUILD) -scheme GudengMac -configuration Debug \
 		-derivedDataPath $(DERIVED_ADHOC) \
 		CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="-" \
 		DEVELOPMENT_TEAM="" PROVISIONING_PROFILE_SPECIFIER="" build
 
 build-mac-universal: generate
-	$(XCODEBUILD) -scheme LiangWenMac -configuration Release \
+	$(XCODEBUILD) -scheme GudengMac -configuration Release \
 		-destination 'generic/platform=macOS' -derivedDataPath .build/DerivedData-Release \
 		ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO build
-	python3 Scripts/verify-mac-build.py .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app
+	python3 Scripts/verify-mac-build.py .build/DerivedData-Release/Build/Products/Release/GudengMac.app
 
 build-ios: generate
-	$(XCODEBUILD) -scheme LiangWeniOS -configuration Debug -sdk iphonesimulator \
+	$(XCODEBUILD) -scheme GudengiOS -configuration Debug -sdk iphonesimulator \
 		-destination 'generic/platform=iOS Simulator' \
 		-derivedDataPath $(DERIVED_IOS) CODE_SIGNING_ALLOWED=NO build
 
 run-mac: build-mac-adhoc
-	bash Scripts/run-mac.sh "$(DERIVED_ADHOC)/Build/Products/Debug/LiangWenMac.app"
+	bash Scripts/run-mac.sh "$(DERIVED_ADHOC)/Build/Products/Debug/GudengMac.app"
 
 package-mac: generate
 	@Scripts/package-mac.sh

@@ -140,4 +140,4 @@ state(b) == current  &&  state(b - 1s) != current
 - 断言 `state`、`nextChangeAt`、`nextChangeState`、`stateStartedAt`、`nextChangeWindowEnd`。
 - 端到端规则包测试读取仓库 `Rules/`，防止数据编辑破坏校验和。
 
-见 `Packages/LiangWen/Tests/LiangWenCoreTests/ClockEngineTests.swift`。
+见 `Packages/Gudeng/Tests/GudengCoreTests/ClockEngineTests.swift`。

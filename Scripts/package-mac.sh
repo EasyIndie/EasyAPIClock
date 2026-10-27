@@ -19,10 +19,10 @@ if [[ "${1:-}" == "--notarize" ]]; then
   NOTARIZE=1
 fi
 
-PROJECT="LiangWenClock.xcodeproj"
-SCHEME="LiangWenMac"
+PROJECT="GudengClock.xcodeproj"
+SCHEME="GudengMac"
 DERIVED="$ROOT/.build/ReleaseDerivedData"
-APP="$DERIVED/Build/Products/Release/LiangWenMac.app"
+APP="$DERIVED/Build/Products/Release/GudengMac.app"
 DIST="$ROOT/dist"
 
 if [[ ! -d "$PROJECT" ]]; then
@@ -63,14 +63,14 @@ BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Conten
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
 BUILD_NUMBER="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")"
 MIN_OS="$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$APP/Contents/Info.plist")"
-SOURCE_URL="$(/usr/libexec/PlistBuddy -c 'Print :LiangWenRuleSourceBaseURL' "$APP/Contents/Info.plist" 2>/dev/null || true)"
-BINARY="$APP/Contents/MacOS/LiangWenMac"
+SOURCE_URL="$(/usr/libexec/PlistBuddy -c 'Print :GudengRuleSourceBaseURL' "$APP/Contents/Info.plist" 2>/dev/null || true)"
+BINARY="$APP/Contents/MacOS/GudengMac"
 
 echo "Bundle：$BUNDLE_ID $VERSION ($BUILD_NUMBER)，最低系统 $MIN_OS"
 if [[ -n "$SOURCE_URL" ]]; then
   echo "规则源：$SOURCE_URL"
 else
-  echo "警告：未配置 LiangWenRuleSourceBaseURL。" >&2
+  echo "警告：未配置 GudengRuleSourceBaseURL。" >&2
 fi
 
 ARCH_INFO="$(lipo -archs "$BINARY")"
@@ -90,12 +90,12 @@ if [[ -n "$SIGN_ID" ]]; then
   codesign --force --deep --sign "$SIGN_ID" \
     --options runtime \
     --timestamp \
-    --entitlements "$ROOT/Apps/Mac/LiangWenMac.entitlements" \
+    --entitlements "$ROOT/Apps/Mac/GudengMac.entitlements" \
     "$APP"
 else
   codesign --force --deep --sign - \
     --options runtime \
-    --entitlements "$ROOT/Apps/Mac/LiangWenMac.entitlements" \
+    --entitlements "$ROOT/Apps/Mac/GudengMac.entitlements" \
     "$APP"
 fi
 
@@ -146,7 +146,7 @@ if [[ "$NOTARIZE" == "1" ]]; then
   spctl -a -vv "$APP"
 fi
 
-STAGE="$(mktemp -d "${TMPDIR:-/tmp}/liangwen-stage.XXXXXX")"
+STAGE="$(mktemp -d "${TMPDIR:-/tmp}/gudeng-stage.XXXXXX")"
 cleanup() {
   rm -rf "$STAGE"
 }

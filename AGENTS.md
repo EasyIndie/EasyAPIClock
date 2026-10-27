@@ -39,7 +39,7 @@
 make bootstrap        # 安装固定版本 XcodeGen + 生成工程 + 环境检查
 make doctor           # 检查 macOS / Xcode / Swift / XcodeGen 版本
 make generate         # 仅生成 Xcode 工程
-make test             # swift test --package-path Packages/LiangWen
+make test             # swift test --package-path Packages/Gudeng
 make validate-rules   # 校验 Rules/ 规则包
 make rules-manifest   # 重新计算 manifest 校验和（修改规则后必须执行）
 make rules-publish-dry-run  # 校验 + 检查 publishedAt，不推送
@@ -71,13 +71,13 @@ XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh`
 
 ```
 Apps/Mac  ──┐
-Apps/iOS  ──┴──> LiangWenKit ──> LiangWenRuntime ──> LiangWenCore
+Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
                   UI/系统服务       共享会话/协议         纯规则逻辑
 ```
 
-- `LiangWenCore`：规则解码与校验、`ClockEngine`、`PriceComparison`、`ReminderPlanner`、`RuleBundleLoader`、`RemoteRuleUpdater`。必须保持可测试、确定性、无 UI 依赖。
-- `LiangWenRuntime`：无UI框架的`ClockSession`、值状态、偏好/排程协议、规则仓库、预览/自动更新策略及Foundation网络适配；Core更新器必须显式注入fetcher。
-- `LiangWenKit`：基于ObservableObject/@Published的薄`ClockModel`观察适配器、`AppEnvironment`、系统通知/UserDefaults/登录项实现、SwiftUI视图与中文文案。不得把业务流程放回视图适配器。
+- `GudengCore`：规则解码与校验、`ClockEngine`、`PriceComparison`、`ReminderPlanner`、`RuleBundleLoader`、`RemoteRuleUpdater`。必须保持可测试、确定性、无 UI 依赖。
+- `GudengRuntime`：无UI框架的`ClockSession`、值状态、偏好/排程协议、规则仓库、预览/自动更新策略及Foundation网络适配；Core更新器必须显式注入fetcher。
+- `GudengKit`：基于ObservableObject/@Published的薄`ClockModel`观察适配器、`AppEnvironment`、系统通知/UserDefaults/登录项实现、SwiftUI视图与中文文案。不得把业务流程放回视图适配器。
 - `Apps/Mac`：只做应用入口、`MenuBarExtra` 场景、唤醒/改时观察。
 - `Apps/iOS`：只做最小只读外壳。不要在这里发明 iOS 交互；先补设计文档与 ADR。
 - `Rules/`：唯一规则数据源；应用通过 folder reference 打包。不要在其他地方复制规则 JSON。
@@ -130,14 +130,14 @@ Apps/iOS  ──┴──> LiangWenKit ──> LiangWenRuntime ──> LiangWenC
 - [ ] 用户可见变更已更新 `CHANGELOG.md`；架构/数据格式变更已更新对应文档与 ADR。
 - [ ] 规则数据变更已更新 manifest、来源与核对日期，并验证 checksum。
 - [ ] 没有新增范围外功能、第三方运行时依赖或网络调用（测试中也不访问真实网络）。
-- [ ] 没有提交生成物：`LiangWenClock.xcodeproj`、`Build/Generated/`、`.build/`、`Package.resolved`（无依赖时）。
+- [ ] 没有提交生成物：`GudengClock.xcodeproj`、`Build/Generated/`、`.build/`、`Package.resolved`（无依赖时）。
 - [ ] PR 描述写清：改了什么、为什么、如何验证、平台限制、剩余事项。
 
 ## 8. 测试约定
 
 - 使用 Swift Testing（`import Testing`、`@Test`、`#expect`、`#require`），不新增 XCTest。
 - 时间固定；禁止 `sleep`、`Date()` 断言和依赖真实时钟的测试。
-- 引擎测试使用 `Packages/LiangWen/Tests/LiangWenCoreTests/Fixtures.swift`；规则包端到端测试读取仓库 `Rules/`。
+- 引擎测试使用 `Packages/Gudeng/Tests/GudengCoreTests/Fixtures.swift`；规则包端到端测试读取仓库 `Rules/`。
 - 网络更新测试使用内存 `RuleDataFetching` 假实现，不访问网络。
 - 验收场景与测试的映射见 `docs/architecture/testing.md`；新增验收项时同步更新该表。
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 app_path="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 # Match the exact build path, never terminate another installed copy by name.
-python3 - "$app_path/Contents/MacOS/LiangWenMac" <<'PY'
+python3 - "$app_path/Contents/MacOS/GudengMac" <<'PY'
 import os
 import signal
 import subprocess

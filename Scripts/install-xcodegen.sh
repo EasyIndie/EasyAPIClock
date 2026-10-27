@@ -56,7 +56,7 @@ for cmd in curl unzip shasum; do
   fi
 done
 
-TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/liangwen-xcodegen.XXXXXX")"
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/gudeng-xcodegen.XXXXXX")"
 cleanup() { rm -rf "$TMP_DIR"; }
 trap cleanup EXIT
 

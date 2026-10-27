@@ -54,7 +54,7 @@ def main():
         run('git', 'switch', '-c', branch)
         run('git', 'config', 'user.name', 'github-actions[bot]')
         run('git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com')
-        run('git', 'add', 'Rules/pricing.json', 'Rules/manifest.json', 'Packages/LiangWen/Tests/LiangWenCoreTests/RuleBundleTests.swift', 'docs/product/requirements.md', 'CHANGELOG.md')
+        run('git', 'add', 'Rules/pricing.json', 'Rules/manifest.json', 'Packages/Gudeng/Tests/GudengCoreTests/RuleBundleTests.swift', 'docs/product/requirements.md', 'CHANGELOG.md')
         run('git', 'commit', '-m', 'rules: prepare verified official price update')
         run('gh', 'auth', 'setup-git')
         run('git', 'push', '--set-upstream', 'origin', branch)

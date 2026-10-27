@@ -9,7 +9,7 @@ updates:
       - "ci"
 
   - package-ecosystem: "swift"
-    directory: "/Packages/LiangWen"
+    directory: "/Packages/Gudeng"
     schedule:
       interval: "weekly"
     labels:

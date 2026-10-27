@@ -55,7 +55,7 @@ test: cover expired calendar coverage
 - 使用 Swift Testing（`import Testing`），不新增 XCTest。
 - 格式化与 lint：`make format` / `make lint`（`swift-format`）。
 - 不引入第三方运行时依赖；确需引入时先写 ADR。
-- 生成物（`LiangWenClock.xcodeproj`、`Build/Generated/`、`.build/`）不提交。
+- 生成物（`GudengClock.xcodeproj`、`Build/Generated/`、`.build/`）不提交。
 
 ## 使用 AI 代理
 

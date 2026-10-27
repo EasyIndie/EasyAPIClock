@@ -73,7 +73,7 @@
 ```bash
 make rules-manifest
 # 或指定版本/时间：
-swift run --package-path Packages/LiangWen liangwen-rules manifest Rules \
+swift run --package-path Packages/Gudeng gudeng-rules manifest Rules \
   --bundle-version 2026.11.01 \
   --published-at 2026-10-31T18:00:00+08:00 \
   --effective-from 2026-11-01T00:00:00+08:00
@@ -104,14 +104,14 @@ cp -R Rules /tmp/lw-rules-test
 
 # 2. 修改 /tmp/lw-rules-test 中的内容并把 publishedAt 调晚
 #    然后重算该目录的 manifest
-swift run --package-path Packages/LiangWen liangwen-rules manifest /tmp/lw-rules-test
+swift run --package-path Packages/Gudeng gudeng-rules manifest /tmp/lw-rules-test
 
 # 3. 启动本地源（仅 localhost；macOS Info.plist 已开启 NSAllowsLocalNetworking）
 python3 -m http.server 8000 --directory /tmp/lw-rules-test
 
 # 4. 用环境变量启动应用（覆盖 Info.plist）
-LIANGWEN_RULE_SOURCE=http://localhost:8000 \
-  .build/DerivedData/Build/Products/Debug/LiangWenMac.app/Contents/MacOS/LiangWenMac
+GUDENG_RULE_SOURCE=http://localhost:8000 \
+  .build/DerivedData/Build/Products/Debug/GudengMac.app/Contents/MacOS/GudengMac
 ```
 
 在应用中打开「设置 → 检查规则更新」，验证：
@@ -151,7 +151,7 @@ make rules-publish-dry-run   # 校验 + 检查 publishedAt，不推送
 make rules-publish           # 校验 + 推送到 rules 分支
 ```
 
-客户端的 base URL 来自 `project.yml` 的 `LiangWenRuleSourceBaseURL`（开发时可用 `LIANGWEN_RULE_SOURCE` 覆盖）。fork 需要同时修改 URL 与发布远端。
+客户端的 base URL 来自 `project.yml` 的 `GudengRuleSourceBaseURL`（开发时可用 `GUDENG_RULE_SOURCE` 覆盖）。fork 需要同时修改 URL 与发布远端。
 
 **不要直接编辑 `rules` 分支。** 它是生成物，下一次发布会覆盖手工改动。
 
@@ -170,7 +170,7 @@ make rules-publish           # 校验 + 推送到 rules 分支
 **本地**：删除 active 目录，应用回退内置规则：
 
 ```bash
-rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/Gudeng/Rules/active
 ```
 
 **紧急**：如果错误包已经发布，尽快准备一个 `publishedAt` 更新的修正包；不要在 `rules` 分支上手工删除文件，下一次发布会覆盖，且无法保证客户端看到一致状态。

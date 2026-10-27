@@ -1,0 +1,19 @@
+---
+description: Gudeng Clock repository rules and invariants
+globs:
+alwaysApply: true
+---
+
+先阅读仓库根目录的 `AGENTS.md`，它是本项目的完整代理契约。
+
+关键不可违反项：
+
+- 所有价格判断使用 `Asia/Shanghai`，不得读取设备时区。
+- 不伪造价格、节假日、调休或覆盖范围；无法确认时显示「规则待更新」并暂停价格提醒。
+- 周末与法定节假日全天为谷；调休上班的周末仍为谷。
+- 下次切换必须是真实状态变化，不得在午夜制造伪切换。
+- 提醒只排未来事件，不补发历史；事件 ID 保持确定性。
+- 规则更新不能覆盖用户提醒偏好，不能执行远程代码。
+- 不增加账号、API Key、统计、番茄钟、任务管理、自动切换模型等范围外功能。
+- 规则改动后执行 `make rules-manifest && make validate-rules && make test`。
+- 提交前执行 `make check`；不要提交 `.xcodeproj`、`Build/Generated/`、`.build/`。

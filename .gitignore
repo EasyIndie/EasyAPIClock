@@ -13,7 +13,7 @@ xcuserdata/
 *.moved-aside
 
 # Generated project (source of truth: project.yml)
-LiangWenClock.xcodeproj/
+GudengClock.xcodeproj/
 
 # SwiftPM
 .build/

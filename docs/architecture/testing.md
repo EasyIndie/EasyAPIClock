@@ -3,7 +3,7 @@
 ## 命令
 
 ```bash
-swift test --package-path Packages/LiangWen   # 全部单元测试
+swift test --package-path Packages/Gudeng   # 全部单元测试
 make test
 make validate-rules
 make check                                    # 规则 + 测试 + 格式 + 双端构建
@@ -85,7 +85,7 @@ make run-mac
 - [ ] 主面板显示状态名、带基准的价格行、倒计时、下一切换、日期摘要、提醒强度。
 - [ ] 点击「设置」在同一面板切换；「完成」返回。
 - [ ] 强度切换立即保存；重启应用后保持。
-- [ ] 当前状态与 `liangwen-rules`/测试计算一致（可用北京时间核对）。
+- [ ] 当前状态与 `gudeng-rules`/测试计算一致（可用北京时间核对）。
 
 ### 通知
 
@@ -162,7 +162,7 @@ SettingsServicesTests覆盖预览次数/ID隔离/结束上限、自动更新节�
 
 ### 共享业务会话与模块边界
 
-LiangWenRuntimeTests仅依赖Core/Runtime，覆盖规则源配置、多观察者与独立解绑、固定时间状态、提醒去重、类型化预览拒绝。SettingsModelTests.sharedPresentationAdapters验证两个ClockModel共享会话并可独立释放。make check-layers及CI检查Core/Runtime不导入UI观察／平台通知框架。
+GudengRuntimeTests仅依赖Core/Runtime，覆盖规则源配置、多观察者与独立解绑、固定时间状态、提醒去重、类型化预览拒绝。SettingsModelTests.sharedPresentationAdapters验证两个ClockModel共享会话并可独立释放。make check-layers及CI检查Core/Runtime不导入UI观察／平台通知框架。
 
 ### macOS13观察桥接
 

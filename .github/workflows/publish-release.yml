@@ -68,9 +68,9 @@ jobs:
       bundle_id: com.easyindie.easyapiclock
       version: ${{ needs.prepare.outputs.version }}
       build_number: ${{ needs.prepare.outputs.build }}
-      artifact: .build/DerivedData-Release/Build/Products/Release/LiangWenMac.app
+      artifact: .build/DerivedData-Release/Build/Products/Release/GudengMac.app
       build_command: Scripts/install-xcodegen.sh && make check && make build-mac-universal
-      entitlements: Apps/Mac/LiangWenMac.entitlements
+      entitlements: Apps/Mac/GudengMac.entitlements
       mode: developer-id
       notarize: true
       staple: true

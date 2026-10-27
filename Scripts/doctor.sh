@@ -59,7 +59,7 @@ else
 fi
 
 printf '\n仓库文件\n'
-for path in project.yml .xcodegen-version Packages/LiangWen/Package.swift Rules/manifest.json Rules/pricing.json Rules/calendar-2026.json Rules/reminder-policy.json; do
+for path in project.yml .xcodegen-version Packages/Gudeng/Package.swift Rules/manifest.json Rules/pricing.json Rules/calendar-2026.json Rules/reminder-policy.json; do
   if [[ -e "$path" ]]; then
     ok "$path"
   else

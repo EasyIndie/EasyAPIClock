@@ -11,7 +11,7 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 - [ ] 通知真实设备验证（A15）已有记录。
 - [ ] 隐私说明：不收集数据；唯一网络请求是用户主动检查规则更新。
 - [ ] 确认目标仓库为 `EasyIndie/EasyAPIClock`，页面和规则源均使用该归属。
-- [ ] `project.yml` 的 `LiangWenRuleSourceBaseURL` 指向仓库 `rules` 分支（fork 需改成自己的地址）；`Rules` workflow 最近一次发布成功。
+- [ ] `project.yml` 的 `GudengRuleSourceBaseURL` 指向仓库 `rules` 分支（fork 需改成自己的地址）；`Rules` workflow 最近一次发布成功。
 - [ ] 用 raw URL 验证 manifest 与三个文件的 SHA-256；注意 CDN 可能有数分钟缓存。
 
 ## 2. Bundle ID 与团队
@@ -28,9 +28,9 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 - `project.yml` 的 `PRODUCT_BUNDLE_IDENTIFIER`
 - 通知授权/沙盒容器路径文档
 - 截图、README 与 issue 模板中的路径
-- 规则更新源（`project.yml` 的 `LiangWenRuleSourceBaseURL`；fork 必须改）
+- 规则更新源（`project.yml` 的 `GudengRuleSourceBaseURL`；fork 必须改）
 
-本次 0.1.1 公证发布将 Bundle ID 从 `app.liangwen.*` 切换到 EasyIndie 前缀；偏好、通知授权及沙盒容器不会自动从 v0.1.0 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
+本次 0.1.1 公证发布将 Bundle ID 从 `app.gudeng.*` 切换到 EasyIndie 前缀；偏好、通知授权及沙盒容器不会自动从 v0.1.0 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
 
 ## 3. 图标与资源
 
@@ -87,7 +87,7 @@ make package-mac-notarized
 - 确认签名身份：
   ```bash
   security find-identity -v -p codesigning
-  codesign -dv --verbose=4 dist/.../LiangWenMac.app
+  codesign -dv --verbose=4 dist/.../GudengMac.app
   ```
 - 签名后、公证前 `spctl -a -vv` 仍可能拒绝，这是预期；公证并 staple 后再检查。
 
@@ -96,14 +96,14 @@ make package-mac-notarized
 使用 Developer ID Application 证书：
 
 ```bash
-xcodebuild -project LiangWenClock.xcodeproj \
-  -scheme LiangWenMac \
+xcodebuild -project GudengClock.xcodeproj \
+  -scheme GudengMac \
   -configuration Release \
-  -archivePath .build/LiangWenClock.xcarchive \
+  -archivePath .build/GudengClock.xcarchive \
   archive
 
 xcodebuild -exportArchive \
-  -archivePath .build/LiangWenClock.xcarchive \
+  -archivePath .build/GudengClock.xcarchive \
   -exportPath .build/export \
   -exportOptionsPlist ExportOptions.plist
 ```
@@ -111,9 +111,9 @@ xcodebuild -exportArchive \
 `ExportOptions.plist` 使用 `method = developer-id`，并指定团队。检查：
 
 ```bash
-codesign -dv --verbose=4 .build/export/LiangWenMac.app
-codesign --verify --deep --strict --verbose=2 .build/export/LiangWenMac.app
-spctl -a -vv .build/export/LiangWenMac.app
+codesign -dv --verbose=4 .build/export/GudengMac.app
+codesign --verify --deep --strict --verbose=2 .build/export/GudengMac.app
+spctl -a -vv .build/export/GudengMac.app
 ```
 
 ## 6. 公证
@@ -137,11 +137,11 @@ make package-mac-notarized
 手动流程如下：
 
 ```bash
-ditto -c -k --keepParent .build/export/LiangWenMac.app .build/LiangWenMac.zip
-xcrun notarytool submit .build/LiangWenMac.zip \
+ditto -c -k --keepParent .build/export/GudengMac.app .build/GudengMac.zip
+xcrun notarytool submit .build/GudengMac.zip \
   --keychain-profile "gudeng-notary" --wait
-xcrun stapler staple .build/export/LiangWenMac.app
-spctl -a -vv .build/export/LiangWenMac.app
+xcrun stapler staple .build/export/GudengMac.app
+spctl -a -vv .build/export/GudengMac.app
 ```
 
 凭据放在钥匙串，不写入仓库或 CI 日志。公证通过后重新打包 DMG/zip。
@@ -151,7 +151,7 @@ spctl -a -vv .build/export/LiangWenMac.app
 `make package-mac` 已生成 zip、dmg 与 `SHA256SUMS`。手动方式：
 
 ```bash
-hdiutil create -volname "谷蹬" -srcfolder .build/export/LiangWenMac.app \
+hdiutil create -volname "谷蹬" -srcfolder .build/export/GudengMac.app \
   -ov -format UDZO .build/Gudeng-0.1.0.dmg
 shasum -a 256 .build/Gudeng-0.1.0.dmg
 ```

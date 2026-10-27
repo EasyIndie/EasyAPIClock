@@ -6,7 +6,7 @@
 # The bundle is written to .build/test-rules and served over localhost. It is
 # never committed or published.
 #
-# Test-only: LIANGWEN_TEST_NOW=2026-10-26T09:00:00+08:00 overrides the clock so
+# Test-only: GUDENG_TEST_NOW=2026-10-26T09:00:00+08:00 overrides the clock so
 # the generator can be validated on a weekend. Do not use it for notification
 # testing; the app still runs on the real clock. The test bundle's publishedAt is intentionally
 # newer than the production bundle, so it will be installed by the app; remove
@@ -96,13 +96,13 @@ lead = int(os.environ["LEAD_MINUTES"])
 install_only = os.environ.get("INSTALL_ONLY") == "1"
 root = Path(os.environ["DIR"])
 tz = timezone(timedelta(hours=8))
-override = os.environ.get("LIANGWEN_TEST_NOW", "")
+override = os.environ.get("GUDENG_TEST_NOW", "")
 if override:
     now = datetime.fromisoformat(override.replace("Z", "+00:00"))
     if now.tzinfo is None:
         now = now.replace(tzinfo=tz)
     now = now.astimezone(tz)
-    print(f"使用 LIANGWEN_TEST_NOW={override} 生成（仅用于验证脚本逻辑）。")
+    print(f"使用 GUDENG_TEST_NOW={override} 生成（仅用于验证脚本逻辑）。")
 else:
     now = datetime.now(tz)
 today = now.date()
@@ -186,20 +186,20 @@ else:
 PY
 
 echo "重新计算 manifest 校验和…"
-swift run --package-path Packages/LiangWen liangwen-rules manifest "$DIR"
+swift run --package-path Packages/Gudeng gudeng-rules manifest "$DIR"
 echo "校验测试规则包…"
-swift run --package-path Packages/LiangWen liangwen-rules validate "$DIR"
+swift run --package-path Packages/Gudeng gudeng-rules validate "$DIR"
 
-APP="${LIANGWEN_APP:-$ROOT/.build/DerivedDataAdhoc/Build/Products/Debug/LiangWenMac.app}"
+APP="${GUDENG_APP:-$ROOT/.build/DerivedDataAdhoc/Build/Products/Debug/GudengMac.app}"
 echo
 echo "规则包：$DIR"
 echo "先退出正在运行的谷蹬，然后构建并带环境变量启动："
 echo "  make build-mac-adhoc"
-echo "  LIANGWEN_RULE_SOURCE=http://127.0.0.1:$PORT \"$APP/Contents/MacOS/LiangWenMac\""
+echo "  GUDENG_RULE_SOURCE=http://127.0.0.1:$PORT \"$APP/Contents/MacOS/GudengMac\""
 echo "在设置中点击「检查更新」，安装测试包后等待窗口切换。"
 echo
 echo "测试结束后清理本地规则，回退内置规则："
-echo "  rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\\ Support/LiangWen/Rules/active"
+echo "  rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\\ Support/Gudeng/Rules/active"
 
 if [[ "$SERVE" == "0" ]]; then
   exit 0

@@ -13,18 +13,18 @@
 ```
 Apps/Mac（菜单栏／生命周期）   Apps/iOS（只读外壳）
                        ↓
-LiangWenKit：SwiftUI／文案／ClockModel观察适配／系统通知与登录项
+GudengKit：SwiftUI／文案／ClockModel观察适配／系统通知与登录项
                        ↓
-LiangWenRuntime：ClockSession／值状态／业务流程／存储与能力协议
+GudengRuntime：ClockSession／值状态／业务流程／存储与能力协议
                        ↓
-LiangWenCore：规则／校验／北京时间引擎／提醒计划／更新校验
+GudengCore：规则／校验／北京时间引擎／提醒计划／更新校验
 ```
 
 依赖方向只能向下。Core与Runtime不依赖SwiftUI、AppKit、UIKit、Observation、Combine或UserNotifications。Core不创建网络客户端；RemoteRuleUpdater必须显式注入RuleDataFetching，URLSession实现位于Runtime。`make check-layers`与CI检查模块import边界。
 
 ## 模块职责
 
-### LiangWenCore（纯逻辑）
+### GudengCore（纯逻辑）
 
 | 类型 | 职责 |
 |---|---|
@@ -39,7 +39,7 @@ LiangWenCore：规则／校验／北京时间引擎／提醒计划／更新校�
 | `ReminderPlanner` | 从快照 + 偏好 + 策略生成未来提醒 |
 | `RemoteRuleUpdater` | 拉取 manifest 与文件、校验、拒绝降级 |
 
-### LiangWenRuntime（共享业务与Foundation能力）
+### GudengRuntime（共享业务与Foundation能力）
 
 | 类型 | 职责 |
 |---|---|
@@ -52,7 +52,7 @@ LiangWenCore：规则／校验／北京时间引擎／提醒计划／更新校�
 | `StrongRepeatRetention` | 刷新时保留窗口内强提醒重复 |
 | `URLSessionRuleDataFetcher` / `RuleSourceConfiguration` | Foundation网络适配与宿主更新源配置 |
 
-### LiangWenKit（界面与Apple平台适配）
+### GudengKit（界面与Apple平台适配）
 
 | 类型 | 职责 |
 |---|---|
@@ -135,30 +135,31 @@ ClockSession.refresh(now:)
 ```
 Apps/Mac/Sources/            入口 + AppDelegate
 Apps/iOS/Sources/            只读外壳
-Packages/LiangWen/Sources/
-  LiangWenCore/Domain/       LocalDate / MinuteOfDay / 金额 / 状态
-  LiangWenCore/Rules/        规则模型、校验、manifest、加载
-  LiangWenCore/Engine/       快照、比较、引擎
-  LiangWenCore/Reminders/    计划器
-  LiangWenCore/Updates/      远程更新与来源配置
-  LiangWenCore/Support/      时区 / JSON 编解码
-  LiangWenRuntime/Session/   共享会话、类型化值状态
-  LiangWenRuntime/Services/  能力协议、预览／自动更新／重复保留策略
-  LiangWenRuntime/Storage/   规则安装与Bundle装载
-  LiangWenRuntime/Transport/ URLSession和宿主更新源配置
-  LiangWenKit/Model/         观察适配器、组合根
-  LiangWenKit/Services/      系统偏好、通知与登录项适配
-  LiangWenKit/Presentation/  文案与格式化
-  LiangWenKit/Views/         SwiftUI 面板
+Packages/Gudeng/Sources/
+  GudengCore/Domain/       LocalDate / MinuteOfDay / 金额 / 状态
+  GudengCore/Rules/        规则模型、校验、manifest、加载
+  GudengCore/Engine/       快照、比较、引擎
+  GudengCore/Reminders/    计划器
+  GudengCore/Updates/      远程更新与来源配置
+  GudengCore/Support/      时区 / JSON 编解码
+  GudengRuntime/Session/   共享会话、类型化值状态
+  GudengRuntime/Services/  能力协议、预览／自动更新／重复保留策略
+  GudengRuntime/Storage/   规则安装与Bundle装载
+  GudengRuntime/Transport/ URLSession和宿主更新源配置
+  GudengKit/Model/         观察适配器、组合根
+  GudengKit/Services/      系统偏好、通知与登录项适配
+  GudengKit/Presentation/  文案与格式化
+  GudengKit/Views/         SwiftUI 面板
 Rules/                       唯一规则数据源
 ```
 
 ## 构建系统
 
-- SwiftPM 负责 `LiangWenCore` / `LiangWenRuntime` / `LiangWenKit` / CLI / 测试。
+- SwiftPM 负责 `GudengCore` / `GudengRuntime` / `GudengKit` / CLI / 测试。
 - XcodeGen 2.46.0 从 `project.yml` 生成两个应用工程；`.xcodeproj` 不提交。
 - 版本固定在 `.xcodegen-version`；`Scripts/install-xcodegen.sh` 下载官方 universal release（含 `SettingPresets`）并校验 SHA-256；`make doctor` 检查工具链。
 - `Rules/` 以 folder reference 原样复制到两个 app bundle。
+- 工程标识统一为 `Gudeng`；偏好键、已安装规则目录与规则源配置在升级时迁移，Bundle ID 与 `lw.` 通知协议 ID 不变。见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。
 - 详见 [ADR-0002](../adr/0002-xcodegen.md)。
 
 ## 改动放在哪里
@@ -168,9 +169,9 @@ Rules/                       唯一规则数据源
 | 新价格字段 | `Core/Rules/PricingRules.swift` + 校验 + 文档 |
 | 新日期语义 | `Core/Engine/ClockEngine.swift` + 测试 + 时间文档 |
 | 新提醒阶段 | `ReminderPolicy` + `ReminderPlanner` + 文案 + 平台验证 |
-| 新 UI 区块 | `LiangWenKit/Views`，先对照设计基准与需求 |
+| 新 UI 区块 | `GudengKit/Views`，先对照设计基准与需求 |
 | 平台能力 | Kit提供原生实现，通过Runtime协议注入会话 |
-| 共享业务流程 | `LiangWenRuntime/Session`，不得依赖界面与系统通知框架 |
+| 共享业务流程 | `GudengRuntime/Session`，不得依赖界面与系统通知框架 |
 | 规则数据 | `Rules/` + manifest + runbook |
 
 ### 菜单栏面板外观

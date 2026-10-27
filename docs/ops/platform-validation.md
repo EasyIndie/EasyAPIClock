@@ -115,14 +115,14 @@ Scripts/serve-test-rules.sh --install-only
 
 ```bash
 make build-mac-adhoc
-LIANGWEN_RULE_SOURCE=http://127.0.0.1:8765 \
-  .build/DerivedDataAdhoc/Build/Products/Debug/LiangWenMac.app/Contents/MacOS/LiangWenMac
+GUDENG_RULE_SOURCE=http://127.0.0.1:8765 \
+  .build/DerivedDataAdhoc/Build/Products/Debug/GudengMac.app/Contents/MacOS/GudengMac
 ```
 
 然后在设置中点击「检查规则更新」。测试包只用于验证，不要提交或发布。**周末恒为谷，脚本会拒绝生成；请在工作日运行。** 测试结束后清理 active 规则，回退内置版本：
 
 ```bash
-rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/Gudeng/Rules/active
 ```
 3. **修改系统时间**：可以验证唤醒/重算，但会影响其他应用与通知计时；测试后立即恢复，并记录风险。
 
@@ -277,7 +277,7 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 2. **检查谷蹬的系统通知设置。** 在“系统设置 → 通知 → 谷蹬”确认“允许通知”、横幅/通知中心位置和“播放通知的声音”已开启，并记录横幅样式。设置关闭时，先处理权限，不要通过重复点击预览来判断。
 3. **检查当前专注模式。** 在控制中心确认当前 Focus 状态。专注模式可能抑制或延迟通知，即使谷蹬已列入该模式的允许 App，也不能据此认定一定会显示/发声。若要做对照复测，可临时关闭当前模式，完成单次预览后恢复原状态，并记录前后状态；不要关闭不相关的模式或改动通知权限。
 4. **检查声音输出。** 确认系统输出设备、输出音量和静音状态。系统总音量未静音只是排查信息，不能单独证明通知声音已播放；通知日志中的 `isMuted` 也可能反映通知/Focus 呈现策略，不应直接等同于系统输出静音。
-5. **区分排程、系统接收和用户可见效果。** Debug 构建可按本文件“日志（辅助取证）”中的 `LIANGWEN_NOTIFICATION_DIAGNOSTICS=1` 观测预览请求与系统回调；统一日志可辅助确认 `usernoted` 接受请求、通知是否被 Focus 延迟/抑制、Notification Center 的呈现处理以及声音处理。系统记录为 delivered 或 “as banner” 不足以证明用户实际看见横幅；需结合可见屏幕证据与实际听感记录。
+5. **区分排程、系统接收和用户可见效果。** Debug 构建可按本文件“日志（辅助取证）”中的 `GUDENG_NOTIFICATION_DIAGNOSTICS=1` 观测预览请求与系统回调；统一日志可辅助确认 `usernoted` 接受请求、通知是否被 Focus 延迟/抑制、Notification Center 的呈现处理以及声音处理。系统记录为 delivered 或 “as banner” 不足以证明用户实际看见横幅；需结合可见屏幕证据与实际听感记录。
 6. **核对结束清理。** 预览最多持续 10 秒，或在手动停止/关闭面板/退出时结束。结束后确认预览专用 `gudeng.preview.*` pending/delivered 请求清理，正式提醒排程数量未改变。
 
 ### 本次复测结果
@@ -291,7 +291,7 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 
 ## 2026-10-28 · macOS 27.0.1 · Apple M1（arm64）· 真实切换提醒
 
-- 应用：0.1.1（build 3），Bundle ID `com.easyindie.easyapiclock`，本地 Debug ad-hoc 构建（`.build/DerivedDataAcceptance`），带 `LIANGWEN_NOTIFICATION_DIAGNOSTICS=1`
+- 应用：0.1.1（build 3），Bundle ID `com.easyindie.easyapiclock`，本地 Debug ad-hoc 构建（`.build/DerivedDataAcceptance`），带 `GUDENG_NOTIFICATION_DIAGNOSTICS=1`
 - 规则：本地测试规则包（`Scripts/serve-test-rules.sh`，仅本机 8765 端口），当日生成 01:52–01:54、02:08–02:10、02:20–02:22、02:28–02:30 四个真实峰窗口；测后已删除 `Rules/active` 并恢复内置规则
 - 通知权限：首次请求由系统显示「谷蹬」授权卡片，随后 `authorization=authorized`；`alerts/sound/notificationCenter=enabled`、`style=banner`。本轮未改系统权限数据库、未清理通知状态
 - Focus：关闭；系统输出音量 6、未静音

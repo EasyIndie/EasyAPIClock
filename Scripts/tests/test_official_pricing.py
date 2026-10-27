@@ -28,11 +28,11 @@ class OfficialPricingTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        for path in ["Rules", "docs/ops", "docs/product", "Packages/LiangWen/Tests/LiangWenCoreTests"]:
+        for path in ["Rules", "docs/ops", "docs/product", "Packages/Gudeng/Tests/GudengCoreTests"]:
             (self.root / path).mkdir(parents=True, exist_ok=True)
         for file in (ROOT / "Rules").glob("*.json"):
             shutil.copy(file, self.root / "Rules")
-        for file in ["docs/product/requirements.md", "Packages/LiangWen/Tests/LiangWenCoreTests/RuleBundleTests.swift", "CHANGELOG.md"]:
+        for file in ["docs/product/requirements.md", "Packages/Gudeng/Tests/GudengCoreTests/RuleBundleTests.swift", "CHANGELOG.md"]:
             shutil.copy(ROOT / file, self.root / file)
         pricing_path = self.root / "Rules/pricing.json"
         pricing = json.loads(pricing_path.read_text())
@@ -99,7 +99,7 @@ class OfficialPricingTests(unittest.TestCase):
         manifest = json.loads((self.root / "Rules/manifest.json").read_text())
         for key, file in manifest["files"].items():
             self.assertEqual(manifest["sha256"][key], m.hashlib.sha256((self.root / "Rules" / file).read_bytes()).hexdigest())
-        self.assertIn('cacheHit.valley.value == Decimal(string: "0.03")', (self.root / "Packages/LiangWen/Tests/LiangWenCoreTests/RuleBundleTests.swift").read_text())
+        self.assertIn('cacheHit.valley.value == Decimal(string: "0.03")', (self.root / "Packages/Gudeng/Tests/GudengCoreTests/RuleBundleTests.swift").read_text())
         self.assertIn("| deepseek-flash | 输入（缓存命中） | 0.03 | 0.06 |", (self.root / "docs/product/requirements.md").read_text())
 
     def test_https_host_boundary(self):

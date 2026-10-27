@@ -157,7 +157,7 @@
 
 ### Debug验收观测
 
-仅Debug构建且设置 `LIANGWEN_NOTIFICATION_DIAGNOSTICS=1` 时，标准输出记录本应用预览的真实pending/delivered ID、授权状态、正式pending数量及willPresent回调。2/5/8秒采样任务在停止时取消；不读取其他应用通知或正式通知正文，不改变正式排程。Release不包含该观测代码。采样仅作为平台验收证据，排入成功不等于用户看到或听到通知。
+仅Debug构建且设置 `GUDENG_NOTIFICATION_DIAGNOSTICS=1` 时，标准输出记录本应用预览的真实pending/delivered ID、授权状态、正式pending数量及willPresent回调。2/5/8秒采样任务在停止时取消；不读取其他应用通知或正式通知正文，不改变正式排程。Release不包含该观测代码。采样仅作为平台验收证据，排入成功不等于用户看到或听到通知。
 
 Debug启动时还可只读记录全部本应用预览前缀的pending/delivered集合，快照自身不清理通知，供验证正常退出后的残留；仍受同一显式环境标志控制，Release不包含。
 

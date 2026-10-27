@@ -4,16 +4,16 @@ on:
   pull_request:
     paths:
       - "Rules/**"
-      - "Packages/LiangWen/Sources/LiangWenCore/**"
-      - "Packages/LiangWen/Tests/LiangWenCoreTests/**"
+      - "Packages/Gudeng/Sources/GudengCore/**"
+      - "Packages/Gudeng/Tests/GudengCoreTests/**"
       - "Scripts/publish-rules.sh"
       - ".github/workflows/rules.yml"
   push:
     branches: [main]
     paths:
       - "Rules/**"
-      - "Packages/LiangWen/Sources/LiangWenCore/**"
-      - "Packages/LiangWen/Tests/LiangWenCoreTests/**"
+      - "Packages/Gudeng/Sources/GudengCore/**"
+      - "Packages/Gudeng/Tests/GudengCoreTests/**"
       - "Scripts/publish-rules.sh"
       - ".github/workflows/rules.yml"
   workflow_dispatch:

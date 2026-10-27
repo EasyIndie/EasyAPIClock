@@ -13,4 +13,4 @@
 - 不扩大产品范围（无账号、API Key、统计、番茄钟、任务管理、自动切换模型）。
 - 修改规则后运行 `make rules-manifest && make validate-rules && make test`。
 - 提交前运行 `make check`；不要提交生成的 `.xcodeproj`、`Build/Generated/`、`.build/`。
-- 核心逻辑（`LiangWenCore`）保持纯函数、确定性、无 UI/网络/系统时区依赖。
+- 核心逻辑（`GudengCore`）保持纯函数、确定性、无 UI/网络/系统时区依赖。

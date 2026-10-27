@@ -33,6 +33,6 @@
 ## 范围检查
 
 - [ ] 没有加入账号、API Key、统计、番茄钟、任务管理、自动切换模型或硬件管理
-- [ ] 没有提交生成的 `LiangWenClock.xcodeproj`、`Build/Generated/`、`.build/`
+- [ ] 没有提交生成的 `GudengClock.xcodeproj`、`Build/Generated/`、`.build/`
 - [ ] 没有引入新的第三方运行时依赖（如引入，已附 ADR）
 - [ ] 没有伪造价格、节假日或日期覆盖

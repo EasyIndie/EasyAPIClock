@@ -224,7 +224,7 @@ def prepare(report, root, expected_digest, effective_from, evidence):
         for tier in model["tiers"]:
             tier.update(observation["prices"][model["id"]][tier["id"]])
     # Keep the independent hard-coded snapshot and product table synchronized, never relax validation.
-    tests_path = root / "Packages/LiangWen/Tests/LiangWenCoreTests/RuleBundleTests.swift"
+    tests_path = root / "Packages/Gudeng/Tests/GudengCoreTests/RuleBundleTests.swift"
     tests = tests_path.read_text()
     values = observation["prices"]
     block = tests[tests.index("    func pricesMatchSnapshot()"):tests.index('    @Test("校验和错误')]

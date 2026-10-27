@@ -16,7 +16,7 @@
 
 | 项目 | 当前证据与差距 | 下一步 |
 |---|---|---|
-| 沙盒与网络 | project.yml和Apps/Mac/LiangWenMac.entitlements已配置app-sandbox、network.client | 用最终商店签名构建检查实际权限及容器内读写 |
+| 沙盒与网络 | project.yml和Apps/Mac/GudengMac.entitlements已配置app-sandbox、network.client | 用最终商店签名构建检查实际权限及容器内读写 |
 | 菜单栏入口 | MenuBarExtra原生实现；所查规则未发现单独禁止菜单栏形态 | 审核备注明确无常驻主窗口、点击状态项进入、设置及退出位置 |
 | 持续实用性 | 本地价格状态、倒计时、日历语义、提醒与离线回退 | 将这些实际能力演示给审核员；不以新增范围外功能应对假想拒绝 |
 | 启动与退出 | SMAppService开关、预览退出清理已实现；实际重新登录待验 | 验证用户主动开启、关闭与退出行为，说明正式通知的系统排程语义 |

@@ -76,13 +76,13 @@ make icon          # 重新生成 macOS AppIcon 全套尺寸
 
 XcodeGen 版本固定在 [`.xcodegen-version`](.xcodegen-version)，安装脚本只下载官方 release 并校验 SHA-256；不会使用“latest”。
 
-`LiangWenClock.xcodeproj` 是生成产物，不提交到仓库。`LiangWenClock` 是暂保留的工程技术标识；对外产品名为「谷蹬」。修改工程结构请编辑 [`project.yml`](project.yml)。
+`GudengClock.xcodeproj` 是生成产物，不提交到仓库。工程标识统一为 `Gudeng`（包、模块、target 与 CLI），对外产品名仍是「谷蹬」。修改工程结构请编辑 [`project.yml`](project.yml)。
 
 只运行 SwiftPM 部分：
 
 ```bash
-swift test --package-path Packages/LiangWen
-swift run --package-path Packages/LiangWen liangwen-rules validate Rules
+swift test --package-path Packages/Gudeng
+swift run --package-path Packages/Gudeng gudeng-rules validate Rules
 ```
 
 ## 项目结构
@@ -91,17 +91,17 @@ swift run --package-path Packages/LiangWen liangwen-rules validate Rules
 Apps/
   Mac/                 macOS 菜单栏外壳（MenuBarExtra、唤醒/改时刷新）
   iOS/                 最小 iOS 外壳（仅验证共享引擎，设计未确认）
-Packages/LiangWen/
-  Sources/LiangWenCore   纯逻辑：规则、日历、引擎、提醒计划、更新校验
-  Sources/LiangWenRuntime 共享业务会话、值状态、规则仓库与能力协议
-  Sources/LiangWenKit    SwiftUI界面适配、中文文案、系统偏好/通知/登录项
-  Sources/LiangWenRuleTool 规则包校验与 manifest 重新计算 CLI
+Packages/Gudeng/
+  Sources/GudengCore   纯逻辑：规则、日历、引擎、提醒计划、更新校验
+  Sources/GudengRuntime 共享业务会话、值状态、规则仓库与能力协议
+  Sources/GudengKit    SwiftUI界面适配、中文文案、系统偏好/通知/登录项
+  Sources/GudengRuleTool 规则包校验与 manifest 重新计算 CLI
 Rules/                 内置规则包（价格、2026 节假日、提醒策略、manifest）
 Scripts/               固定版本工具安装、开发环境检查
 docs/                  产品、架构、ADR、运维与原始交接包
 ```
 
-依赖方向固定为 `Apps → LiangWenKit → LiangWenRuntime → LiangWenCore`。`LiangWenCore` 不依赖 SwiftUI、AppKit 或网络，所有时间答案由传入的 `Date` 和已验证规则决定。共享业务接入见 [SDK边界](docs/architecture/shared-sdk.md)；`make check-layers`检查UI依赖不会进入业务模块。
+依赖方向固定为 `Apps → GudengKit → GudengRuntime → GudengCore`。`GudengCore` 不依赖 SwiftUI、AppKit 或网络，所有时间答案由传入的 `Date` 和已验证规则决定。共享业务接入见 [SDK边界](docs/architecture/shared-sdk.md)；`make check-layers`检查UI依赖不会进入业务模块。
 
 ## 关键约束
 

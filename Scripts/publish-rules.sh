@@ -29,7 +29,7 @@ for cmd in git python3 swift; do
 done
 
 echo "校验规则包…"
-swift run --package-path Packages/LiangWen liangwen-rules validate Rules
+swift run --package-path Packages/Gudeng gudeng-rules validate Rules
 
 NEW_VERSION="$(python3 -c 'import json; print(json.load(open("Rules/manifest.json"))["bundleVersion"])')"
 NEW_PUBLISHED="$(python3 -c 'import json; print(json.load(open("Rules/manifest.json"))["publishedAt"])')"
@@ -80,7 +80,7 @@ if [[ "$DRY_RUN" == "1" ]]; then
   exit 0
 fi
 
-WORKTREE="$(mktemp -d "${TMPDIR:-/tmp}/liangwen-rules.XXXXXX")"
+WORKTREE="$(mktemp -d "${TMPDIR:-/tmp}/gudeng-rules.XXXXXX")"
 cleanup() {
   git -C "$ROOT" worktree remove --force "$WORKTREE" >/dev/null 2>&1 || true
 }

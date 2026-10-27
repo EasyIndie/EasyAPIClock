@@ -1,5 +1,5 @@
 import AppKit
-import LiangWenKit
+import GudengKit
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {

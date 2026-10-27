@@ -4,9 +4,9 @@
 
 ## 产品与依赖
 
-- LiangWenCore：只需要判断价格／日历／下次切换或生成提醒计划的宿主可单独使用。RemoteRuleUpdater要求显式提供RuleDataFetching，不默认联网。
-- LiangWenRuntime：需要完整规则安装、偏好修改、排程去重、自动更新或提醒预览的宿主使用ClockSession。该target只依赖Core，不importSwiftUI、AppKit、UIKit、Observation、Combine或UserNotifications。
-- LiangWenKit：本项目现有Apple原生系统服务、中文文案及SwiftUI面板；ClockModel把会话值状态桥接为Combine ObservableObject，并转发操作。macOS13沿用同一业务会话，视图使用@ObservedObject订阅适配器。
+- GudengCore：只需要判断价格／日历／下次切换或生成提醒计划的宿主可单独使用。RemoteRuleUpdater要求显式提供RuleDataFetching，不默认联网。
+- GudengRuntime：需要完整规则安装、偏好修改、排程去重、自动更新或提醒预览的宿主使用ClockSession。该target只依赖Core，不importSwiftUI、AppKit、UIKit、Observation、Combine或UserNotifications。
+- GudengKit：本项目现有Apple原生系统服务、中文文案及SwiftUI面板；ClockModel把会话值状态桥接为Combine ObservableObject，并转发操作。macOS13沿用同一业务会话，视图使用@ObservedObject订阅适配器。
 
 依赖只向下。共享逻辑不复制到Apps或不同设备视图中。iOS当前只读外壳仍只使用引擎，不启用通知、自动更新或新交互。
 
@@ -15,8 +15,8 @@
 宿主提供Rules目录、规则支持目录、PreferencesStoring与ReminderScheduling实现、更新器（可为nil）、独立UserDefaults配置及初始时间，构造ClockSession。资源和服务选择由宿主负责，不要求加载谷蹬SwiftUI视图。
 
 ```swift
-import LiangWenCore
-import LiangWenRuntime
+import GudengCore
+import GudengRuntime
 
 // repository / initialNow / preferences / stores / scheduler由宿主提供。
 let session = ClockSession(
@@ -55,6 +55,6 @@ ClockSessionTests只导入Core／Runtime，覆盖多观察者、移除订阅、�
 
 make check-layers和CI限制Core/Runtime导入UI框架；SwiftPM依赖图限制反向模块依赖。make check仍运行规则校验、全部测试、lint与双端构建。
 
-本次额外验证：独立临时副本将Package.swift设为macOS13，仅构建LiangWenRuntime成功；随后正式工程目标也降至13.0并完成构建；macOS13运行验收尚未完成。
+本次额外验证：独立临时副本将Package.swift设为macOS13，仅构建GudengRuntime成功；随后正式工程目标也降至13.0并完成构建；macOS13运行验收尚未完成。
 
 ClockSessionState.lastAutomaticAttemptAt为既有自动更新节流记录的只读输出，包含失败、跨实例保留；手动检查不会修改。它是尝试收据，不是网络成功或新规则安装的保证。Kit负责北京时间格式化。

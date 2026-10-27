@@ -28,7 +28,7 @@ git log -1 --oneline --decorate
 - 极简 macOS 菜单栏应用，显示 DeepSeek API 模型价格的峰/谷状态、距真实下一次切换的时长与提醒入口；不做账号、API Key、用量/费用分析、模型自动切换、任务管理或 Agent 集成。
 - 价格状态统一按 `Asia/Shanghai`。周末（包含调休上班周末）及法定节假日全天为谷。规则覆盖不足时显示待更新，不猜状态、不发无法确认的价格提醒。
 - 产品范围和验收以 `docs/product/requirements.md` 为准；Mac 视觉以 `docs/product/design-macos.md` 和 `docs/design/brand-refresh-2026-10-27/` 为准。iOS 仍是只读验证外壳，没有已确认的产品交互设计。
-- Swift 6 分层：`LiangWenCore`（纯规则逻辑）→ `LiangWenRuntime`（共享会话和业务流程）→ `LiangWenKit`（SwiftUI、系统适配）→ `Apps/Mac` / `Apps/iOS`。相关决策见 ADR-0010、0011、0013。
+- Swift 6 分层：`GudengCore`（纯规则逻辑）→ `GudengRuntime`（共享会话和业务流程）→ `GudengKit`（SwiftUI、系统适配）→ `Apps/Mac` / `Apps/iOS`。相关决策见 ADR-0010、0011、0013。
 - 最低目标 macOS 13.0、iOS 17.0。macOS 13.7.8 Intel（pro）有基础原生运行证据；macOS 13 arm64 与完整登录项/通知矩阵尚未通过。
 - macOS 面板固定 334×322pt；已完成设置紧凑布局、菜单栏基线对齐、峰谷表达性视觉和受偏好/Reduce Motion 控制的反馈动效。用户此前已手动确认当时的 UI 视觉验收通过。
 - 当前 Bundle ID：macOS `com.easyindie.easyapiclock`，iOS `com.easyindie.easyapiclock.ios`。v0.1.1 更换了应用身份，旧版偏好、通知授权和沙盒数据不会自动迁移。

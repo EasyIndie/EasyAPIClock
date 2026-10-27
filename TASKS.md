@@ -15,6 +15,8 @@
 - [x] 单元测试、规则 CLI、CI、工程脚手架
 - [x] 产品/架构/ADR/运维文档与交接包归档
 
+- [x] **工程标识统一为 Gudeng**：包/模块/target/工程/CLI 改名，偏好、规则目录与规则源提供迁移；历史 ADR、归档交接与验证证据保留旧名（ADR-0014）。
+
 ## P0 · 发布前
 
 - [x] **2026-10-24 macOS 27 真机初验**：完成界面、周末状态、设置、规则更新/失败回退、退出、偏好持久化与通知授权拒绝路径；记录见 `docs/ops/platform-validation.md`。
@@ -30,7 +32,7 @@
   - 验收：Asset Catalog 编译通过；不暗示自动切换模型。
 - [x] **README 截图**：已在 macOS 27 通过 GUI 会话截取真实主面板与设置页；截图机器未授权通知，README 已说明。
   - 验收：使用真实截图，不使用设计稿冒充成品。
-- [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`LiangWenRuleSourceBaseURL` 默认指向该 raw 地址。
+- [x] **更新源部署**：`Rules` workflow 校验后发布到仓库 `rules` 分支；`GudengRuleSourceBaseURL` 默认指向该 raw 地址。
   - 验收：raw manifest 与三个文件 checksum 一致；一次成功更新与一次坏包回退待真机记录。
 - [x] **Release 打包骨架**：`make package-mac` 生成通用二进制 zip/dmg；CI 增加 Release 通用构建；手动 Release workflow 只产出 artifact。
 - [x] **A15 测试工具**：`make serve-test-rules` 生成近期切换规则包并本地提供，支持提前提醒场景。

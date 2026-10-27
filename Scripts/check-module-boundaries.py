@@ -5,11 +5,11 @@ import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
-sources = root / "Packages/LiangWen/Sources"
+sources = root / "Packages/Gudeng/Sources"
 ui_imports = {"SwiftUI", "AppKit", "UIKit", "Observation", "Combine", "UserNotifications"}
 forbidden = {
-    "LiangWenCore": ui_imports | {"LiangWenRuntime", "LiangWenKit"},
-    "LiangWenRuntime": ui_imports | {"LiangWenKit"},
+    "GudengCore": ui_imports | {"GudengRuntime", "GudengKit"},
+    "GudengRuntime": ui_imports | {"GudengKit"},
 }
 pattern = re.compile(r"^\s*(?:(?:@preconcurrency|@testable|public|internal|package|private|fileprivate)\s+)*import\s+(\w+)", re.MULTILINE)
 errors = []

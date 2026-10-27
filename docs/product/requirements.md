@@ -114,7 +114,7 @@
 
 ## 七、交付验收场景
 
-自动化状态以 `swift test --package-path Packages/LiangWen` 为准；手动项见 [`../ops/platform-validation.md`](../ops/platform-validation.md)。
+自动化状态以 `swift test --package-path Packages/Gudeng` 为准；手动项见 [`../ops/platform-validation.md`](../ops/platform-validation.md)。
 
 | 编号 | 场景 | 状态 | 自动化 / 手动 |
 |---|---|---|---|

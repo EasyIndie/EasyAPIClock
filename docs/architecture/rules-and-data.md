@@ -151,8 +151,8 @@ Rules/
 内置 Rules/（app bundle）
         │ 仅当没有有效已安装版本
         ▼
-Application Support/LiangWen/Rules/active/     ← 已安装、当前有效
-Application Support/LiangWen/Rules/pending/    ← 已校验、尚未到 effectiveFrom
+Application Support/Gudeng/Rules/active/     ← 已安装、当前有效
+Application Support/Gudeng/Rules/pending/    ← 已校验、尚未到 effectiveFrom
 ```
 
 - `RuleRepository.active(at:)`：
@@ -210,9 +210,9 @@ GET <base>/manifest.json
 
 ```bash
 # 沙盒应用
-rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Containers/com.easyindie.easyapiclock/Data/Library/Application\ Support/Gudeng/Rules/active
 # 非沙盒开发构建
-rm -rf ~/Library/Application\ Support/LiangWen/Rules/active
+rm -rf ~/Library/Application\ Support/Gudeng/Rules/active
 ```
 
 删除后应用会回退到内置规则（可能是旧版本）。远程回滚的正确方式是发布一个 `publishedAt` 更新、内容修正的规则包，而不是让旧包“降级”。
@@ -233,7 +233,7 @@ https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules
 ```
 
 - `.github/workflows/rules.yml`：
-  - PR / 主分支涉及 `Rules/**`、`LiangWenCore` 或发布脚本时，先跑 `make validate-rules` 与 `make test`。
+  - PR / 主分支涉及 `Rules/**`、`GudengCore` 或发布脚本时，先跑 `make validate-rules` 与 `make test`。
   - 只有主分支校验通过后，`publish` job 才运行 `Scripts/publish-rules.sh`。
 - `Scripts/publish-rules.sh`：
   - 再次校验规则包；
@@ -241,7 +241,7 @@ https://raw.githubusercontent.com/EasyIndie/EasyAPIClock/rules
   - 用 orphan 快照把 `Rules/` 内容放到分支根目录，强制推送；
   - 推送后回读 `manifest.json` 校验版本。
 - `rules` 分支是生成物，**不要手工编辑**；主分支保留规则变更历史。
-- 应用默认 base URL 写在 `project.yml` 的 `LiangWenRuleSourceBaseURL`；fork 时必须同时改这里和 workflow 的发布远端。
+- 应用默认 base URL 写在 `project.yml` 的 `GudengRuleSourceBaseURL`；fork 时必须同时改这里和 workflow 的发布远端。
 - 公开仓库的标准 GitHub Actions 免费；仓库转私有后 raw 需要认证，当前客户端不支持。
 - raw CDN 可能缓存数分钟；不要假设合并后客户端立即看到新版本。
 
@@ -261,3 +261,7 @@ make rules-publish           # 校验 + 推送到 rules 分支
 发布前在测试设备上走一次「成功更新 + 坏包回退 + 未来生效」三条路径。
 
 自动更新的请求结果与开关代次绑定：请求期间关闭或重新开启自动更新后，旧请求无论成功或失败都不再写入规则或失败反馈；请求尝试时间仍保留，避免反复切换绕过节流。手动检查失败仍正常展示。
+
+## 已安装规则的存储位置
+
+下载并校验后的规则保存在 `Application Support/Gudeng/Rules/active`（待生效在 `pending`）。从旧构建升级时，启动会把 `Application Support/LiangWen` 整体迁入 `Gudeng`；迁移失败则复制，内置规则始终作为回退。详见 [ADR-0014](../adr/0014-engineering-identity-gudeng.md)。
