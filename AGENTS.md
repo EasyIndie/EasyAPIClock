@@ -175,8 +175,10 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。
 
-## 本机安装验收入口（2026-10-27）
+## 本机安装验收入口（2026-10-28 更新）
 
-用户已要求安装，日常版本为`/Applications/谷蹬.app`，Developer ID本地签名、未公证。后续验收优先更新并从此路径启动；源码变更不会自动更新该副本。更新前退出该路径实例并备份旧版，再复制已构建/验证/同身份签名的包，避免同时启动旧开发副本。不要把本机安装等同对外发布授权。
+2026-10-28 已清理旧安装与旧数据：删除 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器 `~/Library/Containers/app.liangwen.mac`、`~/Library/Application Scripts/app.liangwen.mac` 与 `dist/` 中的旧 v0.1.0 产物。当前本机没有安装副本。
+
+后续首个 MVP 安装时使用当前签名构建，安装后从 `/Applications/谷蹬.app` 启动并据此验收；源码变更不会自动更新该副本，更新前退出实例再替换。不要把本机安装等同对外发布授权。
 
 官方价格维护使用ADR-0012与docs/ops/official-pricing-automation.md。计划任务只观察；候选必须有维护者确认的摘要、生效时刻和官方依据，未知时段/模型/倍率/页面结构不能自动覆盖Rules。不得为消除告警直接改语义指纹，不从抓取时间推测生效时间，不自动合并或提升GitHub权限。

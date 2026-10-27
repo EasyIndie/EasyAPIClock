@@ -52,9 +52,9 @@
 
 ## 图形界面启动
 
-本地安装位置使用 `/Applications/谷蹬.app`（本次开发机已完成安装）。在Finder的“应用程序”中双击“谷蹬”即可启动；它只在菜单栏显示入口，不打开常驻窗口或Dock窗口。收起面板时点击菜单栏图标重开；主面板右下电源图标用于退出，退出后从“应用程序”重新启动。目前没有公开下载入口；发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名的 macOS 构建。
+安装后应用位于 `/Applications/谷蹬.app`，双击即可启动；它只在菜单栏显示入口，不打开常驻窗口或 Dock 窗口。收起面板时点击菜单栏图标重开，主面板右下电源图标用于退出。开发机当前没有安装副本（旧 v0.1.0 已于 2026-10-28 清理）；开发时可用 `make run-mac` 或 `.build` 下的 Debug 包。目前没有公开下载入口，发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名构建。
 
-开发构建放在隐藏的.build目录，不是日常入口。本机安装版采用已有 Developer ID 做本地签名。main 上的 0.1.1 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
+开发构建放在隐藏的 `.build` 目录，不是日常入口。main 上的 0.1.1 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
 
 ## 快速开始
 
