@@ -12,12 +12,16 @@
 
 ## [Unreleased]
 
+### Removed
+
+- 删除唯一的公开 Release `v0.1.0` 及其 tag；仓库暂不提供公开下载，等待首个 MVP 版本发布。
+
 ### Changed
 
 - 工程标识从 LiangWen 统一为 Gudeng：SwiftPM 包/模块、Xcode 工程与 target、`gudeng-rules` CLI 全部改名。MVP 尚未发布，不保留旧键/旧目录迁移；Bundle ID 与 `lw.` 通知协议 ID 保持不变（ADR-0014）。
 - 切换提醒文案精简为一眼可读：标题只保留「进入高峰 / 进入低价」，正文合并为「价格基准 · 持续时长」一行；中等提醒不再带副标题，强提醒只显示「持续提醒 · 可停止」。价格单位仍来自规则，不写死倍率。
 - macOS 27 arm64 真机完成真实切换通知验收：中等横幅、强提醒 30 秒重复、「停止提醒」、退出后仍送达、重启不补发；声音实际听感、Focus/静音、睡眠唤醒与 macOS 13 arm64 仍待验证。
-- 完成 EasyAPIClock 迁入 EasyIndie，配置规则源和 GitHub Pages 产品页；v0.1.0 曾通过 EasyRelease 发布 ad-hoc DMG。
+- 完成 EasyAPIClock 迁入 EasyIndie，配置规则源和 GitHub Pages 产品页；v0.1.0 曾通过 EasyRelease 发布 ad-hoc DMG，该 Release 与 tag 已删除。
 
 - 修正提醒预览说明：中等强度显示一次、强提醒显示最多三次，关闭强度时提示先开启提醒；设置页提示与悬停说明使用同一份强度文案。
 - Build2：原创时间环/谷口图标，主界面明确DeepSeek API峰谷价格提醒；蓝靛品牌、青绿/珊瑚状态色及可关闭的入场/数字/折叠/交互反馈，规则详情分层对齐。

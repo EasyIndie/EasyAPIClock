@@ -32,7 +32,7 @@
 
 ## 当前状态
 
-当前开发版本为 **0.1.1**（tag `v0.1.1`），尚未发布公开 Release；已发布的 GitHub Release 只有 v0.1.0（ad-hoc 签名）。
+当前开发版本为 **0.1.1**（tag `v0.1.1`），仓库暂无公开 Release；首个 MVP 版本尚未发布。
 
 | 能力 | 状态 |
 |---|---|
@@ -42,7 +42,7 @@
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 计划/去重已实现；macOS 27 已验权限拒绝降级；2026-10-27 安装签名版授权允许并取得预览系统送达记录，正式平台矩阵待完 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
-| 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；GitHub Release 使用 EasyIndie/EasyRelease 对 app 做 Developer ID 签名与 Apple 公证 |
+| 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；发布流程使用 EasyIndie/EasyRelease 做 Developer ID 签名与 Apple 公证，尚未发布公开 Release |
 | 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
 | iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
 | 英文界面 | ⛔ 未完成 |
@@ -52,9 +52,9 @@
 
 ## 图形界面启动
 
-本地安装位置使用 `/Applications/谷蹬.app`（本次开发机已完成安装）。在Finder的“应用程序”中双击“谷蹬”即可启动；它只在菜单栏显示入口，不打开常驻窗口或Dock窗口。收起面板时点击菜单栏图标重开；主面板右下电源图标用于退出，退出后从“应用程序”重新启动。对外下载入口为[最新 GitHub Release](https://github.com/EasyIndie/EasyAPIClock/releases/latest)。
+本地安装位置使用 `/Applications/谷蹬.app`（本次开发机已完成安装）。在Finder的“应用程序”中双击“谷蹬”即可启动；它只在菜单栏显示入口，不打开常驻窗口或Dock窗口。收起面板时点击菜单栏图标重开；主面板右下电源图标用于退出，退出后从“应用程序”重新启动。目前没有公开下载入口；发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名的 macOS 构建。
 
-开发构建放在隐藏的.build目录，不是日常入口。本机安装版采用已有 Developer ID 做本地签名。对外下载入口当前只有 v0.1.0（ad-hoc 签名，可能被 Gatekeeper 拦截）；main 上的 0.1.1 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证。0.1.1 使用新的 Bundle ID，不沿用 v0.1.0 的偏好、通知授权与沙盒数据。
+开发构建放在隐藏的.build目录，不是日常入口。本机安装版采用已有 Developer ID 做本地签名。main 上的 0.1.1 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
 
 ## 快速开始
 

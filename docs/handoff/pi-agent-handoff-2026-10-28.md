@@ -35,7 +35,7 @@ git log -1 --oneline --decorate
 
 ## 发布与服务状态
 
-- 公开 GitHub Release 目前只有 v0.1.0（ad-hoc 签名）；`v0.1.1` 只有 tag，未发布 Release，最近一次手动发布 workflow 失败。发布入口是 `.github/workflows/publish-release.yml`，仅在 `main` 手动触发并确认；不要把本地 `make package-mac` 的 ad-hoc 包称为可分发的公证包。
+- 仓库暂无公开 Release：v0.1.0 的 Release 与 tag 已删除；`v0.1.1` 只有 tag，未发布 Release，最近一次手动发布 workflow 失败。发布入口是 `.github/workflows/publish-release.yml`，仅在 `main` 手动触发并确认；不要把本地 `make package-mac` 的 ad-hoc 包称为可分发的公证包。
 - 共享发布逻辑来自固定提交 `1b2ccaec5bec0a557e86e11e28c9459a0b7c5633` 的 `EasyIndie/EasyRelease`；使用组织共享 secrets，不要读取、打印或写入凭据。
 - GitHub Pages 产品页源在 `site/`，工作流在 `.github/workflows/pages.yml`，预期 URL 为 `https://easyindie.github.io/EasyAPIClock/`。上线状态应以 Pages workflow / 仓库设置证据为准。
 - 规则更新源是仓库 `rules` 分支。客户端规则更新与维护者官方价格观察是两条不同链路；规则仅为声明式 JSON，SHA-256 是完整性检查，不是发布者数字签名。
