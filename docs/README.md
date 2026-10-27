@@ -50,6 +50,7 @@ ops/
 design/
   README.md            设计资料入口
 handoff/               2026-10-21 原始交接包（归档，不直接修改）
+handoff/pi-agent-handoff-2026-10-28.md  当前项目状态与 Pi agent 接手提示词
 roadmap.md             里程碑、开放问题、明确不做
 ```
 

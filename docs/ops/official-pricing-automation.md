@@ -4,7 +4,7 @@
 
 客户端：已开启自动更新时，每6小时最多一次拉取仓库已发布JSON包，失败继续用有效旧包。
 
-维护者CI：Official pricing工作流每小时观察DeepSeek官方页，比较当前Rules及已核对的语义指纹。当前分支仅实现配置；**合并默认分支后定时任务才生效**，不是本轮已启动的远程监控。GitHub调度不保证准点，审核前客户端仍使用原有效包。
+维护者CI：Official pricing工作流每小时观察DeepSeek官方页，比较当前Rules及已核对的语义指纹。workflow已随`2e79744`进入默认分支并在GitHub Actions中为active；手动`workflow_dispatch observe`已成功运行并返回`unchanged`，但截至2026-10-28 02:17（北京）连续四个整点窗口没有schedule run，定时启动原因待查。GitHub调度不保证准点，审核前客户端仍使用原有效包。
 
 ## 日常观察
 
