@@ -57,10 +57,10 @@ jobs:
 
   publish:
     needs: prepare
-    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d
+    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@50cdb7b9dbdce7898e973ff126fa29c5f77b5266
     with:
       runs_on: macos-15
-      kit_ref: bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d
+      kit_ref: 50cdb7b9dbdce7898e973ff126fa29c5f77b5266
       checkout_ref: v${{ needs.prepare.outputs.version }}
       app: EasyAPIClock
       bundle_id: app.liangwen.mac

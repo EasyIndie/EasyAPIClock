@@ -165,7 +165,7 @@ shasum -a 256 .build/Gudeng-0.1.0.dmg
 
 ## 8. GitHub Release
 
-公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease `apple-v0.6.4` reusable workflow（固定到 commit `bf9b0d0e8b0e4df0cbb71542cd2b96f34d520a4d`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后处理 ad-hoc DMG、manifest、SHA-256 并上传 GitHub Release。EasyRelease 的共享权限与密钥在 EasyIndie 组织管理；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
+公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease reusable workflow（固定到 commit `50cdb7b9dbdce7898e973ff126fa29c5f77b5266`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后处理 ad-hoc DMG、manifest、SHA-256 并上传 GitHub Release。SHA-256 sidecar 使用产物文件名，可在下载目录直接校验。EasyRelease 的共享权限与密钥在 EasyIndie 组织管理；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
 
 当前版本发布的是 DMG。发布前确认 `CHANGELOG.md`、规则来源/覆盖日期、支持系统版本与通知限制准确。Release 文案会说明安装方式、ad-hoc 未公证状态和 Gatekeeper 首次打开处理步骤。
 
