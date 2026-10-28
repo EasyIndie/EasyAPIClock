@@ -86,13 +86,11 @@ public final class UserNotificationScheduler: ReminderScheduling {
     }
 
     public func authorizationStatus() async -> ReminderAuthorization {
-        // UNNotificationSettings is not Sendable on the Xcode 16 SDK. Read the
-        // status inside the callback and resume with a Sendable enum value.
-        let status: ReminderAuthorization = await withCheckedContinuation { continuation in
-            center.getNotificationSettings { settings in
-                continuation.resume(returning: reminderAuthorization(from: settings.authorizationStatus))
-            }
-        }
+        // Use the async API so the value is read on the main actor instead of a
+        // UserNotifications callback queue. Reading it in a callback tripped the
+        // Swift 6 actor-isolation assertion in Release builds.
+        let settings = await center.notificationSettings()
+        let status = reminderAuthorization(from: settings.authorizationStatus)
         logger.debug("通知授权状态：\(status.rawValue, privacy: .public)")
         return status
     }
@@ -242,31 +240,28 @@ public final class UserNotificationScheduler: ReminderScheduling {
         }
 
         private func notificationPresentationDiagnostics() async -> [String: String] {
-            await withCheckedContinuation { continuation in
-                center.getNotificationSettings { settings in
-                    func name(_ value: UNNotificationSetting) -> String {
-                        switch value {
-                        case .enabled: "enabled"
-                        case .disabled: "disabled"
-                        case .notSupported: "not-supported"
-                        @unknown default: "unknown"
-                        }
-                    }
-                    let style: String
-                    switch settings.alertStyle {
-                    case .none: style = "none"
-                    case .banner: style = "banner"
-                    case .alert: style = "alert"
-                    @unknown default: style = "unknown"
-                    }
-                    continuation.resume(returning: [
-                        "alerts": name(settings.alertSetting),
-                        "sound": name(settings.soundSetting),
-                        "notificationCenter": name(settings.notificationCenterSetting),
-                        "style": style,
-                    ])
+            let settings = await center.notificationSettings()
+            func name(_ value: UNNotificationSetting) -> String {
+                switch value {
+                case .enabled: "enabled"
+                case .disabled: "disabled"
+                case .notSupported: "not-supported"
+                @unknown default: "unknown"
                 }
             }
+            let style: String
+            switch settings.alertStyle {
+            case .none: style = "none"
+            case .banner: style = "banner"
+            case .alert: style = "alert"
+            @unknown default: style = "unknown"
+            }
+            return [
+                "alerts": name(settings.alertSetting),
+                "sound": name(settings.soundSetting),
+                "notificationCenter": name(settings.notificationCenterSetting),
+                "style": style,
+            ]
         }
 
         private func diagnosePreview(id: String?, phase: String) async {
@@ -326,33 +321,23 @@ public final class UserNotificationScheduler: ReminderScheduling {
     // Xcode 16 and Xcode 27 SDKs under Swift 6 strict concurrency.
 
     private func pendingNotificationInfos() async -> [PendingNotificationInfo] {
-        await withCheckedContinuation { continuation in
-            center.getPendingNotificationRequests { requests in
-                continuation.resume(
-                    returning: requests.map { request in
-                        PendingNotificationInfo(
-                            identifier: request.identifier,
-                            categoryIdentifier: request.content.categoryIdentifier,
-                            eventID: request.content.userInfo[NotificationID.eventKey] as? String
-                        )
-                    }
-                )
-            }
+        let requests = await center.pendingNotificationRequests()
+        return requests.map { request in
+            PendingNotificationInfo(
+                identifier: request.identifier,
+                categoryIdentifier: request.content.categoryIdentifier,
+                eventID: request.content.userInfo[NotificationID.eventKey] as? String
+            )
         }
     }
 
     private func deliveredNotificationInfos() async -> [DeliveredNotificationInfo] {
-        await withCheckedContinuation { continuation in
-            center.getDeliveredNotifications { notifications in
-                continuation.resume(
-                    returning: notifications.map { notification in
-                        DeliveredNotificationInfo(
-                            identifier: notification.request.identifier,
-                            eventID: notification.request.content.userInfo[NotificationID.eventKey] as? String
-                        )
-                    }
-                )
-            }
+        let notifications = await center.deliveredNotifications()
+        return notifications.map { notification in
+            DeliveredNotificationInfo(
+                identifier: notification.request.identifier,
+                eventID: notification.request.content.userInfo[NotificationID.eventKey] as? String
+            )
         }
     }
 }

@@ -12,6 +12,10 @@
 - 已验证设备：macOS 27.0.1 arm64、macOS 13.7.8 Intel；macOS 14/15 与 macOS 13 arm64 未实测，发布说明需如实标注。
 - 通知能力受系统权限、专注模式、静音与睡眠策略限制；强提醒为有界重复通知，不保证穿透。
 
+### 修复
+
+- 修复 Release 构建在通知设置回调中触发 Swift 6 主线程隔离断言、导致启动崩溃的问题；改用 `UNUserNotificationCenter` 的 async 设置/请求 API，不再从后台回调读取。
+
 ### 变更
 
 ### Removed
