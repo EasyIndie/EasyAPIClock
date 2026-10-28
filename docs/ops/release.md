@@ -163,7 +163,18 @@ shasum -a 256 .build/Gudeng-0.1.0.dmg
 - `Rules/manifest.json` 的 `bundleVersion` 与来源链接
 - 已知限制（通知、强提醒、iOS 外壳）
 
-## 8. GitHub Release
+## 8. 预览公证（不创建 Release）
+
+正式发布前用 `Notarize preview` workflow 产出签名、公证并 staple 的 app，供本机验收：
+
+```sh
+gh workflow run notarize-preview.yml --ref main -f ref=main
+gh run download <run-id> -n easyrelease-EasyAPIClock -D /tmp/preview
+```
+
+产物是 `GudengMac.app` 与 `apple-manifest.json`，仅作为 Actions artifact，不创建 tag 或公开 Release。它复用同一组织共享凭据与 EasyRelease 固定提交；验收通过后再执行下面的公开 Release 流程。预览不会写入 Release，也不能替代 `spctl`/`stapler validate` 本地复核。
+
+## 9. GitHub Release
 
 公开 Release 入口为 `.github/workflows/publish-release.yml`，只允许在 `main` 手动运行并勾选确认。该 workflow 核对版本并创建不可移动的版本 tag，再调用 EasyRelease reusable workflow（固定到 commit `1b2ccaec5bec0a557e86e11e28c9459a0b7c5633`）；EasyRelease 检出该 tag，运行 `make check` 与构建打包，然后使用应用 entitlements 进行 Developer ID 签名、提交 app ZIP 公证并 staple app，生成包含应用版本/build 的 manifest 与 SHA-256 后上传 GitHub Release。下载 ZIP 后解压，将「谷蹬」拖到「应用程序」文件夹。SHA-256 sidecar 使用产物文件名，可在下载目录直接校验。通过 `secrets: inherit` 传递 EasyIndie 组织共享凭据；本项目不重复实现签名/校验/资产发布流程。版本 tag 与 Release 均不可覆盖；构建失败后可在同一 tag 重试，已存在 Release 时必须递增 `MARKETING_VERSION`。
 

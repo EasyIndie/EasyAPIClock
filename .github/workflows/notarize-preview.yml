@@ -1,0 +1,58 @@
+name: Notarize preview
+
+# Builds, signs and notarizes the current main without creating a GitHub
+# Release. The notarized app and EasyRelease manifest are uploaded as a
+# workflow artifact for local acceptance. Use Publish macOS Release only after
+# this preview has been verified.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch or commit to preview"
+        type: string
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+      build: ${{ steps.read.outputs.build }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - id: read
+        name: Read version from project.yml
+        run: |
+          set -euo pipefail
+          VERSION="$(awk -F '"' '/MARKETING_VERSION:/ { print $2; exit }' project.yml)"
+          BUILD="$(awk -F '"' '/CURRENT_PROJECT_VERSION:/ { print $2; exit }' project.yml)"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+
+  preview:
+    needs: prepare
+    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@1b2ccaec5bec0a557e86e11e28c9459a0b7c5633
+    with:
+      runs_on: macos-15
+      kit_ref: 1b2ccaec5bec0a557e86e11e28c9459a0b7c5633
+      checkout_ref: ${{ inputs.ref }}
+      app: EasyAPIClock
+      bundle_id: com.easyindie.easyapiclock
+      version: ${{ needs.prepare.outputs.version }}
+      build_number: ${{ needs.prepare.outputs.build }}
+      artifact: .build/DerivedData-Release/Build/Products/Release/GudengMac.app
+      build_command: Scripts/install-xcodegen.sh && make check && make build-mac-universal
+      entitlements: Apps/Mac/GudengMac.entitlements
+      mode: developer-id
+      notarize: true
+      staple: true
+      dry_run: false
+      upload_artifact: true
+      release: false
+    secrets: inherit
