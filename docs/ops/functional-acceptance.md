@@ -2,6 +2,12 @@
 
 范围依据 `docs/product/requirements.md`、`docs/ops/platform-validation.md` 与已接受 ADR。MVP 1.0.0 仅覆盖 macOS；iOS 与英文界面不在本轮验收范围。界面视觉验收已由用户于 2026-10-27 手动通过；下表只跟踪功能行为。自动化逻辑测试不等同 macOS 系统通知、登录项或生命周期真机验收。
 
+## 发布记录
+
+| 日期 | 项目 | 状态 | 证据 |
+|---|---|---|---|
+| 2026-10-28 | v1.0.0 正式 Release | 通过（已知限制已披露） | `Publish macOS Release` run 40646031872；ZIP/manifest SHA-256、Developer ID、公证、staple、Gatekeeper 通过；正式包已安装到本机与 pro。已验证 macOS 27 arm64 / 13 Intel，macOS 14/15 与 13 arm64 未实测；声音、Focus/静音、睡眠、登录项与真人停止为发布后补验项 |
+
 ## 核心功能
 
 | ID | 用户可感知功能 | 需求 | 验收重点 | 状态 |

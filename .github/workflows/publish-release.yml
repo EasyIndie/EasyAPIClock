@@ -114,5 +114,14 @@ jobs:
 
           社区项目，与 DeepSeek 官方无隶属关系。
           EOF
-          gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
-            -f body="$(cat "$RUNNER_TEMP/release-notes.md")"
+          for attempt in 1 2 3 4 5; do
+            if gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
+              -f body="$(cat "$RUNNER_TEMP/release-notes.md")"; then
+              echo "Release notes updated"
+              exit 0
+            fi
+            echo "Release notes update attempt $attempt failed; retrying" >&2
+            sleep 5
+          done
+          echo "Could not update release notes after 5 attempts" >&2
+          exit 1

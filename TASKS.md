@@ -30,11 +30,13 @@
 - [ ] **真实设备通知验证**：在 macOS 14/15 与当前系统上记录权限允许、通知投递、Focus、静音、睡眠唤醒、退出应用、强提醒停止的结果。
   - 现状：2026-10-28 在 macOS 27.0.1 arm64 与 Pro macOS 13.7.8 Intel 用 1.0.0 公证包验证：中等/强提醒、提前提醒、关闭、退出后送达、重启不重放、Gatekeeper 启动通过；停止最终生效但 AX 自动点击响应延迟约 50 秒，真人点击待复核。声音听感、Focus/静音、睡眠唤醒、登录项重登录、macOS 14/15 与 macOS 13 arm64 仍待验。
   - 验收：每个场景有“通过/失败/受限”与证据；失败项有 issue 或产品降级说明。
+  - 2026-10-28 发布决策：用户接受 macOS 14/15 与 macOS 13 arm64 未实测并授权发布；发布说明已如实标注。声音听感、Focus/静音、睡眠唤醒、登录项重登录、真人点击停止与可访问性仍作为发布后补验项，不阻塞 1.0.0。
 - [x] **Developer ID 签名**：`package-mac` 现在先构建未签名产物，再手动 Developer ID 签名并加安全时间戳；生成通用二进制 zip/dmg。
   - 验收：`codesign --verify` 通过；`Authority=Developer ID Application`、`TeamIdentifier=2N62934Y28`、`Timestamp` 存在。
   - 注意：必须从 GUI 会话运行；SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。
-- [ ] **公证与发布验证**：CI 用组织共享凭据完成签名、公证、staple；本地 profile 仅用于 `make package-mac-notarized`。
-  - 现状：`Notarize preview` 已跑通（run 40627849003）：1.0.0 构建、Developer ID 签名、公证 Accepted、staple、`spctl` 通过，产物仅作 Actions artifact。1.0.0 公开 Release 尚未创建，待最终平台验收后执行。
+- [x] **公证与发布验证**：CI 用组织共享凭据完成签名、公证、staple；本地 profile 仅用于 `make package-mac-notarized`。
+  - 现状：`Notarize preview` 已跑通；2026-10-28 `Publish macOS Release`（run 40646031872）创建 `v1.0.0`，ZIP SHA-256、manifest、Developer ID、公证、staple、Gatekeeper 均通过，并已安装复核。`release-notes` job 首次因 Release API 404 失败，已手动补齐说明并在 workflow 中加入重试。
+  - 发布说明已标注：已验证 macOS 27.0.1 arm64 与 macOS 13.7.8 Intel；macOS 14/15 与 macOS 13 arm64 未实测。
 - [x] **应用图标**：提供 1024pt 峰谷分色时钟图标，AppIcon 10 个尺寸完整，`make icon` 可重复生成。
   - 验收：Asset Catalog 编译通过；不暗示自动切换模型。
 - [x] **README 截图**：已在 macOS 27 通过 GUI 会话截取真实主面板与设置页；截图机器未授权通知，README 已说明。

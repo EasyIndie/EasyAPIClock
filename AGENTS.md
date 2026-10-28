@@ -170,14 +170,14 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 - 2026-10-24 macOS 27 已初验界面、规则更新/离线回退、退出、偏好持久化与通知授权拒绝；通知投递、强提醒、睡眠唤醒、权限允许路径与 macOS 14/15 尚待验证，见 `docs/ops/platform-validation.md`。
 - Developer ID 签名已完成；`make package-mac` 必须在 GUI 会话运行，SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。本机 notary profile 尚未配置；CI 使用 EasyIndie 组织共享凭据（`secrets: inherit`），2026-10-27 运行已验证签名、公证与 staple 成功。
 - 旧Developer ID构建曾返回denied；2026-10-27稳定安装版已为authorized，预览系统送达/清理已验，横幅可见、声音与完整正式矩阵仍未完成。不要据旧记录擅自清理系统通知或BTM。
-- 1.0.0 尚未发布；公证流水线凭据已验证可用，但上次 `stapler validate` 因 runner 网络瞬断（CloudKit -1005）失败，需重跑。英文界面不在 MVP 范围。`make package-mac` 的默认产物仍是 ad-hoc，不可分发。
+- 1.0.0 已于 2026-10-28 发布（tag `v1.0.0`，commit `02cc18e`）：Developer ID 签名、公证、staple、Gatekeeper、SHA-256/manifest 均通过；已验证 macOS 27.0.1 arm64 与 macOS 13.7.8 Intel，macOS 14/15 与 macOS 13 arm64 未实测。英文界面不在 MVP 范围。`make package-mac` 的默认产物仍是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。
 
 ## 本机安装验收入口（2026-10-28 更新）
 
-2026-10-28 已清理旧安装与旧数据：删除旧 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器与旧 dist 产物。随后用 `Notarize preview` workflow 产出的 1.0.0 公证包安装到 `/Applications/谷蹬.app`；尚未创建公开 Release。
+2026-10-28 已清理旧安装与旧数据：删除旧 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器与旧 dist 产物。随后安装 1.0.0 公证包；当天已发布公开 `v1.0.0`，本机与 `pro` 均替换为正式 Release 包。
 
 后续首个 MVP 安装时使用当前签名构建，安装后从 `/Applications/谷蹬.app` 启动并据此验收；源码变更不会自动更新该副本，更新前退出实例再替换。不要把本机安装等同对外发布授权。
 

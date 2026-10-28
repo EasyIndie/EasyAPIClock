@@ -30,7 +30,7 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 - 截图、README 与 issue 模板中的路径
 - 规则更新源（`project.yml` 的 `GudengRuleSourceBaseURL`；fork 必须改）
 
-0.1.1 起 Bundle ID 使用 EasyIndie 前缀（v0.1.0 为 `app.liangwen.mac`）；MVP 定为 1.0.0。仓库暂无公开 Release（v0.1.0 已删除，v0.1.1 仅有 tag）。偏好、通知授权及沙盒容器不跨 Bundle ID 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
+0.1.1 起 Bundle ID 使用 EasyIndie 前缀（v0.1.0 为 `app.liangwen.mac`）；MVP 定为 1.0.0。`v1.0.0` 已于 2026-10-28 发布；v0.1.0 旧 Release 已删除，v0.1.1 仅有 tag。偏好、通知授权及沙盒容器不跨 Bundle ID 迁移。未来若提交 App Store Connect 构建，Bundle ID 上传后不可再改。在 Xcode 中设置 `DEVELOPMENT_TEAM`，或写入本地未提交的 `project.yml` 覆盖文件。不要把团队 ID 或证书提交到仓库。
 
 ## 3. 图标与资源
 
@@ -187,6 +187,14 @@ gh run download <run-id> -n easyrelease-EasyAPIClock -D /tmp/preview
 产品页源文件位于 `site/`，由 `.github/workflows/pages.yml` 在 `main` 更新时部署到 GitHub Pages。仓库迁入 `EasyIndie/EasyAPIClock` 后，需在仓库 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**；首页链接使用 `https://easyindie.github.io/EasyAPIClock/`。上线以首次 Pages workflow 成功为准。
 
 页面只使用仓库内图片和静态 HTML/CSS，不依赖第三方字体、分析脚本或外部构建服务。下载按钮指向 GitHub 最新 Release。
+
+## 9.1 v1.0.0 发布记录（2026-10-28）
+
+- 入口：`Publish macOS Release`（run 40646031872，`main` `02cc18e`）。
+- 产物：`EasyAPIClock-v1.0.0.zip`、`EasyAPIClock-v1.0.0-manifest.json` 及各自 `.sha256`；tag `v1.0.0` 不可移动。
+- 校验：1.0.0 (4)、universal arm64+x86_64、Developer ID `2N62934Y28`、公证 Accepted、staple、`spctl=Notarized Developer ID`、SHA-256 全部通过。
+- 已用正式包替换本机与 `pro` 的 `/Applications/谷蹬.app` 并启动复核。
+- `release-notes` job 首次因 Release API 404 失败（Release 已创建、资产完整），已手动补齐说明；workflow 已加入 5 次重试，后续发布仍应检查 Release body。
 
 ## 10. 发布后
 

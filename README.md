@@ -32,7 +32,7 @@
 
 ## 当前状态
 
-当前开发版本为 **1.0.0**（MVP，尚未打 tag/发布），仓库暂无公开 Release。iOS 交互设计与英文界面不在本次 MVP 范围。
+当前版本为 **1.0.0**（MVP，2026-10-28 已发布）。公开下载见 [GitHub Releases v1.0.0](https://github.com/EasyIndie/EasyAPIClock/releases/tag/v1.0.0)。iOS 交互设计与英文界面不在本次 MVP 范围。
 
 | 能力 | 状态 |
 |---|---|
@@ -42,7 +42,7 @@
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 2026-10-28 公证包已验中等/强提醒、提前/关闭、退出送达、重启不重放与 Gatekeeper 启动；停止动作需真人点击复核；实际听感、Focus/静音与睡眠唤醒待验 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | 只读外壳保留；iOS 交互不在 MVP 范围 |
-| 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；发布流程使用 EasyIndie/EasyRelease 做 Developer ID 签名与 Apple 公证，尚未发布公开 Release |
+| 发布打包 | ✅ `v1.0.0` 已发布：Developer ID 签名、Apple 公证、staple、Gatekeeper 与 SHA-256/manifest 校验通过；下载 ZIP 解压即可安装 |
 | 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
 | iOS 交互设计 | MVP 外；当前外壳不代表正式设计 |
 | 英文界面 | MVP 外，后续单独排期 |
@@ -52,13 +52,13 @@
 
 ## 图形界面启动
 
-安装后应用位于 `/Applications/谷蹬.app`，双击即可启动；它只在菜单栏显示入口，不打开常驻窗口或 Dock 窗口。收起面板时点击菜单栏图标重开，主面板右下电源图标用于退出。开发机当前安装的是 1.0.0 公证预览包（由 `Notarize preview` workflow 产出，尚未创建公开 Release）；开发时也可用 `make run-mac` 或 `.build` 下的 Debug 包。目前没有公开下载入口，发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名构建。
+从 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases/latest) 下载 `EasyAPIClock-v1.0.0.zip`，解压后把「谷蹬」拖入「应用程序」文件夹。应用只在菜单栏显示入口，不打开常驻窗口或 Dock 窗口；收起面板时点击菜单栏图标重开，主面板右下电源图标用于退出。开发机当前安装的是 `v1.0.0` 正式公证包；开发时也可用 `make run-mac` 或 `.build` 下的 Debug 包。
 
-开发构建放在隐藏的 `.build` 目录，不是日常入口。main 上的 1.0.0 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
+开发构建放在隐藏的 `.build` 目录，不是日常入口。公开构建使用 Developer ID 签名与 Apple 公证；已验证 macOS 27.0.1 arm64 与 macOS 13.7.8 Intel，macOS 14/15 与 macOS 13 arm64 未实测。规则覆盖至 2026-12-31，2027 官方安排公布后通过规则包更新。
 
 ## 快速开始
 
-应用最低构建目标：macOS 13.0，iOS 维持 17.0。1.0.0 通用包将在 macOS 13.7.8 Intel 复验并显示正确状态；arm64 的 macOS 13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
+应用最低构建目标：macOS 13.0，iOS 维持 17.0。1.0.0 通用包已在 macOS 27.0.1 arm64 与 macOS 13.7.8 Intel 复验；macOS 14/15、macOS 13 arm64、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
 
 开发主机要求：macOS14+、Xcode16+（Swift6），具体主机版本还需满足所用Xcode要求。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
 

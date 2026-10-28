@@ -1,6 +1,6 @@
 # 平台验证矩阵（待执行）
 
-> 状态：**部分完成**。2026-10-24 在 macOS 27（Apple M1）完成界面、周末状态、设置、规则更新、退出与通知授权拒绝路径；2026-10-28 在 macOS 27.0.1 arm64 完成真实峰切换通知（中等横幅、强提醒重复、停止、退出后送达）；Focus/静音、睡眠唤醒、登录项重登录与 macOS 13 arm64 仍未验证。
+> 状态：**1.0.0 已发布，平台矩阵部分完成**。2026-10-24 在 macOS 27（Apple M1）完成界面、周末状态、设置、规则更新、退出与通知授权拒绝路径；2026-10-28 在 macOS 27.0.1 arm64 完成真实峰切换通知（中等横幅、强提醒重复、停止、退出后送达）；Focus/静音、睡眠唤醒、登录项重登录与 macOS 13 arm64 仍未验证，用户已接受这些限制并授权发布。
 > 本文件是执行清单与记录模板；未勾选项不代表已通过。原有 macOS 27 记录保留旧名称，仅作历史证据；当前产品显示名为「谷蹬」，副标题为「DeepSeek API 峰谷钟点提醒」。
 
 2026-10-27 的本机验证对应 v0.1.0 Bundle ID `app.liangwen.mac`。v0.1.1 起改为 `com.easyindie.easyapiclock`；后续容器、通知授权与平台验证请使用新标识。
@@ -359,7 +359,7 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 | 无设备 | macOS 14/15 | — | — | 未实测；发布说明需标注 |
 | 无设备 | macOS 13 arm64 | arm64 | — | 未实测；发布说明需标注 |
 
-结论：MVP 可发布的支持声明为「macOS 13+ 通用二进制」，并如实列出已验证系统；不能声称 macOS 14/15 或 13 arm64 已通过。
+结论：MVP 可发布的支持声明为「macOS 13+ 通用二进制」，并如实列出已验证系统；不能声称 macOS 14/15 或 13 arm64 已通过。用户于 2026-10-28 接受该限制并授权发布 1.0.0，发布说明已同步。
 
 
 ## 2026-10-28 · 1.0.0 公证预览包
@@ -377,6 +377,16 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 - 在同一 Bundle ID 上从 ad-hoc 切换到 Developer ID 签名后，旧 sandbox 容器 ACL 会让新包卡在 sandbox 初始化；清理旧容器并重置用户 `secinitd` 后恢复。全新安装不受影响；这是测试机切换签名身份的运维问题，不是产品缺陷。
 
 仍未验证：公证包上的强提醒/停止/退出后送达/提前提醒/关闭提醒、Focus/静音、睡眠唤醒、登录项重登录、通知点击、macOS 14/15 与 macOS 13 arm64。
+
+
+## 2026-10-28 · v1.0.0 正式 Release
+
+- 工作流：`Publish macOS Release`（run 40646031872），tag `v1.0.0` 指向 `02cc18e`；不是预览 artifact。
+- 资产：`EasyAPIClock-v1.0.0.zip`、manifest 与 SHA-256 sidecar；下载后校验全部通过。
+- 应用：1.0.0 (4)，`arm64 + x86_64`，最低 macOS 13.0；`codesign --verify`、Developer ID `2N62934Y28`、公证 Accepted、`stapler validate`、`spctl=Notarized Developer ID` 全部通过。
+- 安装复核：正式 ZIP 解压后替换本机与 `pro`（macOS 13.7.8 Intel）的 `/Applications/谷蹬.app`；两个实例均启动，菜单栏状态正常。
+- 发布说明：已验证 macOS 27.0.1 arm64 与 macOS 13.7.8 Intel；明确标注 macOS 14/15 与 macOS 13 arm64 未实测；规则覆盖至 2026-12-31。
+- 自动化问题：`release-notes` job 首次因 Release API 404 失败，Release 与资产本身成功；已手动补齐 body，并在 workflow 加入重试，后续发布仍需检查说明是否写入。
 
 
 ## 2026-10-28 · 1.0.0 公证包补充验收
