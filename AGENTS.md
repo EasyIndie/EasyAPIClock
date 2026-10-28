@@ -162,7 +162,7 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 
 ## 11. 已知限制（不要假装已解决）
 
-- iOS 交互设计未确认；当前只是只读外壳。
+- iOS 交互设计与英文界面明确不在 MVP（1.0.0）范围；当前只是只读外壳。
 - 强提醒使用有界重复的系统通知，不是独立浮层，也无法覆盖专注模式/静音。
 - 规则包只有 SHA-256 完整性校验，没有数字签名；信任根是 HTTPS、GitHub 仓库控制权与 Actions 权限。
 - 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性，raw CDN 可能缓存数分钟；仓库转私有后客户端无法匿名读取。
@@ -177,7 +177,7 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 
 ## 本机安装验收入口（2026-10-28 更新）
 
-2026-10-28 已清理旧安装与旧数据：删除旧 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器与旧 dist 产物。随后用 `make package-mac` 的 0.1.1 ad-hoc DMG 重新安装到 `/Applications/谷蹬.app`；当前安装版未公证、未对外发布。
+2026-10-28 已清理旧安装与旧数据：删除旧 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID `app.liangwen.mac`）、旧容器与旧 dist 产物。随后用 `make package-mac` 的 1.0.0 ad-hoc 包安装到 `/Applications/谷蹬.app`；当前安装版未公证、未对外发布。
 
 后续首个 MVP 安装时使用当前签名构建，安装后从 `/Applications/谷蹬.app` 启动并据此验收；源码变更不会自动更新该副本，更新前退出实例再替换。不要把本机安装等同对外发布授权。
 

@@ -28,11 +28,11 @@
   <img src="docs/images/settings.png" width="300" alt="谷蹬设置面板：提醒强度、提前提醒与规则检查">
 </p>
 
-> 真实截图（macOS 27，深色外观），来自 `/Applications` 安装的 0.1.1 本地包，不是设计稿。截图时通知已授权。
+> 真实截图（macOS 27，深色外观），来自 `/Applications` 安装版，界面与 1.0.0 一致，不是设计稿。截图时通知已授权。
 
 ## 当前状态
 
-当前开发版本为 **0.1.1**（tag `v0.1.1`），仓库暂无公开 Release；首个 MVP 版本尚未发布。
+当前开发版本为 **1.0.0**（MVP，尚未打 tag/发布），仓库暂无公开 Release。iOS 交互设计与英文界面不在本次 MVP 范围。
 
 | 能力 | 状态 |
 |---|---|
@@ -41,24 +41,24 @@
 | macOS 菜单栏、主面板、内嵌设置、本地提醒偏好 | ✅ 已实现并可通过 `make run-mac` 启动 |
 | 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 2026-10-28 安装版已验中等单次、强提醒 30 秒重复、停止、退出后送达与重启不重放；实际听感、Focus/静音与睡眠唤醒待验 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
-| iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
+| iOS 共享引擎 | 只读外壳保留；iOS 交互不在 MVP 范围 |
 | 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；发布流程使用 EasyIndie/EasyRelease 做 Developer ID 签名与 Apple 公证，尚未发布公开 Release |
 | 应用图标 | ✅ 1024pt 峰谷分色时钟，AppIcon 全套尺寸；`make icon` 可重建 |
-| iOS 交互设计 | ⛔ 尚未确认，当前外壳不代表正式设计 |
-| 英文界面 | ⛔ 未完成 |
+| iOS 交互设计 | MVP 外；当前外壳不代表正式设计 |
+| 英文界面 | MVP 外，后续单独排期 |
 | 规则包数字签名 | ⛔ 仅 SHA-256 完整性校验，见 [ADR-0004](docs/adr/0004-rule-bundles.md) |
 
 当前设计基准是 [`docs/product/design-macos.md`](docs/product/design-macos.md) 与 [`docs/design/brand-refresh-2026-10-27/`](docs/design/brand-refresh-2026-10-27/)。`docs/handoff/design-preview.html` 是早期归档示意，不代表当前实现。
 
 ## 图形界面启动
 
-安装后应用位于 `/Applications/谷蹬.app`，双击即可启动；它只在菜单栏显示入口，不打开常驻窗口或 Dock 窗口。收起面板时点击菜单栏图标重开，主面板右下电源图标用于退出。开发机当前安装的是本地 ad-hoc 包 0.1.1（2026-10-28 由 `make package-mac` 产物安装，未公证）；开发时也可用 `make run-mac` 或 `.build` 下的 Debug 包。目前没有公开下载入口，发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名构建。
+安装后应用位于 `/Applications/谷蹬.app`，双击即可启动；它只在菜单栏显示入口，不打开常驻窗口或 Dock 窗口。收起面板时点击菜单栏图标重开，主面板右下电源图标用于退出。开发机当前安装的是本地 ad-hoc 包 1.0.0（由 `make package-mac` 产物安装，未公证）；开发时也可用 `make run-mac` 或 `.build` 下的 Debug 包。目前没有公开下载入口，发布后会在 [GitHub Releases](https://github.com/EasyIndie/EasyAPIClock/releases) 提供已签名构建。
 
-开发构建放在隐藏的 `.build` 目录，不是日常入口。main 上的 0.1.1 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
+开发构建放在隐藏的 `.build` 目录，不是日常入口。main 上的 1.0.0 构建尚未发布，发布流程使用 Developer ID 签名与 Apple 公证；首个 MVP 版本发布前不提供公开下载。
 
 ## 快速开始
 
-应用最低构建目标：macOS 13.0，iOS 维持 17.0。0.1.1 通用包已在 macOS 13.7.8 Intel 解压启动并显示正确状态；arm64 的 macOS 13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
+应用最低构建目标：macOS 13.0，iOS 维持 17.0。1.0.0 通用包将在 macOS 13.7.8 Intel 复验并显示正确状态；arm64 的 macOS 13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
 
 开发主机要求：macOS14+、Xcode16+（Swift6），具体主机版本还需满足所用Xcode要求。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
 

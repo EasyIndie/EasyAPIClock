@@ -69,6 +69,6 @@ macOS 常驻菜单栏，显示「峰 / 谷 + 距离下一次切换的时间」�
 
 ## 当前实现状态
 
-0.1.1 已实现规则引擎、macOS 菜单栏界面、提醒计划与规则包安装机制；首个 MVP 版本尚未发布，仓库暂无公开 Release。真实设备通知验证、iOS 设计和英文界面仍未完成。详见根目录 `README.md` 的状态表与 `TASKS.md`。
+1.0.0（MVP）实现规则引擎、macOS 菜单栏界面、提醒计划与规则包安装机制；尚未发布公开 Release。iOS 交互设计与英文界面不在 MVP 范围。详见根目录 `README.md` 的状态表与 `TASKS.md`。
 
 需求与验收细节见 [`requirements.md`](requirements.md)。

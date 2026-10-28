@@ -2,15 +2,17 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
-## [0.1.1] - 2026-10-28
+## [1.0.0] - 2026-10-28
 
-### Changed
+首个公开 MVP（仅 macOS）。iOS 交互设计与英文界面不在 MVP 范围，后续单独排期。
 
-- macOS 打包流程改为 Developer ID 签名、Apple 公证并 staple；0.1.1 尚未发布公开 Release。
-- 将应用版本与 build 号传入 manifest，记录为 0.1.1 / 3。
-- 将 Bundle ID 从 `app.liangwen.*` 更换为 `com.easyindie.easyapiclock` 系列，移除旧品牌标识。
+### 范围与平台
 
-## [Unreleased]
+- 支持 macOS 13.0+，通用二进制（arm64 + x86_64）。
+- 已验证设备：macOS 27.0.1 arm64、macOS 13.7.8 Intel；macOS 14/15 与 macOS 13 arm64 未实测，发布说明需如实标注。
+- 通知能力受系统权限、专注模式、静音与睡眠策略限制；强提醒为有界重复通知，不保证穿透。
+
+### 变更
 
 ### Removed
 
@@ -103,6 +105,16 @@
 - 补充本机预览实测：中等单条、关闭禁用、正常退出与待发送时退出清理；测试后恢复原偏好。键盘复核受当前自动化焦点条件限制，未判通过。
 
 - 补充自动更新长周期集成测试：七天固定时间模拟、关闭两天、跨实例重建、离线节流与坏清单回退；不访问真实网络。
+
+## [0.1.1] - 2026-10-28
+
+### Changed
+
+- macOS 打包流程改为 Developer ID 签名、Apple 公证并 staple；0.1.1 尚未发布公开 Release。
+- 将应用版本与 build 号传入 manifest，记录为 0.1.1 / 3。
+- 将 Bundle ID 从 `app.liangwen.*` 更换为 `com.easyindie.easyapiclock` 系列，移除旧品牌标识。
+
+## [Unreleased]
 
 ## [0.1.0] - 2026-10-23
 

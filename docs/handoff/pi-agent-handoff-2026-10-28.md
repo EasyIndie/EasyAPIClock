@@ -35,7 +35,7 @@ git log -1 --oneline --decorate
 
 ## 发布与服务状态
 
-- 仓库暂无公开 Release：v0.1.0 的 Release 与 tag 已删除；`v0.1.1` 只有 tag，未发布 Release，最近一次手动发布 workflow 失败。发布入口是 `.github/workflows/publish-release.yml`，仅在 `main` 手动触发并确认；不要把本地 `make package-mac` 的 ad-hoc 包称为可分发的公证包。
+- 仓库暂无公开 Release：v0.1.0 的 Release 与 tag 已删除；`v0.1.1` 只有历史 tag。MVP 定为 1.0.0，发布 workflow 尚未对 1.0.0 跑通。发布入口是 `.github/workflows/publish-release.yml`，仅在 `main` 手动触发并确认；不要把本地 `make package-mac` 的 ad-hoc 包称为可分发的公证包。
 - 共享发布逻辑来自固定提交 `1b2ccaec5bec0a557e86e11e28c9459a0b7c5633` 的 `EasyIndie/EasyRelease`；使用组织共享 secrets，不要读取、打印或写入凭据。
 - GitHub Pages 产品页源在 `site/`，工作流在 `.github/workflows/pages.yml`，预期 URL 为 `https://easyindie.github.io/EasyAPIClock/`。上线状态应以 Pages workflow / 仓库设置证据为准。
 - 规则更新源是仓库 `rules` 分支。客户端规则更新与维护者官方价格观察是两条不同链路；规则仅为声明式 JSON，SHA-256 是完整性检查，不是发布者数字签名。
@@ -58,7 +58,7 @@ git log -1 --oneline --decorate
 
 - 最低提交门槛是 `make check`；不要为通过检查放宽规则校验，也不要把生成的 `.xcodeproj`、`Build/Generated/`、`.build/`、无依赖时的 `Package.resolved` 提交。
 - 修改提醒前读 `docs/architecture/reminders.md`；系统通知、登录项、Focus、睡眠等行为必须如实记录平台、版本、权限、结果和证据路径。
-- 本机旧安装 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID）与旧容器、Application Scripts、`dist/` 旧产物已于 2026-10-28 删除，当前已用 0.1.1 本地 ad-hoc DMG 安装到 `/Applications/谷蹬.app`。源码变更不会自动更新副本，更新前先退出实例。
+- 本机旧安装 `/Applications/谷蹬.app`（v0.1.0、旧 Bundle ID）与旧容器、Application Scripts、`dist/` 旧产物已于 2026-10-28 删除，当前安装的是 1.0.0 本地 ad-hoc 构建（后续以公证包替换）。源码变更不会自动更新副本，更新前先退出实例。
 - 之前用户明确允许用 SSH `pro` 做 macOS 13 真机验收，并允许 AppleScript/System Events 自动展开面板；若继续做 UI 自动化，应仅操作谷蹬相关 UI，保留原系统偏好，测试后恢复临时改动。
 - 用户要求先验收并记录问题、集中处理；本次交接只记录已知状态，不把待验收问题伪装为已修复。
 - 公开发布、公证、上传规则包等外部副作用必须遵循 `AGENTS.md` 与 `docs/ops/release.md` 的授权约束。当前 release workflow 已被配置，不代表每次改动都获准发布。
@@ -79,7 +79,7 @@ git log -1 --oneline --decorate
 
 开始任何代码修改前，完整阅读根目录 AGENTS.md，并严格按其必读顺序读产品、架构、TASKS.md 和已接受 ADR。再读 docs/handoff/pi-agent-handoff-2026-10-28.md、docs/ops/functional-acceptance.md、docs/ops/platform-validation.md，了解当前验收证据和遗留问题。文档之间若有冲突，先核实代码、GitHub Actions 或设备证据，记录冲突后再修订，不要把推测写成结论。
 
-项目当前基线是 main / v0.1.1，交接时提交 a841b2e；仓库迁入 EasyIndie，Bundle ID 为 com.easyindie.easyapiclock（iOS 后缀 .ios）。主分支和 rules 是应保留的分支。旧 codex/macos-13-runtime 已被确认无独有代码并清理，不要恢复它。远端规则分支由 workflow 生成，不要手工编辑。
+项目当前基线为 main；2026-10-28 后续已把 MVP 定为 1.0.0（交接时提交 a841b2e，v0.1.1 仅历史 tag）；仓库迁入 EasyIndie，Bundle ID 为 com.easyindie.easyapiclock（iOS 后缀 .ios）。主分支和 rules 是应保留的分支。旧 codex/macos-13-runtime 已被确认无独有代码并清理，不要恢复它。远端规则分支由 workflow 生成，不要手工编辑。
 
 当前最高优先级是完成核心提醒及 macOS 13 平台验收：真实切换通知的横幅/声音/次数/停止行为、Focus/静音/睡眠唤醒/退出边界，macOS 13 arm64，以及登录项重登录行为。用户此前允许 SSH 到 pro 做 macOS 13 真机验证，也允许 AppleScript/System Events 自动展开谷蹬面板。所有系统设置变更须最小化并恢复；不要通过改权限、通知数据库、BTM 或清理系统状态来强行制造“通过”。正式通知的验收不能用提醒预览或系统日志替代。
 
