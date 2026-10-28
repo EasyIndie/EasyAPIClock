@@ -24,11 +24,11 @@
 ## 截图
 
 <p align="center">
-  <img src="docs/images/panel.png" width="300" alt="谷蹬主面板：低价时段、距高峰 17 小时 35 分">
-  <img src="docs/images/settings.png" width="300" alt="谷蹬设置面板：提醒强度、规则版本与来源">
+  <img src="docs/images/panel.png" width="300" alt="谷蹬主面板：当前峰期、价格基准与距谷期时间">
+  <img src="docs/images/settings.png" width="300" alt="谷蹬设置面板：提醒强度、提前提醒与规则检查">
 </p>
 
-> 真实截图（macOS 27，深色外观），不是设计稿。截图机器未授予通知权限，因此主面板显示「通知未授权」、设置页显示「系统通知未开启」；这是应用的真实降级提示。
+> 真实截图（macOS 27，深色外观），来自 `/Applications` 安装的 0.1.1 本地包，不是设计稿。截图时通知已授权。
 
 ## 当前状态
 
@@ -39,7 +39,7 @@
 | 北京时间峰谷规则、节假日覆盖、下次真实切换计算 | ✅ 已实现；当前全套79个单元测试 |
 | 内置 2026 价格与节假日规则包，SHA-256 校验 | ✅ 已实现 |
 | macOS 菜单栏、主面板、内嵌设置、本地提醒偏好 | ✅ 已实现并可通过 `make run-mac` 启动 |
-| 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 计划/去重已实现；macOS 27 已验权限拒绝降级；2026-10-27 安装签名版授权允许并取得预览系统送达记录，正式平台矩阵待完 |
+| 中等 / 强提醒的通知计划、去重、拒绝补发历史通知 | ✅ 2026-10-28 安装版已验中等单次、强提醒 30 秒重复、停止、退出后送达与重启不重放；实际听感、Focus/静音与睡眠唤醒待验 |
 | 远程规则包下载、完整性校验、原子替换、未来生效 | ✅ 机制已实现；默认指向仓库 `rules` 分支，由 Rules workflow 发布 |
 | iOS 共享引擎 | ✅ 最小外壳，仅用于验证跨平台核心 |
 | 发布打包 | ✅ `make package-mac` 生成通用二进制 zip/dmg（默认 ad-hoc）；发布流程使用 EasyIndie/EasyRelease 做 Developer ID 签名与 Apple 公证，尚未发布公开 Release |
@@ -48,7 +48,7 @@
 | 英文界面 | ⛔ 未完成 |
 | 规则包数字签名 | ⛔ 仅 SHA-256 完整性校验，见 [ADR-0004](docs/adr/0004-rule-bundles.md) |
 
-设计基准是 [`docs/handoff/design-preview.html`](docs/handoff/design-preview.html)。用浏览器直接打开即可查看，它是交互示意，不是生产实现。
+当前设计基准是 [`docs/product/design-macos.md`](docs/product/design-macos.md) 与 [`docs/design/brand-refresh-2026-10-27/`](docs/design/brand-refresh-2026-10-27/)。`docs/handoff/design-preview.html` 是早期归档示意，不代表当前实现。
 
 ## 图形界面启动
 
@@ -58,7 +58,7 @@
 
 ## 快速开始
 
-应用最低构建目标：macOS13.0，iOS维持17.0。macOS13.7.8 Intel真机已原生启动并完成菜单栏、设置及偏好跨重启持久化检查；arm64的macOS13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
+应用最低构建目标：macOS 13.0，iOS 维持 17.0。0.1.1 通用包已在 macOS 13.7.8 Intel 解压启动并显示正确状态；arm64 的 macOS 13、登录启动与完整通知矩阵仍待验，见[兼容记录](docs/ops/macos-13-compatibility.md)。
 
 开发主机要求：macOS14+、Xcode16+（Swift6），具体主机版本还需满足所用Xcode要求。XcodeGen 由脚本安装固定版本，无需手动 `brew install`。
 
