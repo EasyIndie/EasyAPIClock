@@ -50,6 +50,7 @@
 | 2026-10-28 | C4 退出后送达与重启不补发 | 通过 | 02:26:36 退出应用，已排定 02:28:00 通知仍由系统送达；02:28:31 重启后状态为峰、下一切换 02:30，未重放 02:28 事件，02:30:00 正常提醒一次 |
 | 2026-10-28 | N5 旧安装与旧数据清理 | 通过 | 删除 `/Applications/谷蹬.app`（0.1.0 / `app.liangwen.mac`）、`~/Library/Containers/app.liangwen.mac`、`~/Library/Application Scripts/app.liangwen.mac` 与 `dist/` 旧 v0.1.0 产物；LaunchServices 旧构建路径已全部注销（残留记录 0）。系统「通知」设置中旧应用条目不再显示；删除 usernoted 中 `app.liangwen.mac` 与当前 Bundle ID 的测试授权记录（偏好列表与数据库行均为 0），重启 usernoted 后无回写。首次安装 MVP 时会重新请求通知权限 |
 | 2026-10-27 | 发布凭据与公证流水线 | 部分通过 | v0.1.1 publish 使用组织共享凭据：证书导入、Developer ID 签名、公证 Accepted、staple 均成功；`stapler validate` 因 runner 网络瞬断（CloudKit -1005）失败，非凭据问题。1.0.0 待重跑 |
+| 2026-10-28 | 1.0.0 公证预览包 | 通过（部分矩阵） | `Notarize preview` run 40627849003：1.0.0(4)、Developer ID、公证 Accepted、staple、`spctl=Notarized Developer ID`；本机 macOS 27 与 pro 13.7.8 均启动成功；11:46:00 真实峰切换通知单次送达。强提醒/停止/退出/提前/关闭需在公证包继续复验 |
 | 2026-10-28 | 1.0.0 本地包安装与元数据 | 通过 | `dist/Gudeng-1.0.0.dmg` 安装到 `/Applications/谷蹬.app`；1.0.0 (4)、`com.easyindie.easyapiclock`、arm64+x86_64、最低 13.0、ad-hoc 签名校验通过；菜单栏状态正常。完整通知矩阵待公证包复验 |
 | 2026-10-28 | 0.1.1 本地包安装 | 通过 | `dist/Gudeng-0.1.1.dmg`（SHA-256 `b66a40fd…`）校验并挂载复制到 `/Applications/谷蹬.app`；ad-hoc 签名、`com.easyindie.easyapiclock` 0.1.1(3)、arm64+x86_64、最低 13.0、沙盒与网络客户端 entitlement 正常，`codesign --verify` 通过 |
 | 2026-10-28 | 安装版面 UI 与设置 | 通过 | 菜单栏显示「谷 / 峰 + 剩余时间」；面板 334×322pt；设置可读提醒强度、提前提醒、预览、规则检查与最近自动尝试；手动检查安装测试规则包并显示「已更新至 …」 |

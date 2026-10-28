@@ -360,3 +360,19 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 | 无设备 | macOS 13 arm64 | arm64 | — | 未实测；发布说明需标注 |
 
 结论：MVP 可发布的支持声明为「macOS 13+ 通用二进制」，并如实列出已验证系统；不能声称 macOS 14/15 或 13 arm64 已通过。
+
+
+## 2026-10-28 · 1.0.0 公证预览包
+
+- 工作流：`Notarize preview`（run 40627849003），`release=false`，只上传 artifact
+- 产物：`GudengMac.app` 1.0.0 (4)，universal，Developer ID：Zhizhou Wang (2N62934Y28)
+- 校验：`codesign --verify` 通过，`spctl` = accepted / Notarized Developer ID，`stapler validate` 通过
+- 本机 macOS 27.0.1 arm64：安装后启动正常，菜单栏状态正确；11:46:00 真实峰切换通知单次送达
+- pro macOS 13.7.8 Intel：公证包直接启动成功，菜单栏状态正确
+
+发现与修复：
+
+- Release 构建曾在 `UNUserNotificationServiceConnection` 回调中触发 Swift 6 主线程隔离断言并崩溃；已改用 `notificationSettings()` / `pendingNotificationRequests()` / `deliveredNotifications()` async API，ad-hoc 与公证包均不再崩溃。
+- 在同一 Bundle ID 上从 ad-hoc 切换到 Developer ID 签名后，旧 sandbox 容器 ACL 会让新包卡在 sandbox 初始化；清理旧容器并重置用户 `secinitd` 后恢复。全新安装不受影响；这是测试机切换签名身份的运维问题，不是产品缺陷。
+
+仍未验证：公证包上的强提醒/停止/退出后送达/提前提醒/关闭提醒、Focus/静音、睡眠唤醒、登录项重登录、通知点击、macOS 14/15 与 macOS 13 arm64。
