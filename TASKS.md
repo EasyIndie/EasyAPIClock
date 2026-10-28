@@ -62,7 +62,7 @@
 - [ ] iOS 交互设计与正式实现（需产品确认；当前外壳不代表设计）。
 - [ ] 强提醒独立浮层（若平台验证表明通知不足；需设计确认）。
 - [x] 价格页面变更监测及已确认单价候选（ADR-0012，仅维护者工具，不进入运行时）。
-  - 2026-10-28：workflow 已随 `2e79744` 进入 `main`；手动 `workflow_dispatch observe` 成功（`unchanged`，digest `cad344f7…`）；连续四个整点 schedule 窗口无 run，原因待查，未改 workflow 或权限。
+  - 2026-10-28：workflow 已随 `2e79744` 进入 `main`；手动 `workflow_dispatch observe` 成功（`unchanged`，digest `cad344f7…`）。GitHub 调度延迟后，2026-10-27 20:05Z / 23:46Z（北京 04:05 / 07:46）两次 schedule 均成功且结果 `unchanged`；未改 workflow 或权限。
 - [ ] 规则包 CDN 与灰度发布策略。
 - [ ] 西班牙语/日语等更多语言（社区驱动）。
 
