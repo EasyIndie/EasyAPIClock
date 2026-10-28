@@ -28,7 +28,7 @@
 
 - [x] **2026-10-24 macOS 27 真机初验**：完成界面、周末状态、设置、规则更新/失败回退、退出、偏好持久化与通知授权拒绝路径；记录见 `docs/ops/platform-validation.md`。
 - [ ] **真实设备通知验证**：在 macOS 14/15 与当前系统上记录权限允许、通知投递、Focus、静音、睡眠唤醒、退出应用、强提醒停止的结果。
-  - 现状：2026-10-28 在 macOS 27.0.1 arm64 用本地 DMG 安装的 0.1.1 完成真实峰切换的中等横幅、强提醒 30 秒重复、「停止提醒」、退出后仍送达、重启不重放与偏好持久化；系统声音 enabled 但未取得实际听感确认；Focus/静音、睡眠唤醒、macOS 14/15 与 macOS 13 arm64 仍待验。证据见 `docs/ops/platform-validation.md`。
+  - 现状：2026-10-28 在 macOS 27.0.1 arm64 与 Pro macOS 13.7.8 Intel 用 1.0.0 公证包验证：中等/强提醒、提前提醒、关闭、退出后送达、重启不重放、Gatekeeper 启动通过；停止最终生效但 AX 自动点击响应延迟约 50 秒，真人点击待复核。声音听感、Focus/静音、睡眠唤醒、登录项重登录、macOS 14/15 与 macOS 13 arm64 仍待验。
   - 验收：每个场景有“通过/失败/受限”与证据；失败项有 issue 或产品降级说明。
 - [x] **Developer ID 签名**：`package-mac` 现在先构建未签名产物，再手动 Developer ID 签名并加安全时间戳；生成通用二进制 zip/dmg。
   - 验收：`codesign --verify` 通过；`Authority=Developer ID Application`、`TeamIdentifier=2N62934Y28`、`Timestamp` 存在。
