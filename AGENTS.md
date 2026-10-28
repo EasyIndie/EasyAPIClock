@@ -168,9 +168,9 @@ Apps/iOS  ──┴──> GudengKit ──> GudengRuntime ──> GudengCore
 - 规则默认托管在 `raw.githubusercontent.com/.../rules`；依赖 GitHub 可用性，raw CDN 可能缓存数分钟；仓库转私有后客户端无法匿名读取。
 - 2026 年之后没有内置节假日数据；2027 年安排公布前会显示「规则待更新」。
 - 2026-10-24 macOS 27 已初验界面、规则更新/离线回退、退出、偏好持久化与通知授权拒绝；通知投递、强提醒、睡眠唤醒、权限允许路径与 macOS 14/15 尚待验证，见 `docs/ops/platform-validation.md`。
-- Developer ID 签名已完成；`make package-mac` 必须在 GUI 会话运行，SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。公证 profile 尚未配置。
+- Developer ID 签名已完成；`make package-mac` 必须在 GUI 会话运行，SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。本机 notary profile 尚未配置；CI 使用 EasyIndie 组织共享凭据（`secrets: inherit`），2026-10-27 运行已验证签名、公证与 staple 成功。
 - 旧Developer ID构建曾返回denied；2026-10-27稳定安装版已为authorized，预览系统送达/清理已验，横幅可见、声音与完整正式矩阵仍未完成。不要据旧记录擅自清理系统通知或BTM。
-- 公证、英文界面尚未完成；应用图标、README 截图与 Developer ID 签名已完成，`make package-mac` 的默认产物是 ad-hoc，不可分发。
+- 1.0.0 尚未发布；公证流水线凭据已验证可用，但上次 `stapler validate` 因 runner 网络瞬断（CloudKit -1005）失败，需重跑。英文界面不在 MVP 范围。`make package-mac` 的默认产物仍是 ad-hoc，不可分发。
 - 通知点击目前只激活应用，不会自动展开面板。
 
 如果任务要求解决上述限制，先确认产品范围并新建 ADR；不要用占位数据或未验证的“看起来能用”替代。

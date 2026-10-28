@@ -33,8 +33,8 @@
 - [x] **Developer ID 签名**：`package-mac` 现在先构建未签名产物，再手动 Developer ID 签名并加安全时间戳；生成通用二进制 zip/dmg。
   - 验收：`codesign --verify` 通过；`Authority=Developer ID Application`、`TeamIdentifier=2N62934Y28`、`Timestamp` 存在。
   - 注意：必须从 GUI 会话运行；SSH 会话访问 login keychain 会返回 `errSecInternalComponent`。
-- [ ] **公证**：创建 `notarytool` profile（`gudeng-notary`），运行 `make package-mac-notarized`，staple 后用 `spctl -a -vv` 验证。
-  - 现状：公证凭据未配置；`spctl` 目前只报 `source=Unnotarized Developer ID`。
+- [ ] **公证与发布验证**：CI 用组织共享凭据完成签名、公证、staple；本地 profile 仅用于 `make package-mac-notarized`。
+  - 现状：2026-10-27 v0.1.1 运行已成功签名、公证（Accepted）并 staple；随后 `stapler validate` 因 runner 网络瞬断（CloudKit -1005）失败，不是凭据问题。1.0.0 尚未发布，需重跑并验证 `spctl`、`stapler validate`。
 - [x] **应用图标**：提供 1024pt 峰谷分色时钟图标，AppIcon 10 个尺寸完整，`make icon` 可重复生成。
   - 验收：Asset Catalog 编译通过；不暗示自动切换模型。
 - [x] **README 截图**：已在 macOS 27 通过 GUI 会话截取真实主面板与设置页；截图机器未授权通知，README 已说明。
