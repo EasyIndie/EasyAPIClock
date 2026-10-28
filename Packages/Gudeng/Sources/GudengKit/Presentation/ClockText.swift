@@ -10,6 +10,7 @@ public enum ClockText {
     public static let brandTitle = "DeepSeek API"
     public static let brandCaption = "峰谷价格提醒 · 北京时间"
     public static let communityNotice = "社区工具，与 DeepSeek 官方无隶属关系"
+    public static let bundleVersionLabel = "规则包版本"
     public static let versionsLabel = "价格 / 日历"
     public static let coverageLabel = "覆盖日期"
     public static let originLabel = "规则来源"
@@ -43,6 +44,14 @@ public enum ClockText {
 
     public static func appVersionAccessibilityLabel(_ version: AppVersion) -> String {
         "应用版本 \(version.shortVersion)，构建号 \(version.build)"
+    }
+
+    public static func ruleBundleLabel(origin: String, bundleVersion: String) -> String {
+        "\(origin) · \(bundleVersion)"
+    }
+
+    public static func ruleBundleAccessibilityLabel(origin: String, bundleVersion: String) -> String {
+        "规则包版本 \(bundleVersion)，来源 \(origin)"
     }
 
     public static let rulesTitle = "规则信息"

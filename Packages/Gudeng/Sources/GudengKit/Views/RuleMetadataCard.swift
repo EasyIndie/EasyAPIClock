@@ -9,6 +9,7 @@ struct RuleMetadataCard: View {
         VStack(spacing: 10) {
             ClockBrandHeader()
             VStack(spacing: 7) {
+                SettingsFactRow(title: ClockText.bundleVersionLabel, value: status.bundleVersion)
                 SettingsFactRow(
                     title: ClockText.versionsLabel, value: "\(status.pricingVersion) / \(status.calendarVersion)")
                 SettingsFactRow(title: ClockText.coverageLabel, value: ClockText.coverageText(status.coverage))

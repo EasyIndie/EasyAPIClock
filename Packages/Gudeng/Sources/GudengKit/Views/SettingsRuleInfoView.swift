@@ -12,9 +12,16 @@ struct SettingsRuleInfoView: View {
                 HStack {
                     Text(ClockText.rulesTitle)
                     Spacer(minLength: 8)
-                    Text(model.ruleStatus.bundleVersion)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                    Text(
+                        ClockText.ruleBundleLabel(
+                            origin: model.ruleStatus.originText, bundleVersion: model.ruleStatus.bundleVersion)
+                    )
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .accessibilityLabel(
+                        ClockText.ruleBundleAccessibilityLabel(
+                            origin: model.ruleStatus.originText, bundleVersion: model.ruleStatus.bundleVersion))
                 }
             }
             // Problems remain visible even while the metadata is collapsed.

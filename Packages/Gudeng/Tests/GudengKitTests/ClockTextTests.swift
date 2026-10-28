@@ -5,6 +5,15 @@ import Testing
 
 @Suite("界面文案与倒计时")
 struct ClockTextTests {
+    @Test("规则包来源与版本可识别")
+    func ruleBundleCopy() {
+        #expect(ClockText.ruleBundleLabel(origin: "已下载规则", bundleVersion: "2026.10.23") == "已下载规则 · 2026.10.23")
+        #expect(ClockText.ruleBundleLabel(origin: "内置规则", bundleVersion: "2026.10.23") == "内置规则 · 2026.10.23")
+        #expect(
+            ClockText.ruleBundleAccessibilityLabel(origin: "已下载规则", bundleVersion: "2026.10.23")
+                == "规则包版本 2026.10.23，来源 已下载规则")
+    }
+
     @Test("设置页显示应用版本与构建号")
     func appVersionCopy() {
         let version = AppVersion(shortVersion: "1.0.0", build: "4")
