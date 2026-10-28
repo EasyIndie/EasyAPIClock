@@ -37,6 +37,14 @@ public enum ClockText {
 
     public static let quitTitle = "退出谷蹬"
     public static let quitHint = "退出应用后不再重新排定提醒"
+    public static func appVersionLabel(_ version: AppVersion) -> String {
+        "谷蹬 \(version.shortVersion) (\(version.build))"
+    }
+
+    public static func appVersionAccessibilityLabel(_ version: AppVersion) -> String {
+        "应用版本 \(version.shortVersion)，构建号 \(version.build)"
+    }
+
     public static let rulesTitle = "规则信息"
     public static let officialRulesTitle = "DeepSeek 官方价格 · 北京时间"
     public static let priceSourceTitle = "价格来源"

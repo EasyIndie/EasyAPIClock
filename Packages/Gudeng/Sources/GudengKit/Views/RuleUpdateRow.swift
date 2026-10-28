@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RuleUpdateRow: View {
     @ObservedObject var model: ClockModel
+    private let appVersion = AppVersion.current()
     @State private var showingDetails = false
 
     var body: some View {
@@ -40,11 +41,21 @@ struct RuleUpdateRow: View {
                 }
             }
             .frame(minHeight: 28)
-            Text(ClockText.lastAutomaticAttemptText(model.lastAutomaticAttemptAt))
-                .font(.system(size: 9))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 8) {
+                Text(ClockText.lastAutomaticAttemptText(model.lastAutomaticAttemptAt))
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Text(ClockText.appVersionLabel(appVersion))
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .textSelection(.enabled)
+                    .accessibilityLabel(ClockText.appVersionAccessibilityLabel(appVersion))
+                    .help(ClockText.appVersionAccessibilityLabel(appVersion))
+            }
         }
         .frame(maxWidth: .infinity, minHeight: 28)
     }

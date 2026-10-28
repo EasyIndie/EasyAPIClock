@@ -5,6 +5,14 @@ import Testing
 
 @Suite("界面文案与倒计时")
 struct ClockTextTests {
+    @Test("设置页显示应用版本与构建号")
+    func appVersionCopy() {
+        let version = AppVersion(shortVersion: "1.0.0", build: "4")
+        #expect(ClockText.appVersionLabel(version) == "谷蹬 1.0.0 (4)")
+        #expect(ClockText.appVersionAccessibilityLabel(version) == "应用版本 1.0.0，构建号 4")
+        #expect(ClockText.appVersionLabel(AppVersion(shortVersion: "—", build: "—")) == "谷蹬 — (—)")
+    }
+
     @Test("预览说明与所选提醒强度及次数一致")
     func previewExplanationMatchesIntensity() {
         #expect(
