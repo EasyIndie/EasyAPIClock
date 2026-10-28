@@ -27,7 +27,11 @@ jobs:
       version: "1.0.0"
       build_number: "4"
       artifact: .build/DerivedData-Release/Build/Products/Release/GudengMac.app
-      build_command: Scripts/install-xcodegen.sh && grep -q 'MARKETING_VERSION: "1.0.0"' project.yml && make check && make build-mac-universal
+      build_command: >-
+        Scripts/install-xcodegen.sh
+        && grep -q 'MARKETING_VERSION: "1.0.0"' project.yml
+        && make check
+        && make build-mac-universal
       entitlements: Apps/Mac/GudengMac.entitlements
       mode: developer-id
       notarize: true
