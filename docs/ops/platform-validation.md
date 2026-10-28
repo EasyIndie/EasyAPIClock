@@ -368,6 +368,7 @@ Developer ID本地签名的谷蹬安装在/Applications/谷蹬.app，旧开发�
 - 产物：`GudengMac.app` 1.0.0 (4)，universal，Developer ID：Zhizhou Wang (2N62934Y28)
 - 校验：`codesign --verify` 通过，`spctl` = accepted / Notarized Developer ID，`stapler validate` 通过
 - 本机 macOS 27.0.1 arm64：安装后启动正常，菜单栏状态正确；11:46:00 真实峰切换通知单次送达
+- 设置页实际显示「谷蹬 1.0.0 (4)」与「内置规则 · 2026.10.23」，规则详情可复制包版本
 - pro macOS 13.7.8 Intel：公证包直接启动成功，菜单栏状态正确
 
 发现与修复：

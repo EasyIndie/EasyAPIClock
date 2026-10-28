@@ -74,6 +74,12 @@ class OfficialPricingTests(unittest.TestCase):
             with self.assertRaises((ValueError, IndexError)):
                 m.extract(html)
 
+    def test_cached_observation_reuses_price_status(self):
+        observation = m.extract(HTML)
+        report = m.report_from_cached_observation({"pricingInfo": {"observation": observation}}, self.root)
+        self.assertEqual(report["status"], "unchanged")
+        self.assertEqual(report["digest"], m.digest(observation))
+
     def changed_report(self):
         return m.observe(HTML.replace("0.02元", "0.03元").replace("0.04元", "0.06元"), self.root)
 
@@ -106,6 +112,49 @@ class OfficialPricingTests(unittest.TestCase):
         for url in ["http://api-docs.deepseek.com/", "https://evil.invalid/", "https://api-docs.deepseek.com@evil.invalid/", "https://api-docs.deepseek.com:444/"]:
             self.assertFalse(m.allowed_url(url))
         self.assertTrue(m.allowed_url(m.SOURCE))
+
+
+UPDATES_HTML = """<html><body>
+<p>2026 年 8 月更新：DeepSeek V4 全系列模型正式版上线。</p>
+<p>新价格将于北京时间 2026 年 8 月 17 日 0 时开始生效。</p>
+<p>其他与计价无关的更新。</p>
+</body></html>"""
+NEWS_HTML = """<html><body>
+<h1>DeepSeek-V4-Pro GA Release 2026/08/13</h1>
+<p>API 价格同步下调，详细价格请参考模型与价格。</p>
+<p>新价格将于北京时间 2026 年 8 月 17 日 0 时开始生效。</p>
+</body></html>"""
+SITEMAP_XML = """<?xml version="1.0"?><urlset>
+<url><loc>https://api-docs.deepseek.com/news/news261017</loc></url>
+<url><loc>https://api-docs.deepseek.com/news/news260910</loc></url>
+<url><loc>https://api-docs.deepseek.com/quick_start/pricing</loc></url>
+</urlset>"""
+
+
+class ContextObservationTests(unittest.TestCase):
+    def test_updates_extract_price_and_effective_time(self):
+        info = m.parse_updates(UPDATES_HTML)
+        self.assertTrue(any("价格" in s for s in info["snippets"]))
+        self.assertEqual(info["effectiveTimes"], ["北京时间 2026-08-17 00:00+08:00"])
+        self.assertEqual(m.parse_updates(UPDATES_HTML)["snippets"], info["snippets"])
+
+    def test_sitemap_keeps_only_official_news(self):
+        self.assertEqual(m.parse_sitemap(SITEMAP_XML), [
+            "https://api-docs.deepseek.com/news/news261017",
+            "https://api-docs.deepseek.com/news/news260910",
+        ])
+        self.assertEqual(m.parse_sitemap("<urlset></urlset>"), [])
+
+    def test_news_scan_and_context_trigger_review(self):
+        info = m.scan_news(NEWS_HTML)
+        self.assertTrue(any("价格" in s for s in info["snippets"]))
+        self.assertEqual(info["effectiveTimes"], ["北京时间 2026-08-17 00:00+08:00"])
+        price = {"status": "unchanged", "observation": {}, "digest": "a" * 64}
+        context = {"updates": {"changed": True, "snippets": info["snippets"], "effectiveTimes": []},
+                   "news": [], "errors": [], "notModified": {}}
+        report = m.compose_report(price, context)
+        self.assertEqual(report["status"], "review-required")
+        self.assertNotEqual(report["notificationDigest"], report["digest"])
 
 
 class ActionsGlueTests(unittest.TestCase):

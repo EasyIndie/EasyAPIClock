@@ -6,6 +6,15 @@
 
 维护者CI：Official pricing工作流每小时观察DeepSeek官方页，比较当前Rules及已核对的语义指纹。workflow已随`2e79744`进入默认分支并在GitHub Actions中为active；手动`workflow_dispatch observe`已成功运行并返回`unchanged`。新工作流注册后前几个整点未触发（GitHub调度延迟），随后2026-10-27 20:05Z / 23:46Z（北京04:05 / 07:46）两次schedule均成功，结果仍为`unchanged`。GitHub调度不保证准点，审核前客户端仍使用原有效包。
 
+## 条件请求与官方上下文
+
+观察器对价格页、官方更新日志和 sitemap 使用 `ETag` / `Last-Modified` 条件请求；未变化时返回 304，不重复解析。状态保存在 `.build/official-pricing/state.json`，CI 通过 Actions cache 跨运行恢复（首次运行建立基线，不把历史日志当新变化）。
+
+- 价格页：仍是单价与峰谷语义的唯一数值来源；ETag 变化仍会重新解析并对比指纹。
+- 更新日志 `/zh-cn/updates`：提取包含价格/计费/峰谷/生效的段落，以及原文中明确的北京时间生效时刻，作为 issue 的候选证据。
+- `sitemap.xml`：只处理新增的 `/news/newsNNNNNN` 公告页，按日期取最新 5 条；首次运行把现有公告记为已见。
+- 生效时刻仍只作候选：`prepare` 仍要求维护者提供已核实的 `+08:00` 时间与官方依据，不从抓取时间推断。
+
 ## 日常观察
 
 ```sh
@@ -19,7 +28,7 @@ make test-source-monitor
 |---|---|
 | unchanged | 不生成规则，不重复通知；可关闭已恢复的bot复核issue |
 | prices-changed | 已知模型/计费项/语义下的单价差异，可进一步确认 |
-| review-required | 时段、模型、倍率或仓库语义有变化；不自动生成 |
+| review-required | 时段、模型、倍率、仓库语义有变化，或更新日志/公告出现价格相关变化；不自动生成 |
 | unrecognized | 网络/结构/币种/缺失数据异常；保留旧规则并复核 |
 
 语义基线在official-pricing-baseline.json，仅维护者核对官方策略后修改。不得为“消除告警”直接改hash。Search/Fetch独立按次收费，不纳入模型峰谷包；日历也不从价格页面推测。

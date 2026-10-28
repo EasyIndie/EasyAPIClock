@@ -18,7 +18,7 @@
 
 - HTTPS官方主机白名单、响应体上限、无脚本执行或远程表达式；GITHUB_TOKEN仅在需要的GitHub步骤提供，观察job只有读源码/写issue，候选job仅受维护者显式调度。
 - 生效日超出日历覆盖、摘要不符、基线已变、时段语义未知、任何校验失败均停止候选。不能只改指纹让错误通过；语义变化需单独复核需求/引擎/日历。
-- 10项标准库离线测试覆盖提取、去重、格式、失败、语义漂移、时间/摘要门槛和候选文件范围；隔离临时仓库的合成单价变更已通过完整Swift规则校验和77项测试，未写真实Rules。
+- 14项标准库离线测试覆盖提取、去重、格式、失败、语义漂移、时间/摘要门槛、候选文件范围，以及更新日志/公告上下文与首轮基线；隔离临时仓库的合成单价变更已通过完整Swift规则校验和77项测试，未写真实Rules。
 - GitHub定时任务只在默认分支生效，可能延迟或被平台停用；客户端还有节流与离线因素，不承诺实时同步。私有仓库套餐、Actions的PR创建权限及branch protection需维护者配置，不自动提升权限。
 
 来源：DeepSeek https://api-docs.deepseek.com/zh-cn/quick_start/pricing/ （2026-10-27核对）；GitHub https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onschedule 。

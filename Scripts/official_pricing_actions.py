@@ -33,7 +33,8 @@ def main():
             if existing:
                 api(f"repos/{repo}/issues/{existing['number']}", {'state': 'closed'}, 'PATCH')
             return
-        state_marker = f"<!-- observation-state:{report['digest']}:{report['status']} -->"
+        notify_digest = report.get('notificationDigest') or report['digest']
+        state_marker = f"<!-- observation-state:{notify_digest}:{report['status']} -->"
         if existing and state_marker in (existing.get('body') or ''):
             return
         body = MARKER + '\n' + state_marker + '\n' + (REPORT.parent / 'report.md').read_text() + '\n\n请核对官方生效时间；不要把观察时间当生效时间。已知单价变化可用Official pricing workflow的prepare模式生成草稿PR；语义/结构变化须人工处理。'

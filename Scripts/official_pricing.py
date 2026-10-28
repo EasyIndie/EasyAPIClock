@@ -9,10 +9,14 @@ import json
 from pathlib import Path
 import re
 from urllib.parse import urlsplit
+from urllib.error import HTTPError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 SOURCE = "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
+UPDATES_SOURCE = "https://api-docs.deepseek.com/zh-cn/updates"
+SITEMAP_SOURCE = "https://api-docs.deepseek.com/sitemap.xml"
 HOST = "api-docs.deepseek.com"
+PRICE_WORDS = ("价格", "计费", "峰谷", "生效", "调价", "降价", "优惠")
 TIERS = {"百万tokens输入（缓存命中）": "inputCacheHit", "百万tokens输入（缓存未命中）": "inputCacheMiss", "百万tokens输出": "output"}
 STATES = {"空闲时段": "valley", "高峰时段": "peak"}
 ROOT = Path(__file__).resolve().parents[1]
@@ -153,21 +157,51 @@ class OfficialRedirect(HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
+def fetch_page(url, cache=None, content_types=("text/html", "application/xhtml+xml")):
+    """Fetch an allow-listed official URL, using ETag/Last-Modified when cached."""
+    if not allowed_url(url):
+        raise ValueError("只允许读取官方HTTPS来源")
+    headers = {"User-Agent": "GudengOfficialPricingMonitor/1.1"}
+    cache = cache or {}
+    if cache.get("etag"):
+        headers["If-None-Match"] = cache["etag"]
+    elif cache.get("lastModified"):
+        headers["If-Modified-Since"] = cache["lastModified"]
+    req = Request(url, headers=headers)
+    try:
+        with build_opener(OfficialRedirect()).open(req, timeout=30) as response:
+            if not allowed_url(response.url) or response.headers.get_content_type() not in content_types:
+                raise ValueError("官方响应地址或内容类型异常")
+            data = response.read(2_000_001)
+            if len(data) > 2_000_000:
+                raise ValueError("官方页面超过允许大小")
+            return {
+                "notModified": False,
+                "body": data.decode("utf-8"),
+                "etag": response.headers.get("ETag"),
+                "lastModified": response.headers.get("Last-Modified"),
+            }
+    except HTTPError as error:
+        if error.code == 304:
+            return {
+                "notModified": True,
+                "body": "",
+                "etag": error.headers.get("ETag") if error.headers else cache.get("etag"),
+                "lastModified": error.headers.get("Last-Modified") if error.headers else cache.get("lastModified"),
+            }
+        raise
+
+
 def fetch():
-    req = Request(SOURCE, headers={"User-Agent": "GudengOfficialPricingMonitor/1.0"})
-    with build_opener(OfficialRedirect()).open(req, timeout=30) as response:
-        if not allowed_url(response.url) or response.headers.get_content_type() not in ("text/html", "application/xhtml+xml"):
-            raise ValueError("官方响应地址或内容类型异常")
-        data = response.read(2_000_001)
-    if len(data) > 2_000_000:
-        raise ValueError("官方页面超过允许大小")
-    return data.decode("utf-8")
+    result = fetch_page(SOURCE)
+    if result["notModified"]:
+        raise ValueError("全新请求不应返回304")
+    return result["body"]
 
 
-def observe(html, root=ROOT):
+def status_from_observation(observation, root=ROOT):
     pricing_bytes = (root / "Rules/pricing.json").read_bytes()
     baseline = json.loads((root / "docs/ops/official-pricing-baseline.json").read_text())
-    observation = extract(html)
     status = "unchanged"
     if (observation["policySHA256"] != baseline["policySHA256"]
             or digest(rule_semantics(json.loads(pricing_bytes))) != baseline["ruleSemanticsSHA256"]):
@@ -179,9 +213,153 @@ def observe(html, root=ROOT):
             status = "review-required"
         elif any(Decimal(t["peak"]) != 2 * Decimal(t["valley"]) for m in observation["prices"].values() for t in m.values()):
             status = "review-required"
+    return status
+
+
+def observe(html, root=ROOT):
+    pricing_bytes = (root / "Rules/pricing.json").read_bytes()
+    observation = extract(html)
     return {"schemaVersion": 1, "sourceURL": SOURCE, "checkedAt": datetime.now(timezone.utc).isoformat(),
-            "status": status, "observation": observation, "digest": digest(observation),
-            "pricingSHA256": hashlib.sha256(pricing_bytes).hexdigest()}
+            "status": status_from_observation(observation, root), "observation": observation,
+            "digest": digest(observation), "pricingSHA256": hashlib.sha256(pricing_bytes).hexdigest()}
+
+
+CHINESE_EFFECTIVE_TIME = re.compile(
+    r"北京时间\s*(20\d{2})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日\s*(\d{1,2})\s*[时点]"
+)
+ISO_EFFECTIVE_TIME = re.compile(r"\b(20\d{2})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})\b")
+
+
+def page_texts(html):
+    page = Page()
+    page.feed(html)
+    return [text for text in page.paragraphs if len(text) >= 8]
+
+
+def effective_times(text):
+    found = []
+    for match in CHINESE_EFFECTIVE_TIME.finditer(text):
+        year, month, day, hour = match.groups()
+        found.append(f"北京时间 {int(year):04d}-{int(month):02d}-{int(day):02d} {int(hour):02d}:00+08:00")
+    for match in ISO_EFFECTIVE_TIME.finditer(text):
+        year, month, day, hour, minute = match.groups()
+        found.append(f"北京时间 {year}-{month}-{day} {hour}:{minute}+08:00")
+    return list(dict.fromkeys(found))
+
+
+def price_snippets(texts, limit=8):
+    snippets = []
+    for text in texts:
+        if not any(word in text for word in PRICE_WORDS):
+            continue
+        snippet = text[:600]
+        if snippet not in snippets:
+            snippets.append(snippet)
+    return snippets[:limit]
+
+
+def parse_updates(html):
+    texts = page_texts(html)
+    snippets = price_snippets(texts)
+    times = []
+    for snippet in snippets:
+        for value in effective_times(snippet):
+            if value not in times:
+                times.append(value)
+    return {"sha256": hashlib.sha256("\n".join(texts).encode()).hexdigest(),
+            "snippets": snippets, "effectiveTimes": times}
+
+
+def parse_sitemap(xml):
+    urls = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", xml)
+    news = []
+    for url in urls:
+        if allowed_url(url) and re.search(r"/news/news\d+$", url) and url not in news:
+            news.append(url)
+    return news
+
+
+def scan_news(html):
+    texts = page_texts(html)
+    snippets = price_snippets(texts)
+    times = []
+    for snippet in snippets:
+        for value in effective_times(snippet):
+            if value not in times:
+                times.append(value)
+    return {"snippets": snippets, "effectiveTimes": times}
+
+
+def collect_context(state):
+    context = {
+        "updates": {"changed": False, "snippets": [], "effectiveTimes": [], "url": UPDATES_SOURCE},
+        "news": [],
+        "errors": [],
+        "notModified": {},
+    }
+    try:
+        result = fetch_page(UPDATES_SOURCE, state.get("updates"))
+        if result["notModified"]:
+            context["notModified"]["updates"] = True
+            cached = state.get("updatesInfo", {})
+            context["updates"].update(cached)
+        else:
+            info = parse_updates(result["body"])
+            previous = state.get("updatesInfo", {})
+            context["updates"].update(info)
+            # The first observation establishes a baseline; existing historical
+            # entries must not look like a fresh policy change.
+            context["updates"]["changed"] = bool(previous) and info["snippets"] != previous.get("snippets")
+            state["updates"] = {"etag": result["etag"], "lastModified": result["lastModified"]}
+            state["updatesInfo"] = info
+    except Exception as error:
+        context["errors"].append("updates: " + str(error)[:300])
+
+    try:
+        first_sitemap = "newsURLs" not in state
+        result = fetch_page(SITEMAP_SOURCE, state.get("sitemap"), content_types=("application/xml", "text/xml"))
+        if result["notModified"]:
+            context["notModified"]["sitemap"] = True
+            urls = state.get("newsURLs", [])
+        else:
+            urls = parse_sitemap(result["body"])
+            state["sitemap"] = {"etag": result["etag"], "lastModified": result["lastModified"]}
+            state["newsURLs"] = urls
+        seen = set(state.get("seenNews", []))
+        unseen = [url for url in urls if url not in seen]
+        if first_sitemap:
+            # Baseline all existing announcements instead of notifying for old releases.
+            seen.update(unseen)
+            unseen = []
+        else:
+            unseen = sorted(unseen, key=lambda url: re.search(r"news(\d+)$", url).group(1), reverse=True)[:5]
+        for url in unseen:
+            try:
+                page = fetch_page(url)
+                item = scan_news(page["body"])
+                context["news"].append({"url": url, **item})
+                seen.add(url)
+            except Exception as error:
+                context["errors"].append(url + ": " + str(error)[:300])
+        state["seenNews"] = list(seen)[-100:]
+    except Exception as error:
+        context["errors"].append("sitemap: " + str(error)[:300])
+    return context
+
+
+def compose_report(price_report, context):
+    context_changed = context["updates"]["changed"] or any(item["snippets"] for item in context["news"])
+    report = dict(price_report)
+    report["context"] = context
+    if context_changed and report["status"] == "unchanged":
+        report["status"] = "review-required"
+        report["reason"] = "官方更新日志或公告包含价格/计费变化"
+    report["notificationDigest"] = digest({
+        "observation": report.get("observation"),
+        "updates": context["updates"],
+        "news": context["news"],
+    })
+    return report
 
 
 def prepare(report, root, expected_digest, effective_from, evidence):
@@ -264,11 +442,36 @@ def prepare(report, root, expected_digest, effective_from, evidence):
     changelog.write_text(changelog.read_text().replace("### Changed\n", "### Changed\n\n- 官方单价候选 " + version + "；生效依据：" + evidence + "，需审阅后合并。\n", 1))
 
 
+def load_state(path):
+    try:
+        state = json.loads(path.read_text())
+    except (FileNotFoundError, ValueError):
+        return {}
+    return state if state.get("schemaVersion") == 1 else {}
+
+
+def report_from_cached_observation(state, root=ROOT):
+    info = state.get("pricingInfo")
+    if not info or "observation" not in info:
+        raise ValueError("缺少可复用的价格观察缓存")
+    observation = info["observation"]
+    return {
+        "schemaVersion": 1,
+        "sourceURL": SOURCE,
+        "checkedAt": datetime.now(timezone.utc).isoformat(),
+        "status": status_from_observation(observation, root),
+        "observation": observation,
+        "digest": digest(observation),
+        "pricingSHA256": hashlib.sha256((root / "Rules/pricing.json").read_bytes()).hexdigest(),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=["observe", "prepare"])
     parser.add_argument("--html", type=Path, help="本地测试输入；CI默认读取官方HTTPS页面")
     parser.add_argument("--output", type=Path, default=Path(".build/official-pricing"))
+    parser.add_argument("--state", type=Path, help="条件请求缓存；默认 <output>/state.json")
     parser.add_argument("--expected-digest", default="")
     parser.add_argument("--effective-from", default="")
     parser.add_argument("--evidence", default=SOURCE)
@@ -276,20 +479,63 @@ def main():
     if args.mode == "prepare" and args.html:
         parser.error("prepare必须重新抓取官方HTTPS，不接受本地HTML")
     args.output.mkdir(parents=True, exist_ok=True)
+    state_path = args.state or (args.output / "state.json")
+    state = load_state(state_path)
+    state["schemaVersion"] = 1
     try:
-        report = observe(args.html.read_text() if args.html else fetch())
+        if args.html:
+            report = observe(args.html.read_text())
+            report["context"] = {"updates": {"changed": False, "snippets": [], "effectiveTimes": []}, "news": [], "errors": [], "notModified": {}}
+            report["notificationDigest"] = digest({"observation": report["observation"], "updates": report["context"]["updates"], "news": []})
+        else:
+            pricing_result = fetch_page(SOURCE, state.get("pricing"))
+            if pricing_result["notModified"]:
+                price_report = report_from_cached_observation(state)
+                price_report["notModified"] = True
+            else:
+                price_report = observe(pricing_result["body"])
+                state["pricing"] = {"etag": pricing_result["etag"], "lastModified": pricing_result["lastModified"]}
+                state["pricingInfo"] = {"observation": price_report["observation"], "digest": price_report["digest"]}
+            context = collect_context(state)
+            report = compose_report(price_report, context)
+            save_state(state_path, state)
     except Exception as error:
         if args.mode == "prepare":
             raise
         report = {"status": "unrecognized", "reason": str(error)[:500], "sourceURL": SOURCE,
-                  "checkedAt": datetime.now(timezone.utc).isoformat(), "digest": digest(str(error)[:500])}
+                  "checkedAt": datetime.now(timezone.utc).isoformat(), "digest": digest(str(error)[:500]),
+                  "notificationDigest": digest(str(error)[:500]),
+                  "context": {"updates": {"changed": False, "snippets": [], "effectiveTimes": []}, "news": [], "errors": [str(error)[:300]], "notModified": {}}}
     (args.output / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    context = report.get("context") or {}
+    extra = []
+    updates = context.get("updates") or {}
+    if updates.get("snippets"):
+        extra.append("## 官方更新日志摘录\n\n" + "\n\n".join("- " + s for s in updates["snippets"]))
+    if updates.get("effectiveTimes"):
+        extra.append("检测到的生效时间（仍需维护者确认）：\n\n" + "\n".join("- " + t for t in updates["effectiveTimes"]))
+    if context.get("news"):
+        lines = []
+        for item in context["news"]:
+            lines.append("- " + item["url"])
+            for snippet in item.get("snippets", [])[:3]:
+                lines.append("  - " + snippet)
+        extra.append("## 新公告\n\n" + "\n".join(lines))
+    if context.get("errors"):
+        extra.append("## 上下文读取提示\n\n" + "\n".join("- " + e for e in context["errors"]))
     (args.output / "report.md").write_text(
         "# DeepSeek 官方单价观察\n\n状态：" + report["status"] + "\n\n来源：" + SOURCE + "\n\n摘要：`" + report["digest"] + "`\n\n"
-        + "生效时间不能由抓取时间推断；时段/结构变化须人工处理。\n\n```json\n" + json.dumps(report, ensure_ascii=False, indent=2) + "\n```\n")
+        + "生效时间不能由抓取时间推断；时段/结构变化须人工处理。\n\n"
+        + ("\n\n".join(extra) + "\n\n" if extra else "")
+        + "```json\n" + json.dumps(report, ensure_ascii=False, indent=2) + "\n```\n")
     if args.mode == "prepare":
         prepare(report, ROOT, args.expected_digest, args.effective_from, args.evidence)
-    print(json.dumps({"status": report["status"], "digest": report["digest"]}, ensure_ascii=False))
+    print(json.dumps({"status": report["status"], "digest": report["digest"],
+                      "notificationDigest": report.get("notificationDigest", report["digest"])}, ensure_ascii=False))
+
+
+def save_state(path, state):
+    path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
 
 
 if __name__ == "__main__":
