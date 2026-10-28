@@ -92,17 +92,27 @@ jobs:
           cat > "$RUNNER_TEMP/release-notes.md" <<EOF
           ## 谷蹬 ${{ needs.prepare.outputs.version }}
 
-          DeepSeek API 峰谷钟点提醒。最低支持 macOS 13.0，提供 Apple silicon 与 Intel 通用版本。
+          DeepSeek API 峰谷钟点提醒。仅支持 macOS 13.0+，提供 Apple silicon 与 Intel 通用版本。
 
           ### 安装
-          下载 ZIP 并解压，将「谷蹬」拖入「应用程序」文件夹。
+          下载 ZIP 并解压，将「谷蹬」拖入「应用程序」文件夹。首次启动时按需允许通知；不登录账号，也不需要 API Key。
 
           ### 签名与公证
           此版本使用 Developer ID 签名，通过 Apple 公证并完成 staple。manifest 记录应用版本、build、签名及公证状态；SHA-256 文件可在下载目录直接校验。
 
-          本版 Bundle ID 为 com.easyindie.easyapiclock；v0.1.0 使用旧标识。系统偏好、通知授权和沙盒数据不会从旧标识自动迁移。
+          ### 已验证平台
+          - macOS 27.0.1 arm64
+          - macOS 13.7.8 Intel
 
-          社区项目，与 DeepSeek 官方无隶属关系。当前规则覆盖范围与通知限制见仓库文档。
+          macOS 14/15 与 macOS 13 arm64 未实测；如有异常请附系统版本反馈。
+
+          ### 规则覆盖
+          内置 2026 年价格与节假日规则，覆盖至 2026-12-31。2027 年官方安排公布后会通过规则包更新；覆盖不足时应用显示「规则待更新」，不展示精确倒计时或发送价格提醒。
+
+          ### 通知限制
+          通知受系统权限、专注模式、静音和睡眠策略影响；强提醒为有界重复通知，不保证穿透系统限制。规则更新、签名与隐私说明见仓库文档。
+
+          社区项目，与 DeepSeek 官方无隶属关系。
           EOF
           gh api --method PATCH "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
             -f body="$(cat "$RUNNER_TEMP/release-notes.md")"

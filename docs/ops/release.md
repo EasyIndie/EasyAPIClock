@@ -44,7 +44,7 @@ GitHub Release 由 EasyIndie 组织的 [EasyRelease](https://github.com/EasyIndi
 
 ```yaml
 MARKETING_VERSION: "1.0.0"   # 用户可见版本
-CURRENT_PROJECT_VERSION: "3" # 构建号，每次上传递增
+CURRENT_PROJECT_VERSION: "4" # 构建号，每次上传递增
 ```
 
 规则包版本（`bundleVersion`）独立于应用版本；发布说明中同时列出两者。
