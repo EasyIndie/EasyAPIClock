@@ -33,3 +33,7 @@
 - 修改必需检查时，同步更新 GitHub 分支保护和本文档；不要只改 workflow 名称。
 - 修改路径分类规则时，先确认 `Scripts/`、`Rules/`、`.github/workflows/` 等仍被当作代码。
 - 若 PR 上的 `CI gate` 一直等待，检查它是否运行以及 `Classify changes` 是否成功；必要时用 `workflow_dispatch` 手动跑完整 CI。
+
+## 实测记录
+
+- 2026-11-04：纯文档 PR 改动本文件时，只运行 `Classify changes` 与 `CI gate`，macOS 测试/构建为 skipped；`CI gate` 成功，分支保护允许合并。
