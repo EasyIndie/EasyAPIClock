@@ -61,7 +61,7 @@ make test-source-monitor # 官方来源解析/候选生成的离线测试
 make check            # 分层 + 规则校验 + 测试 + lint + 双端构建
 ```
 
-`make check` 是提交前的最低门槛。CI 会重复执行这些检查。
+`make check` 是提交前的最低门槛。CI 会重复执行这些检查；纯文档 PR 走快速路径，只运行变更分类与 `CI gate`，代码 PR 仍执行完整 macOS 测试/构建。
 
 XcodeGen 版本固定在 `.xcodegen-version`，由 `Scripts/install-xcodegen.sh` 下载官方 release 并校验 SHA-256。不要用 `brew install/upgrade xcodegen` 绕过固定版本；升级流程见 ADR-0002。
 

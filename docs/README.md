@@ -43,6 +43,7 @@ adr/
   0011-shared-application-runtime.md  共享会话与界面适配
 ops/
   release.md           签名、公证、发布检查
+  ci.md                CI 变更分类、必需检查与分支保护
   macos-13-compatibility.md macOS13编译审计、迁移方案与验收门槛
   mac-app-store-readiness.md Mac App Store要求初查与项目差距
   rule-update-runbook.md 规则更新操作手册
