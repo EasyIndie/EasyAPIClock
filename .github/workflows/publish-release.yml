@@ -59,7 +59,7 @@ jobs:
 
   publish:
     needs: prepare
-    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@1b2ccaec5bec0a557e86e11e28c9459a0b7c5633
+    uses: EasyIndie/EasyRelease/.github/workflows/apple-release.yml@413c858e74da35b69af69fa81de25331c03d14fc
     with:
       runs_on: macos-15
       kit_ref: 1b2ccaec5bec0a557e86e11e28c9459a0b7c5633
